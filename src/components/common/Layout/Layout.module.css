@@ -1,0 +1,15 @@
+.layoutContainer {
+    display: flex;
+}
+
+.content {
+    flex: 1;
+    padding: 1rem;
+    width: calc(100% - 16rem);
+}
+
+.button {
+    width: 2.1rem;
+    height: 2.1rem;
+    padding: 0;
+}

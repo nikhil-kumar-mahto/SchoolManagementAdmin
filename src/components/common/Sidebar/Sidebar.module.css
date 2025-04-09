@@ -1,0 +1,71 @@
+.sidebar {
+    width: 16rem;
+    background-color: var(--background-color);
+    height: 100vh;
+    transition: transform 0.3s ease, width 0.3s ease;
+    transform: translateX(-100%);
+    overflow: hidden;
+}
+
+.sidebar.open {
+    transform: translateX(0);
+}
+
+.sidebar nav ul {
+    list-style: none;
+    padding: 1rem;
+}
+
+.sidebar nav ul li a {
+    display: block;
+    padding: 0.5rem 0;
+    text-decoration: none;
+    color: var(--text-color);
+    transition: color 0.3s ease;
+}
+
+.iconContainer {
+    width: 3.75rem;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0.65rem;
+}
+
+.labelIcon {
+    width: 40px;
+    height: 40px;
+}
+
+.labelContainer {
+    display: flex;
+    gap: 10px;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+
+.sidebar.minimized {
+    width: 4rem;
+}
+
+.sidebar.minimized .labelContainer a {
+    display: none;
+}
+
+.sidebar.minimized nav ul {
+    padding: 0.5rem;
+}
+
+.hoverState {
+    background: var(--primary-color);
+}
+
+.anchorHoveredState {
+    color: var(--white) !important;
+}
+
+.labelContainer:hover a {
+    color: var(--white);
+}

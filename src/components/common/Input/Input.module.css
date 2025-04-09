@@ -1,0 +1,50 @@
+.inputContainer {
+    margin-bottom: 1rem;
+    width: 100%;
+}
+
+.label {
+    margin-bottom: 0.5rem;
+    font-weight: 400;
+    color: var(--dark-color);
+}
+
+.inputWrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input {
+    padding: 0.5rem;
+    padding-left: 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    width: 100%;
+    box-sizing: border-box;
+    min-height: 2.5rem;
+}
+
+.icon {
+    position: absolute;
+    left: 0.5rem;
+    color: #888;
+}
+
+.errorMessage {
+    color: var(--danger-color);
+    margin-top: 0.25rem;
+    font-size: 0.875rem;
+}
+
+.error input {
+    border-color: var(--danger-color);
+}
+
+.mb1 {
+    margin-bottom: 0.25rem;
+}
+
+.rounded {
+    border-radius: 4px;
+}
