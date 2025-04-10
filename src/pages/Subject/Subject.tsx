@@ -1,10 +1,8 @@
 import { useState } from "react";
-import DataTable from "../components/common/DataTable/DataTable";
-import Select from "../components/common/Select/Select";
-import SearchDebounce from "../components/common/Search/Search";
-import Layout from "../components/common/Layout/Layout";
-import Loader from "../components/common/Loader/Loader";
-import Button from "../components/common/Button/Button";
+import Layout from "../../components/common/Layout/Layout";
+import Select from "../../components/common/Select/Select";
+import SearchDebounce from "../../components/common/Search/Search";
+import DataTable from "../../components/common/DataTable/DataTable";
 
 const options = [
   { value: "option1", label: "Option 1" },
@@ -12,7 +10,7 @@ const options = [
   { value: "option3", label: "Option 3" },
 ];
 
-function Dashboard() {
+function Subjects() {
   const [selectedValue, setSelectedValue] = useState("option1");
   const handleSearch = (query: string) => {
     console.log("Searching for:", query);
@@ -20,8 +18,6 @@ function Dashboard() {
 
   return (
     <Layout>
-      <Loader size="medium" color="blue" text="Loading..." />
-
       <div
         style={{
           height: "100vh",
@@ -30,7 +26,7 @@ function Dashboard() {
           marginTop: "20px",
         }}
       >
-        <h2>DataTable Sample</h2>
+        <h2>Subjects Listing</h2>
         <Select
           options={options}
           value={selectedValue}
@@ -39,10 +35,9 @@ function Dashboard() {
         />
         <SearchDebounce onSearch={handleSearch} debounceDelay={300} />
         <DataTable />
-        <Button text="Demo" onClick={() => {}} isLoading={true} />
       </div>
     </Layout>
   );
 }
 
-export default Dashboard;
+export default Subjects;

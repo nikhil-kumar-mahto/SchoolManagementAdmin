@@ -1,11 +1,12 @@
-button {
-    padding: 0.75rem 1rem;
+.button {
+    padding: 1rem 1.5rem;
     border: none;
     cursor: pointer;
-    transition: background-color 0.3s ease;
-    font-weight: bold;
-    border-radius: 60px;
-    width: "100%";
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    font-weight: 600;
+    border-radius: 6px;
+    font-size: 1rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .filled {
@@ -15,6 +16,7 @@ button {
 
 .filled:hover {
     background-color: #0056b3;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
 .outline {
@@ -25,4 +27,5 @@ button {
 
 .outline:hover {
     background-color: rgba(0, 123, 255, 0.1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }

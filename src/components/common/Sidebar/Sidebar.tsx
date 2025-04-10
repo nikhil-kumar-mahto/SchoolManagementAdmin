@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "./Sidebar.module.css";
 import { SchoolIcon } from "../../../assets/svgs";
 import { sidebarItems } from "./SideBarList";
+import { useLocation } from "react-router-dom";
 
 interface SidebarProps {
   isMinimized: boolean;
@@ -10,6 +11,23 @@ interface SidebarProps {
 const Sidebar: React.FC<SidebarProps> = ({ isMinimized }) => {
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
   const [selectedItem, setSelectedItem] = useState<string | null>("Dashboard");
+  const location = useLocation();
+
+  useEffect(() => {
+    const currentPath = location.pathname;
+    const matchingItem = sidebarItems.find((item) => {
+      const itemPath = item.href;
+      return currentPath.startsWith(itemPath);
+    });
+
+    if (matchingItem) {
+      setSelectedItem(matchingItem.name);
+    } else {
+      setSelectedItem("Dashboard");
+    }
+  }, [location.pathname]);
+
+  console.log("selected item====", selectedItem);
 
   return (
     <aside

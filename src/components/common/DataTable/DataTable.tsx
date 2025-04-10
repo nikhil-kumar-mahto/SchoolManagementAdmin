@@ -15,7 +15,7 @@ const DataTable = () => {
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
   return (
-    <div className={styles["table-container"]}>
+    <div className={`styles["table-container"]`}>
       <table className={styles.table}>
         <thead>
           <tr>
