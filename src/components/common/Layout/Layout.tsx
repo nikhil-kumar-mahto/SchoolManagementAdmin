@@ -17,7 +17,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
   return (
     <div className={styles.layoutContainer}>
-      <Sidebar isOpen={isSidebarOpen} />
+      <Sidebar isMinimized={isSidebarOpen} />
       <div className={styles.content}>
         <button className={styles.button} onClick={toggleSidebar}>
           <Options />

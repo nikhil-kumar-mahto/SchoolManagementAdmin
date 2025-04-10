@@ -4,17 +4,16 @@ import { SchoolIcon } from "../../../assets/svgs";
 import { sidebarItems } from "./SideBarList";
 
 interface SidebarProps {
-  isOpen: boolean;
-  isMinimized?: boolean;
+  isMinimized: boolean;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ isOpen, isMinimized }) => {
+const Sidebar: React.FC<SidebarProps> = ({ isMinimized }) => {
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
   const [selectedItem, setSelectedItem] = useState<string | null>("Dashboard");
 
   return (
     <aside
-      className={`${styles.sidebar} ${isOpen || true ? styles.open : ""} ${
+      className={`${styles.sidebar} ${isMinimized || true ? styles.open : ""} ${
         isMinimized ? styles.minimized : ""
       }`}
     >
