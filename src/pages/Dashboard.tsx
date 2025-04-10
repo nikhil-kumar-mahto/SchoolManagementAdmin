@@ -38,7 +38,7 @@ function Dashboard() {
           label="Select an Option"
         />
         <SearchDebounce onSearch={handleSearch} debounceDelay={300} />
-        <DataTable />
+        {/* <DataTable /> */}
         <Button text="Demo" onClick={() => {}} isLoading={true} />
       </div>
     </Layout>

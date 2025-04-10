@@ -89,7 +89,7 @@ const CreateTeacher: React.FC<Props> = () => {
         </div>
 
         <Button text="Submit" onClick={handleSubmit} className="mt-2" />
-      </div>  
+      </div>
     </Layout>
   );
 };

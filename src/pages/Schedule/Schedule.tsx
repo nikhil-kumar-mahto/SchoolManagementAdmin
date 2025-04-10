@@ -1,6 +1,6 @@
 import Layout from "../../components/common/Layout/Layout";
 import DataTable from "../../components/common/DataTable/DataTable";
-import styles from "./Schools.module.css";
+import styles from "./Schedule.module.css";
 import Button from "../../components/common/Button/Button";
 import { useNavigate } from "react-router-dom";
 import { DeleteIcon, EditIcon } from "../../assets/svgs";
@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 import Fetch from "../../utils/form-handling/fetch";
 import { arrayString } from "../../utils/form-handling/arrayString";
 
-function Schools() {
+function Schedule() {
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
@@ -17,16 +17,29 @@ function Schools() {
 
   const getData = () => {
     setIsLoading(true);
-    Fetch("schools/").then((res: any) => {
+    Fetch("schedule/").then((res: any) => {
       if (res.status) {
-        setData(res.data);
+        let formattedData = res.data.map((item: any) => {
+          return {
+            id: item?.id,
+            class_assigned:
+              item?.class_assigned?.name + item?.class_assigned?.section,
+            subject: item?.subject?.name,
+            teacher: item?.teacher?.name,
+            school: item?.teacher?.school?.name,
+            start_time: item?.start_time,
+            end_time: item?.end_time,
+            day: item?.day,
+          };
+        });
+        setData(formattedData);
       }
       setIsLoading(false);
     });
   };
 
   const handleDelete = (id: string) => {
-    Fetch(`schools/${id}/`, {}, { method: "delete" }).then((res: any) => {
+    Fetch(`schedule/${id}/`, {}, { method: "delete" }).then((res: any) => {
       if (res.status) {
         getData();
       }
@@ -34,7 +47,7 @@ function Schools() {
   };
 
   const handleEdit = (id: string) => {
-    navigate(`/schools/create/${id}`);
+    navigate(`/schedule/create/${id}`);
   };
 
   useEffect(() => {
@@ -42,19 +55,13 @@ function Schools() {
   }, []);
 
   const columns = [
-    { key: "name", header: "Name" },
-    { key: "address", header: "Address" },
-    { key: "phone", header: "Phone" },
-    {
-      key: "logo",
-      header: "Logo",
-      render: (item: any) => <img width={40} height={40} src={item.logo} />,
-    },
-    {
-      key: "email",
-      header: "Email Link",
-      render: (item: any) => <a href={`mailto:${item.email}`}>{item.email}</a>,
-    },
+    { key: "class_assigned", header: "Class" },
+    { key: "subject", header: "Subject" },
+    { key: "teacher", header: "Teacher" },
+    { key: "school", header: "School" },
+    { key: "start_time", header: "Start Time" },
+    { key: "end_time", header: "End Time" },
+    { key: "day", header: "Day" },
     {
       key: "actions",
       header: "Actions",
@@ -83,10 +90,8 @@ function Schools() {
   ];
 
   const handleNavigate = () => {
-    navigate("/schools/create");
+    navigate("/schedule/create");
   };
-
-  console.log("data====", data);
 
   return (
     <Layout>
@@ -99,7 +104,7 @@ function Schools() {
         }}
       >
         <div className={styles.titleContainer}>
-          <h2 className="mb-3">Schools</h2>
+          <h2 className="mb-3">Schedule</h2>
           <Button text="Create" onClick={handleNavigate} />
         </div>
 
@@ -109,4 +114,4 @@ function Schools() {
   );
 }
 
-export default Schools;
+export default Schedule;

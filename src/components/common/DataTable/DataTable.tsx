@@ -1,39 +1,51 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import styles from "./DataTable.module.css";
-import { dummyData } from "../../../static/data.js";
 
-const DataTable = () => {
+interface DataTableProps<T> {
+  data: T[];
+  columns: {
+    key: keyof T;
+    header: string;
+    render?: (item: T) => React.ReactNode;
+  }[];
+  itemsPerPage?: number;
+}
+
+const DataTable = <T extends {}>({
+  data,
+  columns,
+  itemsPerPage = 5,
+}: DataTableProps<T>) => {
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = dummyData.slice(indexOfFirstItem, indexOfLastItem);
+  const currentItems = data.slice(indexOfFirstItem, indexOfLastItem);
 
-  const totalPages = Math.ceil(dummyData.length / itemsPerPage);
+  const totalPages = Math.ceil(data.length / itemsPerPage);
 
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
   return (
-    <div className={`styles["table-container"]`}>
+    <div className={styles["table-container"]}>
       <table className={styles.table}>
         <thead>
           <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>City</th>
-            <th>Country</th>
+            {columns.map((column) => (
+              <th key={column.key as string}>{column.header}</th>
+            ))}
           </tr>
         </thead>
         <tbody>
-          {currentItems.map((item: any) => (
-            <tr key={item.id}>
-              <td>{item.id}</td>
-              <td>{item.name}</td>
-              <td>{item.email}</td>
-              <td>{item.city}</td>
-              <td>{item.country}</td>
+          {currentItems.map((item, index) => (
+            <tr key={index}>
+              {columns.map((column) => (
+                <td key={column.key as string}>
+                  {column.render
+                    ? column.render(item)
+                    : (item[column.key] as string)}
+                </td>
+              ))}
             </tr>
           ))}
         </tbody>

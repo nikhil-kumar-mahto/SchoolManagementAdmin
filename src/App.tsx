@@ -16,6 +16,8 @@ import Schools from "./pages/Schools/Schools";
 import CreateSchool from "./pages/Schools/CreateSchool";
 import Subjects from "./pages/Subject/Subject";
 import CreateSubject from "./pages/Subject/CreateSubject";
+import Schedule from "./pages/Schedule/Schedule";
+import CreateSchedule from "./pages/Schedule/CreateSchedule.";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState<null | boolean>(null);
@@ -48,7 +50,7 @@ function App() {
           element={isLoggedIn ? <Teachers /> : <Navigate to="/login" />}
         />
         <Route
-          path="/teachers/create"
+          path="/teachers/create/:id?"
           element={isLoggedIn ? <CreateTeacher /> : <Navigate to="/login" />}
         />
         <Route
@@ -56,7 +58,7 @@ function App() {
           element={isLoggedIn ? <Class /> : <Navigate to="/login" />}
         />
         <Route
-          path="/classes/create"
+          path="/classes/create/:id?"
           element={isLoggedIn ? <CreateClass /> : <Navigate to="/login" />}
         />
         <Route
@@ -64,7 +66,7 @@ function App() {
           element={isLoggedIn ? <Schools /> : <Navigate to="/login" />}
         />
         <Route
-          path="/schools/create"
+          path="/schools/create/:id?"
           element={isLoggedIn ? <CreateSchool /> : <Navigate to="/login" />}
         />
         <Route
@@ -72,8 +74,16 @@ function App() {
           element={isLoggedIn ? <Subjects /> : <Navigate to="/login" />}
         />
         <Route
-          path="/subjects/create"
+          path="/subjects/create/:id?"
           element={isLoggedIn ? <CreateSubject /> : <Navigate to="/login" />}
+        />
+        <Route
+          path="/schedule"
+          element={isLoggedIn ? <Schedule /> : <Navigate to="/login" />}
+        />
+        <Route
+          path="/schedule/create/:id?"
+          element={isLoggedIn ? <CreateSchedule /> : <Navigate to="/login" />}
         />
         <Route path="*" element={<Navigate to="/dashboard" />} />
       </Routes>

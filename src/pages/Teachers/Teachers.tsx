@@ -34,7 +34,7 @@ function Teachers() {
           label="Select an Option"
         />
         <SearchDebounce onSearch={handleSearch} debounceDelay={300} />
-        <DataTable />
+        {/* <DataTable /> */}
       </div>
     </Layout>
   );

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import styles from "./Sidebar.module.css";
 import { SchoolIcon } from "../../../assets/svgs";
 import { sidebarItems } from "./SideBarList";
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 interface SidebarProps {
   isMinimized: boolean;
@@ -10,7 +10,7 @@ interface SidebarProps {
 
 const Sidebar: React.FC<SidebarProps> = ({ isMinimized }) => {
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
-  const [selectedItem, setSelectedItem] = useState<string | null>("Dashboard");
+  const [selectedItem, setSelectedItem] = useState<string | null>("");
   const location = useLocation();
 
   useEffect(() => {
@@ -67,14 +67,14 @@ const Sidebar: React.FC<SidebarProps> = ({ isMinimized }) => {
                   }
                 />
               </div>
-              <a
+              <Link
                 className={
                   selectedItem === item.name ? styles.anchorHoveredState : ""
                 }
-                href={item.href}
+                to={item.href}
               >
                 {item.name}
-              </a>
+              </Link>
             </li>
           ))}
         </ul>

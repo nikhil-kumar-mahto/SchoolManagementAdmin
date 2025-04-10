@@ -1,7 +1,7 @@
 import React, { ChangeEvent, useEffect, useState } from "react";
 import Input from "../../components/common/Input/Input";
 import Button from "../../components/common/Button/Button";
-import styles from "./CreateClass.module.css";
+import styles from "./CreateSchedule.module.css";
 import Layout from "../../components/common/Layout/Layout";
 import { useNavigate, useParams } from "react-router-dom";
 import { FormC } from "../../utils/form-handling/validate";
@@ -12,20 +12,29 @@ import Select from "../../components/common/Select/Select";
 interface Props {}
 
 const initialState = {
-  name: "",
-  section: "",
   school: "",
+  class_assigned: "",
+  subject: "",
+  teacher: "",
+  start_time: "",
+  end_time: "",
+  day: "",
 };
 
-const CreateClass: React.FC<Props> = () => {
+const time = {}
+
+const CreateSchedule: React.FC<Props> = () => {
   const [data, setData] = useState(initialState);
   const [isLoading, setIsLoading] = useState(false);
   const [schools, setSchools] = useState([]);
+  const [classes, setClasses] = useState([]);
+  const [teachers, setTeachers] = useState([]);
+  const [subjects, setSubjects] = useState([]);
 
   const navigate = useNavigate();
 
-  const getClassInfo = () => {
-    Fetch(`classes/${id}/`).then((res: any) => {
+  const getScheduleInfo = () => {
+    Fetch(`schedule/${id}/`).then((res: any) => {
       if (res.status) {
         setData(res.data);
       } else {
@@ -49,12 +58,62 @@ const CreateClass: React.FC<Props> = () => {
     });
   };
 
+  const getTeachers = () => {
+    Fetch("teachers/").then((res: any) => {
+      if (res.status) {
+        let teachers = res.data?.map((item: { name: string; id: string }) => {
+          return {
+            label: item?.name,
+            value: item?.id,
+          };
+        });
+        setTeachers(teachers);
+      }
+    });
+  };
+
+  const getClasses = () => {
+    Fetch("classes/").then((res: any) => {
+      if (res.status) {
+        let classes = res.data?.map(
+          (item: { name: string; id: string; section: string }) => {
+            return {
+              label: item?.name + " " + item?.section,
+              value: item?.id,
+            };
+          }
+        );
+        setClasses(classes);
+      }
+    });
+  };
+
+  const getSubjects = () => {
+    Fetch("subjects/").then((res: any) => {
+      if (res.status) {
+        let subjects = res.data?.map(
+          (item: { name: string; id: string; section: string }) => {
+            return {
+              label: item?.name,
+              value: item?.id,
+            };
+          }
+        );
+        setSubjects(subjects);
+      }
+    });
+  };
+
   const { id } = useParams();
 
   useEffect(() => {
     getSchools();
+    getTeachers();
+    getClasses();
+    getSubjects();
+
     if (id) {
-      getClassInfo();
+      getScheduleInfo();
     }
   }, []);
 
@@ -67,20 +126,20 @@ const CreateClass: React.FC<Props> = () => {
   };
 
   const navigateBack = () => {
-    navigate("/classes");
+    navigate("/schedule");
   };
 
   const onSubmit = () => {
     setIsLoading(true);
     let url = "";
     if (id) {
-      url = `classes/${id}/`;
+      url = `schedule/${id}/`;
     } else {
-      url = "classes/";
+      url = "schedule/";
     }
     Fetch(url, data, { method: id ? "patch" : "post" }).then((res: any) => {
       if (res.status) {
-        navigate("/classes");
+        navigate("/schedule");
       } else {
         // let resErr = arrayString(res);
         // handleNewError(resErr);
@@ -94,10 +153,10 @@ const CreateClass: React.FC<Props> = () => {
     onSubmit,
   });
 
-  const handleSchoolChange = (value: string) => {
+  const handleSchoolChange = (value: string, type: string) => {
     setData((prevData) => ({
       ...prevData,
-      school: value,
+      [type]: value,
     }));
   };
 
@@ -105,35 +164,33 @@ const CreateClass: React.FC<Props> = () => {
     <Layout>
       <form action="" onSubmit={handleSubmit}>
         <div className={styles.container}>
-          <h2>{id ? "Update" : "Create"} Class</h2>
+          <h2>{id ? "Update" : "Create"} Schedule</h2>
           <Select
             label="Select school"
             options={schools}
             value={data?.school}
-            onChange={handleSchoolChange}
+            onChange={(value: string) => handleSchoolChange(value, "school")}
           />
-          <div className={styles.row}>
-            <div className={styles.column}>
-              <Input
-                label="Name"
-                name="name"
-                value={data.name}
-                onChange={handleChange}
-                placeholder="Enter class name"
-                error={errors?.name}
-              />
-            </div>
-            <div className={styles.column}>
-              <Input
-                label="Section"
-                name="section"
-                value={data.section}
-                onChange={handleChange}
-                placeholder="Enter section"
-                error={errors?.section}
-              />
-            </div>
-          </div>
+          <Select
+            label="Select class"
+            options={classes}
+            value={data?.class_assigned}
+            onChange={(value: string) =>
+              handleSchoolChange(value, "class_assigned")
+            }
+          />
+          <Select
+            label="Select teacher"
+            options={teachers}
+            value={data?.teacher}
+            onChange={(value: string) => handleSchoolChange(value, "teacher")}
+          />
+          <Select
+            label="Select subject"
+            options={subjects}
+            value={data?.subject}
+            onChange={(value: string) => handleSchoolChange(value, "subject")}
+          />
 
           <Button
             text="Cancel"
@@ -153,4 +210,4 @@ const CreateClass: React.FC<Props> = () => {
   );
 };
 
-export default CreateClass;
+export default CreateSchedule;
