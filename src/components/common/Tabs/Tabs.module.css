@@ -1,0 +1,75 @@
+.tabsContainer {
+    width: 100%;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.tabHeaders {
+    display: flex;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.tabHeader {
+    padding: 12px 18px;
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    font-weight: 500;
+    transition: border-bottom 0.3s ease, color 0.3s ease;
+}
+
+.tabContent {
+    padding: 24px;
+}
+
+/* Variant Styles */
+.neutralHeader {
+    color: #333;
+}
+
+.neutralActiveHeader {
+    border-bottom: 3px solid #007bff;
+    color: #007bff;
+}
+
+.primaryHeader {
+    color: #2e7d32;
+}
+
+.primaryActiveHeader {
+    border-bottom: 3px solid #2e7d32;
+    color: #2e7d32;
+}
+
+.secondaryHeader {
+    color: #d32f2f;
+}
+
+.secondaryActiveHeader {
+    border-bottom: 3px solid #d32f2f;
+    color: #d32f2f;
+}
+
+/* Size Styles */
+.smallHeader {
+    font-size: 0.875rem;
+}
+
+.mediumHeader {
+    font-size: 1rem;
+}
+
+.largeHeader {
+    font-size: 1.125rem;
+}
+
+.smallContent {
+    font-size: 0.875rem;
+}
+
+.mediumContent {
+    font-size: 1rem;
+}
+
+.largeContent {
+    font-size: 1.125rem;
+}

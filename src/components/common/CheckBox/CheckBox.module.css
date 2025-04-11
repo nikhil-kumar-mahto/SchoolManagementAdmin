@@ -1,0 +1,59 @@
+.checkboxContainer {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #333;
+}
+
+.checkboxInput {
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border: 2px solid #aaa;
+    border-radius: 4px;
+    margin-right: 8px;
+    position: relative;
+    cursor: pointer;
+    transition: border-color 0.3s ease;
+}
+
+.checkboxInput:checked {
+    border-color: #007bff;
+    background-color: #007bff;
+}
+
+.checkboxInput:checked::before {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 6px;
+    width: 6px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+.checkboxInput:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.2);
+}
+
+.checkboxLabel {
+    font-size: 1rem;
+}
+
+.checkboxContainer.disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.checkboxContainer.disabled .checkboxInput {
+    cursor: not-allowed;
+}
+
+.checkboxContainer.disabled .checkboxLabel {
+    cursor: not-allowed;
+}

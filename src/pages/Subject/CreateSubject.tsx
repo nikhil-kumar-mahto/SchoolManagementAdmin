@@ -1,12 +1,14 @@
 import React, { ChangeEvent, useEffect, useState } from "react";
 import Input from "../../components/common/Input/Input";
 import Button from "../../components/common/Button/Button";
-import styles from "./CreateSubjects.module.css";
+// import styles from "./CreateSubjects.module.css";
+import styles from "../../styles/Forms.module.css";
 import Layout from "../../components/common/Layout/Layout";
 import { useNavigate, useParams } from "react-router-dom";
 import { FormC } from "../../utils/form-handling/validate";
 import Fetch from "../../utils/form-handling/fetch";
 import { arrayString } from "../../utils/form-handling/arrayString";
+import { useToast } from "../../contexts/Toast";
 
 interface Props {}
 
@@ -18,14 +20,16 @@ const CreateSchool: React.FC<Props> = () => {
   const [data, setData] = useState(initialState);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const toast = useToast();
+
+  const showToast = (message: string) => {
+    toast.show(message, 2000, "#4CAF50");
+  };
 
   const getSubjectInfo = () => {
     Fetch(`subjects/${id}/`).then((res: any) => {
       if (res.status) {
         setData(res.data);
-      } else {
-        // let resErr = arrayString(res);
-        // handleNewError(resErr);
       }
     });
   };
@@ -60,10 +64,13 @@ const CreateSchool: React.FC<Props> = () => {
     }
     Fetch(url, data, { method: id ? "patch" : "post" }).then((res: any) => {
       if (res.status) {
+        showToast(
+          id ? "Subject updated successfully" : "Subject added successfully"
+        );
         navigate("/subjects");
       } else {
-        // let resErr = arrayString(res);
-        // handleNewError(resErr);
+        let resErr = arrayString(res);
+        handleNewError(resErr);
       }
       setIsLoading(false);
     });
@@ -92,18 +99,26 @@ const CreateSchool: React.FC<Props> = () => {
             </div>
           </div>
 
-          <Button
-            text="Cancel"
-            type="outline"
-            onClick={navigateBack}
-            className="mt-2 mr-4"
-          />
-          <Button
-            text={id ? "Update" : "Submit"}
-            onClick={handleSubmit}
-            className="mt-2"
-            isLoading={isLoading}
-          />
+          {errors?.non_field_errors && (
+            <p className="error">{errors?.non_field_errors}</p>
+          )}
+
+          <div className={styles.buttonContainer}>
+            <Button
+              text="Cancel"
+              type="outline"
+              onClick={navigateBack}
+              className="mt-2 mr-4"
+              style={{ width: "8rem" }}
+            />
+            <Button
+              text={id ? "Update" : "Submit"}
+              onClick={handleSubmit}
+              className="mt-2"
+              isLoading={isLoading}
+              style={{ width: "8rem" }}
+            />
+          </div>
         </div>
       </form>
     </Layout>

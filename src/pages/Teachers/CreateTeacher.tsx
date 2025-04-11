@@ -1,7 +1,8 @@
 import React, { ChangeEvent, useState } from "react";
 import Input from "../../components/common/Input/Input";
 import Button from "../../components/common/Button/Button";
-import styles from "./CreateTeacher.module.css";
+// import styles from "./CreateTeacher.module.css";
+import styles from "../../styles/Forms.module.css";
 import Layout from "../../components/common/Layout/Layout";
 
 interface Props {}
@@ -26,7 +27,6 @@ const CreateTeacher: React.FC<Props> = () => {
   };
 
   const handleSubmit = () => {
-    console.log("Form data:", data);
     // Add your form submission logic here
   };
 
@@ -88,7 +88,22 @@ const CreateTeacher: React.FC<Props> = () => {
           </div>
         </div>
 
-        <Button text="Submit" onClick={handleSubmit} className="mt-2" />
+        {/* <div className={styles.buttonContainer}>
+          <Button
+            text="Cancel"
+            type="outline"
+            onClick={navigateBack}
+            className="mt-2 mr-4"
+            style={{ width: "8rem" }}
+          />
+          <Button
+            text={id ? "Update" : "Submit"}
+            onClick={handleSubmit}
+            className="mt-2"
+            isLoading={isLoading}
+            style={{ width: "8rem" }}
+          />
+        </div> */}
       </div>
     </Layout>
   );

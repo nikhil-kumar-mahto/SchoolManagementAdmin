@@ -1,13 +1,19 @@
-import React, { ChangeEvent, useEffect, useState } from "react";
-import Input from "../../components/common/Input/Input";
+import React, { useEffect, useState } from "react";
 import Button from "../../components/common/Button/Button";
-import styles from "./CreateSchedule.module.css";
+import styles from "../../styles/Forms.module.css";
 import Layout from "../../components/common/Layout/Layout";
 import { useNavigate, useParams } from "react-router-dom";
 import { FormC } from "../../utils/form-handling/validate";
 import Fetch from "../../utils/form-handling/fetch";
 import { arrayString } from "../../utils/form-handling/arrayString";
 import Select from "../../components/common/Select/Select";
+import {
+  filterTimeArray,
+  generateTimeArray,
+} from "../../utils/common/utility-functions";
+import { useToast } from "../../contexts/Toast";
+import Tabs from "../../components/common/Tabs/Tabs";
+import Checkbox from "../../components/common/CheckBox/CheckBox";
 
 interface Props {}
 
@@ -21,15 +27,87 @@ const initialState = {
   day: "",
 };
 
-const time = {}
+const state = {
+  Monday: {
+    school: "",
+    class_assigned: "",
+    subject: "",
+    teacher: "",
+    start_time: "",
+    end_time: "",
+    day: "Monday",
+  },
+  Tuesday: {
+    school: "",
+    class_assigned: "",
+    subject: "",
+    teacher: "",
+    start_time: "",
+    end_time: "",
+    day: "Tuesday",
+  },
+  Wednesday: {
+    school: "",
+    class_assigned: "",
+    subject: "",
+    teacher: "",
+    start_time: "",
+    end_time: "",
+    day: "Wednesday",
+  },
+  Thursday: {
+    school: "",
+    class_assigned: "",
+    subject: "",
+    teacher: "",
+    start_time: "",
+    end_time: "",
+    day: "Thursday",
+  },
+  Friday: {
+    school: "",
+    class_assigned: "",
+    subject: "",
+    teacher: "",
+    start_time: "",
+    end_time: "",
+    day: "Friday",
+  },
+  Saturday: {
+    school: "",
+    class_assigned: "",
+    subject: "",
+    teacher: "",
+    start_time: "",
+    end_time: "",
+    day: "Saturday",
+  },
+  Sunday: {
+    school: "",
+    class_assigned: "",
+    subject: "",
+    teacher: "",
+    start_time: "",
+    end_time: "",
+    day: "Sunday",
+  },
+};
 
 const CreateSchedule: React.FC<Props> = () => {
   const [data, setData] = useState(initialState);
+  const [weekData, setWeekData] = useState();
   const [isLoading, setIsLoading] = useState(false);
   const [schools, setSchools] = useState([]);
   const [classes, setClasses] = useState([]);
   const [teachers, setTeachers] = useState([]);
   const [subjects, setSubjects] = useState([]);
+  const [scheduleType, setScheduleType] = useState("");
+
+  const toast = useToast();
+
+  const showToast = (message: string) => {
+    toast.show(message, 2000, "#4CAF50");
+  };
 
   const navigate = useNavigate();
 
@@ -37,9 +115,6 @@ const CreateSchedule: React.FC<Props> = () => {
     Fetch(`schedule/${id}/`).then((res: any) => {
       if (res.status) {
         setData(res.data);
-      } else {
-        // let resErr = arrayString(res);
-        // handleNewError(resErr);
       }
     });
   };
@@ -117,17 +192,11 @@ const CreateSchedule: React.FC<Props> = () => {
     }
   }, []);
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  };
-
   const navigateBack = () => {
     navigate("/schedule");
   };
+
+  console.log("start time===", data.start_time, data.end_time);
 
   const onSubmit = () => {
     setIsLoading(true);
@@ -139,17 +208,23 @@ const CreateSchedule: React.FC<Props> = () => {
     }
     Fetch(url, data, { method: id ? "patch" : "post" }).then((res: any) => {
       if (res.status) {
+        showToast(
+          id ? "Schedule updated successfully" : "Schedule added successfully"
+        );
         navigate("/schedule");
       } else {
-        // let resErr = arrayString(res);
-        // handleNewError(resErr);
+        let resErr = arrayString(res);
+        handleNewError(resErr);
       }
       setIsLoading(false);
     });
   };
 
+  let params = { ...data };
+  delete params.teacher;
+
   const { errors, handleSubmit, handleNewError } = FormC({
-    values: data,
+    values: params,
     onSubmit,
   });
 
@@ -157,6 +232,7 @@ const CreateSchedule: React.FC<Props> = () => {
     setData((prevData) => ({
       ...prevData,
       [type]: value,
+      ...(type === "start_time" && { end_time: "" }),
     }));
   };
 
@@ -165,45 +241,92 @@ const CreateSchedule: React.FC<Props> = () => {
       <form action="" onSubmit={handleSubmit}>
         <div className={styles.container}>
           <h2>{id ? "Update" : "Create"} Schedule</h2>
-          <Select
-            label="Select school"
-            options={schools}
-            value={data?.school}
-            onChange={(value: string) => handleSchoolChange(value, "school")}
-          />
-          <Select
-            label="Select class"
-            options={classes}
-            value={data?.class_assigned}
-            onChange={(value: string) =>
-              handleSchoolChange(value, "class_assigned")
-            }
-          />
-          <Select
-            label="Select teacher"
-            options={teachers}
-            value={data?.teacher}
-            onChange={(value: string) => handleSchoolChange(value, "teacher")}
-          />
-          <Select
-            label="Select subject"
-            options={subjects}
-            value={data?.subject}
-            onChange={(value: string) => handleSchoolChange(value, "subject")}
-          />
 
-          <Button
-            text="Cancel"
-            type="outline"
-            onClick={navigateBack}
-            className="mt-2 mr-4"
-          />
-          <Button
-            text={id ? "Update" : "Submit"}
-            onClick={handleSubmit}
-            className="mt-2"
-            isLoading={isLoading}
-          />
+          <div>
+            <div className={`${styles.row} ${styles.selectContainer}`}>
+              <Select
+                label="Select school"
+                options={schools}
+                value={data?.school}
+                onChange={(value: string) =>
+                  handleSchoolChange(value, "school")
+                }
+                error={errors?.school}
+              />
+
+              <Select
+                label="Select class"
+                options={classes}
+                value={data?.class_assigned}
+                onChange={(value: string) =>
+                  handleSchoolChange(value, "class_assigned")
+                }
+                error={errors?.class_assigned}
+              />
+
+              <Select
+                label="Select teacher"
+                options={teachers}
+                value={data?.teacher}
+                onChange={(value: string) =>
+                  handleSchoolChange(value, "teacher")
+                }
+                error={errors?.teacher}
+              />
+
+              <Select
+                label="Select subject"
+                options={subjects}
+                value={data?.subject}
+                onChange={(value: string) =>
+                  handleSchoolChange(value, "subject")
+                }
+                error={errors?.subject}
+              />
+            </div>
+
+            <div className={`${styles.row} ${styles.selectContainer}`}>
+              <Select
+                label="Select start time"
+                options={generateTimeArray()}
+                value={data?.start_time}
+                onChange={(value: string) =>
+                  handleSchoolChange(value, "start_time")
+                }
+                error={errors?.start_time}
+              />
+              <Select
+                label="Select end time"
+                options={filterTimeArray(data?.start_time)}
+                value={data?.end_time}
+                onChange={(value: string) =>
+                  handleSchoolChange(value, "end_time")
+                }
+                error={errors?.end_time}
+              />
+            </div>
+          </div>
+
+          {errors?.non_field_errors && (
+            <p className="error">{errors?.non_field_errors}</p>
+          )}
+
+          <div className={styles.buttonContainer}>
+            <Button
+              text="Cancel"
+              type="outline"
+              onClick={navigateBack}
+              className="mt-2 mr-4"
+              style={{ width: "8rem" }}
+            />
+            <Button
+              text={id ? "Update" : "Submit"}
+              onClick={handleSubmit}
+              className="mt-2"
+              isLoading={isLoading}
+              style={{ width: "8rem" }}
+            />
+          </div>
         </div>
       </form>
     </Layout>

@@ -8,6 +8,8 @@ interface InputProps {
   error?: string;
   type?: "text" | "password" | "email" | "number" | "tel" | "url";
   [key: string]: any;
+  onKeyPress?: () => void;
+  maxLength?: undefined | number
 }
 
 const Input: React.FC<InputProps> = ({
@@ -17,6 +19,8 @@ const Input: React.FC<InputProps> = ({
   error,
   icon,
   type = "text",
+  onKeyPress = () => {},
+  maxLength = undefined,
   ...props
 }) => {
   return (
@@ -28,6 +32,8 @@ const Input: React.FC<InputProps> = ({
           value={value}
           onChange={onChange}
           className={styles.input}
+          onKeyDown={onKeyPress}
+          maxLength={maxLength}
           {...props}
         />
       </div>

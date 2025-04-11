@@ -7,6 +7,7 @@ interface SelectProps {
   label?: string;
   placeholder?: string;
   className?: string;
+  error?: string;
 }
 
 function Select({
@@ -16,6 +17,7 @@ function Select({
   label,
   placeholder = "Select an option",
   className,
+  error,
 }: SelectProps) {
   return (
     <div className={`${styles.selectContainer} ${className || ""}`}>
@@ -34,6 +36,7 @@ function Select({
           </option>
         ))}
       </select>
+      {error && <p className={styles.errorMessage}>{error}</p>}
     </div>
   );
 }

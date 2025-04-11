@@ -27,8 +27,6 @@ const Sidebar: React.FC<SidebarProps> = ({ isMinimized }) => {
     }
   }, [location.pathname]);
 
-  console.log("selected item====", selectedItem);
-
   return (
     <aside
       className={`${styles.sidebar} ${isMinimized || true ? styles.open : ""} ${

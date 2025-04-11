@@ -15,7 +15,6 @@ const options = [
 function Dashboard() {
   const [selectedValue, setSelectedValue] = useState("option1");
   const handleSearch = (query: string) => {
-    console.log("Searching for:", query);
   };
   const toast = useToast();
 

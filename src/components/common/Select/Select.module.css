@@ -27,6 +27,7 @@
     background-position: right 1rem center;
     background-size: 1rem;
     cursor: pointer;
+    background-color: #f8f8f8;
 }
 
 .select:focus {
@@ -44,4 +45,10 @@
     .selectContainer {
         max-width: 100%;
     }
+}
+
+.errorMessage {
+    color: var(--danger-color);
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
 }

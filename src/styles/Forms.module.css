@@ -52,3 +52,12 @@
     border-color: #007bff;
     box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
 }
+
+.buttonContainer {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.selectContainer {
+    gap: 2rem;
+}

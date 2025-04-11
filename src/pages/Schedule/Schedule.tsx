@@ -1,22 +1,28 @@
 import Layout from "../../components/common/Layout/Layout";
 import DataTable from "../../components/common/DataTable/DataTable";
-import styles from "./Schedule.module.css";
+import styles from "../../styles/Listing.module.css";
 import Button from "../../components/common/Button/Button";
 import { useNavigate } from "react-router-dom";
 import { DeleteIcon, EditIcon } from "../../assets/svgs";
 import { useEffect, useState } from "react";
 import Fetch from "../../utils/form-handling/fetch";
-import { arrayString } from "../../utils/form-handling/arrayString";
+import { useToast } from "../../contexts/Toast";
+import Modal from "../../components/common/Modal/Modal";
 
 function Schedule() {
   const [data, setData] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState<"listing" | "delete" | "">("");
+  const [showModal, setShowModal] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState("");
   const navigate = useNavigate();
+  const toast = useToast();
 
-  console.log("data====", data);
+  const showToast = () => {
+    toast.show("Schedule deleted successfully", 2000, "#dc3545");
+  };
 
   const getData = () => {
-    setIsLoading(true);
+    setIsLoading("listing");
     Fetch("schedule/").then((res: any) => {
       if (res.status) {
         let formattedData = res.data.map((item: any) => {
@@ -34,16 +40,22 @@ function Schedule() {
         });
         setData(formattedData);
       }
-      setIsLoading(false);
+      setIsLoading("");
     });
   };
 
-  const handleDelete = (id: string) => {
-    Fetch(`schedule/${id}/`, {}, { method: "delete" }).then((res: any) => {
-      if (res.status) {
-        getData();
+  const handleDelete = () => {
+    setIsLoading("delete");
+    Fetch(`schedule/${itemToDelete}/`, {}, { method: "delete" }).then(
+      (res: any) => {
+        if (res.status) {
+          getData();
+          showToast();
+        }
+        setShowModal(false);
+        setIsLoading("listing");
       }
-    });
+    );
   };
 
   const handleEdit = (id: string) => {
@@ -53,6 +65,11 @@ function Schedule() {
   useEffect(() => {
     getData();
   }, []);
+
+  const handleDeleteRequest = (id: string) => {
+    setItemToDelete(id);
+    setShowModal(true);
+  };
 
   const columns = [
     { key: "class_assigned", header: "Class" },
@@ -74,7 +91,7 @@ function Schedule() {
               cursor: "pointer",
             }}
             className="mr-3"
-            onClick={() => handleDelete(item?.id)}
+            onClick={() => handleDeleteRequest(item?.id)}
           >
             <DeleteIcon size={20} color="#d32f2f" />
           </button>
@@ -93,6 +110,11 @@ function Schedule() {
     navigate("/schedule/create");
   };
 
+  const handleCancel = () => {
+    setItemToDelete("");
+    setShowModal(false);
+  };
+
   return (
     <Layout>
       <div
@@ -108,7 +130,20 @@ function Schedule() {
           <Button text="Create" onClick={handleNavigate} />
         </div>
 
-        <DataTable data={data} columns={columns} itemsPerPage={10} />
+        <DataTable
+          data={data}
+          columns={columns}
+          itemsPerPage={10}
+          isLoading={isLoading === "listing"}
+        />
+        <Modal
+          title="Confirm!"
+          message="Are you sure you want to delete this item?"
+          onConfirm={handleDelete}
+          onCancel={handleCancel}
+          visible={showModal}
+          isLoading={isLoading === "delete"}
+        />
       </div>
     </Layout>
   );

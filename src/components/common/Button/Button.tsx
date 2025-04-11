@@ -1,6 +1,6 @@
 import React from "react";
 import styles from "./Button.module.css";
-import Loader from "../Loader/Loader"; // Import your Loader component
+import Loader from "../Loader/Loader";
 
 interface ButtonProps {
   text: string;
@@ -8,6 +8,7 @@ interface ButtonProps {
   type?: "outline" | "filled";
   className?: string;
   isLoading?: boolean;
+  style?: any;
 }
 
 const Button: React.FC<ButtonProps> = ({
@@ -16,6 +17,7 @@ const Button: React.FC<ButtonProps> = ({
   type = "filled",
   className,
   isLoading = false,
+  style,
 }) => {
   return (
     <button
@@ -24,8 +26,9 @@ const Button: React.FC<ButtonProps> = ({
         type === "outline" ? styles.outline : styles.filled
       } ${className || ""} ${isLoading ? styles.loading : ""}`}
       disabled={isLoading}
+      style={style}
     >
-      {isLoading ? <Loader size="small" color="white" /> : text}
+      {isLoading ? <Loader size="small" color="white" /> : <span>{text}</span>}
     </button>
   );
 };
