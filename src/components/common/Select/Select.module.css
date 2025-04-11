@@ -4,11 +4,12 @@
     width: 100%;
     max-width: 300px;
     margin-bottom: 1rem;
+    min-width: 100%;
 }
 
 .label {
-    margin-bottom: 0.5rem;
-    font-weight: 600;
+    margin-bottom: 0.75rem;
+    font-weight: 500;
     color: #333;
 }
 
@@ -28,6 +29,7 @@
     background-size: 1rem;
     cursor: pointer;
     background-color: #f8f8f8;
+    min-height: 3rem;
 }
 
 .select:focus {
