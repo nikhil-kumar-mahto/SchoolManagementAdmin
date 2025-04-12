@@ -119,7 +119,7 @@ function Schedule() {
     <Layout>
       <div
         style={{
-          height: "100vh",
+          height: "calc(100vh - 9rem)",
           backgroundColor: "#f8f9fa",
           padding: "20px",
           marginTop: "20px",

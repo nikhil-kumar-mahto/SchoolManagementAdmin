@@ -37,15 +37,15 @@ const LoginScreen: React.FC = () => {
         localStorage.setItem("token", access);
         navigate("/dashboards");
       } else {
-        // let resErr = arrayString(res);
-        // handleNewError(resErr);
+        let resErr = arrayString(res);
+        handleNewError(resErr);
       }
       setIsLoading(false);
     });
   };
 
   const { errors, handleSubmit, handleNewError } = FormC({
-    values: data,
+    values: { email_or_phone: data.userName, password: data.password },
     onSubmit,
   });
 
@@ -61,12 +61,12 @@ const LoginScreen: React.FC = () => {
             </p>
 
             <Input
-              label="Email / Number"
+              label="Email / Phone"
               name="userName"
               value={data.userName}
               onChange={handleChange}
               placeholder="Please enter your email or phone number"
-              error={errors?.userName}
+              error={errors?.email_or_phone}
             />
 
             <Input
@@ -78,6 +78,10 @@ const LoginScreen: React.FC = () => {
               type="password"
               error={errors?.password}
             />
+
+            {errors?.non_field_errors && (
+              <p className="error">{errors?.non_field_errors}</p>
+            )}
 
             <Button
               text="Sign In"

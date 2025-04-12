@@ -1,6 +1,7 @@
 import {
   ClassIcon,
   DashboardIcon,
+  ScheduleIcon,
   SchoolIcon2,
   SubjectIcon,
   TeacherIcon,
@@ -48,7 +49,7 @@ export const sidebarItems: SidebarItem[] = [
   {
     name: "Schedule Management",
     href: "/schedule",
-    Icon: SubjectIcon,
+    Icon: ScheduleIcon,
     fill: "#000",
   },
 ];

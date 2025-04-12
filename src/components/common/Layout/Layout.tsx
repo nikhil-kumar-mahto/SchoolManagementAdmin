@@ -1,21 +1,18 @@
-import React, { useState } from "react";
+import React from "react";
 import styles from "./Layout.module.css";
 import Sidebar from "../Sidebar/Sidebar";
-import { Options } from "../../../assets/svgs";
+import { SideBarLeft, SideBarRight } from "../../../assets/svgs";
 import Button from "../Button/Button";
 import { useNavigate } from "react-router-dom";
+import { useAppContext } from "../../../contexts/AppContext";
 
 interface LayoutProps {
   children: React.ReactNode;
 }
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const { isSidebarOpen, toggleSidebar } = useAppContext();
   const navigate = useNavigate();
-
-  const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
-  };
 
   const handleLogout = () => {
     localStorage.clear();
@@ -28,7 +25,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       <div className={styles.content}>
         <div className={styles.navbar}>
           <button className={styles.button} onClick={toggleSidebar}>
-            <Options />
+            {!isSidebarOpen ? <SideBarLeft /> : <SideBarRight />}
           </button>
           <Button text="Logout" onClick={handleLogout} type="outline" />
         </div>

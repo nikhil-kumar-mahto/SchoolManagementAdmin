@@ -233,6 +233,7 @@ const CreateTeacher: React.FC<Props> = () => {
             value={data?.school}
             onChange={(value) => handleSelectChange(value, "school")}
             error={errors?.school}
+            className="w-25"
           />
 
           <div className={formStyles["form-grid"]}>
@@ -242,6 +243,7 @@ const CreateTeacher: React.FC<Props> = () => {
                 if (key === "teacher_gender") {
                   return (
                     <Select
+                      key={key}
                       label="Select gender"
                       options={getGender()}
                       value={data?.teacher_gender}
@@ -254,6 +256,7 @@ const CreateTeacher: React.FC<Props> = () => {
                 } else if (key === "teacher_marital_status") {
                   return (
                     <Select
+                      key={key}
                       label="Select marital status"
                       options={getMaritalStatus()}
                       value={data?.teacher_marital_status}
@@ -266,6 +269,7 @@ const CreateTeacher: React.FC<Props> = () => {
                 } else if (key === "teacher_blood_group") {
                   return (
                     <Select
+                      key={key}
                       label="Select blood group"
                       options={getBloodGroups()}
                       value={data?.teacher_blood_group}

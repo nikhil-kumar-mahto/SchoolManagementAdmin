@@ -118,6 +118,8 @@ const CreateClass: React.FC<Props> = () => {
             options={schools}
             value={data?.school}
             onChange={handleSchoolChange}
+            className="w-25"
+            error={errors?.school}
           />
           <div className={styles.row}>
             <div className={styles.column}>

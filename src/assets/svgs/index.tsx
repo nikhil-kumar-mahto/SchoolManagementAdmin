@@ -154,25 +154,6 @@ export const TeacherIcon = ({ stroke = "#292D32" }) => {
   );
 };
 
-export const ScheduleIcon = ({ stroke = "#000000" }) => {
-  return (
-    <svg
-      viewBox="0 0 64 64"
-      xmlns="http://www.w3.org/2000/svg"
-      strokeWidth="3"
-      stroke={stroke}
-      fill="none"
-    >
-      <path d="M36.66,54.45H8.84A2.5,2.5,0,0,1,6.35,52V12.12A2.49,2.49,0,0,1,8.84,9.63H48.68a2.49,2.49,0,0,1,2.49,2.49v22.4" />
-      <line x1="6.35" y1="20.63" x2="51.17" y2="20.63" />
-      <line x1="16.46" y1="9.63" x2="16.46" y2="4.63" />
-      <line x1="40.42" y1="9.63" x2="40.42" y2="4.63" />
-      <circle cx="45.22" cy="45.44" r="12.43" />
-      <polyline points="45.22 36.7 45.22 45.82 49.57 49.16" />
-    </svg>
-  );
-};
-
 export const SubjectIcon = ({ fill = "#000000" }) => {
   return (
     <svg
@@ -182,45 +163,6 @@ export const SubjectIcon = ({ fill = "#000000" }) => {
       enableBackground="new 0 0 24 24"
     >
       <path d="M3,8h18c0.6,0,1-0.4,1-1s-0.4-1-1-1H3C2.4,6,2,6.4,2,7S2.4,8,3,8z M13,16H3c-0.6,0-1,0.4-1,1s0.4,1,1,1h10c0.6,0,1-0.4,1-1S13.6,16,13,16z M21,11H3c-0.6,0-1,0.4-1,1s0.4,1,1,1h18c0.6,0,1-0.4,1-1S21.6,11,21,11z" />
-    </svg>
-  );
-};
-
-export const ClassIcon = ({ fill = "#000000" }) => {
-  return (
-    <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" fill={fill}>
-      <defs>
-        <style>
-          {`.a{fill:none;stroke:${fill};stroke-linecap:round;stroke-linejoin:round;}`}
-        </style>
-      </defs>
-      <rect className="a" x="4.5" y="8.4" width="39" height="31.2" rx="2" />
-      <rect className="a" x="8.5" y="12.4" width="31" height="23.2" rx="1" />
-      <rect className="a" x="29.68" y="33.41" width="6.62" height="2.19" />
-      <path
-        className="a"
-        d="M25.84,19a2.6,2.6,0,0,0-3.68,0l0,0a2.61,2.61,0,1,0,4.46,1.86A2.54,2.54,0,0,0,25.82,19Z"
-      />
-      <path
-        className="a"
-        d="M22,25.53h4a3,3,0,0,1,3,3v1.21a0,0,0,0,1,0,0H19a0,0,0,0,1,0,0V28.53A3,3,0,0,1,22,25.53Z"
-      />
-      <path
-        className="a"
-        d="M17.42,21.47a2,2,0,0,0-2.84,0l0,0A2,2,0,1,0,18,22.91a2,2,0,0,0-.6-1.43Z"
-      />
-      <path
-        className="a"
-        d="M19.34,27.14a2,2,0,0,0-1.47-.65H14.13a2,2,0,0,0-2,2v1.25H19"
-      />
-      <path
-        className="a"
-        d="M33.42,21.47a2,2,0,0,0-2.84,0l0,0A2,2,0,1,0,34,22.91a2,2,0,0,0-.6-1.43Z"
-      />
-      <path
-        className="a"
-        d="M29,29.74h6.86V28.49a2,2,0,0,0-2-2H30.13a2,2,0,0,0-1.47.65"
-      />
     </svg>
   );
 };
@@ -272,3 +214,134 @@ export const EditIcon = ({ size = 24, color = "#1976d2", ...props }) => (
     <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z" />
   </svg>
 );
+
+export const SideBarLeft = () => {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <g id="SVGRepo_bgCarrier" strokeWidth="0" />
+      <g
+        id="SVGRepo_tracerCarrier"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <g id="SVGRepo_iconCarrier">
+        <path
+          d="M21.97 15V9C21.97 4 19.97 2 14.97 2H8.96997C3.96997 2 1.96997 4 1.96997 9V15C1.96997 20 3.96997 22 8.96997 22H14.97C19.97 22 21.97 20 21.97 15Z"
+          stroke="#292D32"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <path
+          d="M7.96997 2V22"
+          stroke="#292D32"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <path
+          d="M14.97 9.43994L12.41 11.9999L14.97 14.5599"
+          stroke="#292D32"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </g>
+    </svg>
+  );
+};
+
+export const SideBarRight = () => {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <g id="SVGRepo_bgCarrier" strokeWidth="0" />
+      <g
+        id="SVGRepo_tracerCarrier"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <g id="SVGRepo_iconCarrier">
+        <path
+          d="M21.97 15V9C21.97 4 19.97 2 14.97 2H8.96997C3.96997 2 1.96997 4 1.96997 9V15C1.96997 20 3.96997 22 8.96997 22H14.97C19.97 22 21.97 20 21.97 15Z"
+          stroke="#292D32"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <path
+          d="M14.97 2V22"
+          stroke="#292D32"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <path
+          d="M7.96997 9.43994L10.53 11.9999L7.96997 14.5599"
+          stroke="#292D32"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </g>
+    </svg>
+  );
+};
+
+export const ScheduleIcon = ({ stroke = "#000000" }) => {
+  return (
+    <svg
+      viewBox="0 0 64 64"
+      xmlns="http://www.w3.org/2000/svg"
+      strokeWidth="3"
+      stroke={stroke}
+      fill="none"
+    >
+      <g id="SVGRepo_bgCarrier" strokeWidth="0" />
+      <g
+        id="SVGRepo_tracerCarrier"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <g id="SVGRepo_iconCarrier">
+        <path
+          d="M36.66,54.45H8.84A2.5,2.5,0,0,1,6.35,52V12.12A2.49,2.49,0,0,1,8.84,9.63H48.68a2.49,2.49,0,0,1,2.49,2.49v22.4"
+          stroke={stroke}
+        />
+        <line x1="6.35" y1="20.63" x2="51.17" y2="20.63" stroke={stroke} />
+        <line x1="16.46" y1="9.63" x2="16.46" y2="4.63" stroke={stroke} />
+        <line x1="40.42" y1="9.63" x2="40.42" y2="4.63" stroke={stroke} />
+        <circle cx="45.22" cy="45.44" r="12.43" stroke={stroke} />
+        <polyline points="45.22 36.7 45.22 45.82 49.57 49.16" stroke={stroke} />
+      </g>
+    </svg>
+  );
+};
+
+export const ClassIcon = ({ stroke = "#000000" }) => {
+  return (
+    <svg
+      viewBox="0 0 64 64"
+      xmlns="http://www.w3.org/2000/svg"
+      strokeWidth="3"
+      stroke={stroke}
+      fill="none"
+    >
+      <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
+      <g
+        id="SVGRepo_tracerCarrier"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      ></g>
+      <g id="SVGRepo_iconCarrier">
+        <path d="M43.31,37.52A11.83,11.83,0,0,1,31.25,49.35,12.1,12.1,0,0,1,19.63,37.12V20.64a.1.1,0,0,1,.08-.1,90.43,90.43,0,0,1,12.08-1,82.5,82.5,0,0,1,11.57,1,.09.09,0,0,1,.07.1Z"></path>
+        <path d="M19.63,26,9,20.47a.1.1,0,0,1,0-.18L31.49,8.86h.09L54,20.17a.1.1,0,0,1,0,.18L43.43,26"></path>
+        <path d="M19.63,32.19H17.7s-2.94,0-2.94,4.52c0,4.17,2.93,4.17,2.93,4.17l2.51-.05"></path>
+        <path d="M43.3,32.7h1.93s3,0,3,4.53c0,4.17-2.94,4.17-2.94,4.17H42.65"></path>
+        <line x1="52.72" y1="45.04" x2="52.72" y2="21.03"></line>
+        <circle cx="52.72" cy="47.36" r="2.31"></circle>
+        <polyline points="37.76 47.53 37.76 55.15 25.89 55.15 25.89 47.95"></polyline>
+        <path d="M43.43,30.13a63,63,0,0,0-11.61-1,60.25,60.25,0,0,0-12.19,1"></path>
+      </g>
+    </svg>
+  );
+};

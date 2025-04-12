@@ -28,8 +28,6 @@ const Sidebar: React.FC<SidebarProps> = ({ isMinimized }) => {
     }
   }, [location.pathname]);
 
-  console.log("selected item===", selectedItem);
-
   const handleClick = (selectedItem: string, path: string) => {
     navigate(path);
     setSelectedItem(selectedItem);
@@ -37,7 +35,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isMinimized }) => {
 
   return (
     <aside
-      className={`${styles.sidebar} ${isMinimized || true ? styles.open : ""} ${
+      className={`${styles.sidebar} ${!isMinimized ? styles.open : ""} ${
         isMinimized ? styles.minimized : ""
       }`}
     >

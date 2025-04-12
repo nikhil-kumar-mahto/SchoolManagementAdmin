@@ -9,7 +9,7 @@ interface InputProps {
   type?: "text" | "password" | "email" | "number" | "tel" | "url";
   [key: string]: any;
   onKeyPress?: () => void;
-  maxLength?: undefined | number
+  maxLength?: undefined | number;
 }
 
 const Input: React.FC<InputProps> = ({
@@ -37,7 +37,8 @@ const Input: React.FC<InputProps> = ({
           {...props}
         />
       </div>
-      {error && <p className={styles.errorMessage}>{error}</p>}
+      {/* {error && <p className={styles.errorMessage}>{error}</p>} */}
+      <p className={styles.errorMessage}>{error}</p>  
     </div>
   );
 };

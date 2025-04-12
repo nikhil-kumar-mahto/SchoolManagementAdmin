@@ -51,12 +51,14 @@ export const onKeyPress = (evt, reg) => {
 const inputValidation = (data, property) => {
   const errors = {};
   if (data[property] === null || data[property] === undefined || !data[property].toString().length)
-    errors[property] = `Please ${property.includes("photo") ? "upload" : "enter"} ${property === "email"
-      ? "email address."
-      : property?.split("_")
-        ? property?.split("_").join(" ") + "."
-        : property + "."
+
+    errors[property] = property.startsWith("select.")
+      ? `Please select ${property.split(".")[1].replace(/_/g, " ")}.`
+      : `Please ${property.includes("photo") || property.includes("logo") ? "upload" : "enter"} ${property === "email"
+        ? "email address."
+        : property.replace(/_/g, " ") + "."
       }`;
+
   if (property.includes("email") && data[property]?.length) {
     if (ValidateEmailAddress(data[property])) {
       errors[property] = ValidateEmailAddress(data[property]);

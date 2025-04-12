@@ -46,7 +46,7 @@ const ImagePicker: React.FC<ImagePickerProps> = ({
           onChange={handleFileChange}
           className={styles.input}
         />
-        <label htmlFor="imageInput" className={styles.fileLabel}>
+        <label htmlFor="imageInput" className={`${styles.fileLabel} mb-0`}>
           {fileName ? fileName : "Choose File"}
         </label>
       </div>

@@ -22,7 +22,6 @@
 
 body {
   font-family: sans-serif;
-  line-height: 1.6;
   color: var(--text-color);
   background-color: var(--background-color);
 }
@@ -114,6 +113,10 @@ a:hover {
 
 .mt-6 {
   margin-top: 3rem;
+}
+
+.mb-0 {
+  margin-bottom: 0 !important;
 }
 
 .mb-1 {
@@ -525,11 +528,15 @@ label {
 }
 
 .w-100 {
-  width: 100%;
+  width: 100% !important;
 }
 
 .w-50 {
-  width: 50%;
+  width: 50% !important;
+}
+
+.w-25 {
+  width: 25% !important;
 }
 
 .text-center {
