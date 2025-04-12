@@ -41,13 +41,18 @@
     gap: 10px;
     cursor: pointer;
     padding: 0.5rem;
+
     border-radius: 5px;
     transition: background-color 0.3s ease;
 }
 
+.labelIconMinimized {
+    margin: auto;
+}
+
 
 .sidebar.minimized {
-    width: 4rem;
+    width: 5rem;
 }
 
 .sidebar.minimized .labelContainer a {
@@ -68,4 +73,8 @@
 
 .labelContainer:hover a {
     color: var(--white);
+}
+ 
+.minimizedIconSize {
+    width: 3rem;
 }

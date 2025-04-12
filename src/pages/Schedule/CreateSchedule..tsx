@@ -12,8 +12,6 @@ import {
   generateTimeArray,
 } from "../../utils/common/utility-functions";
 import { useToast } from "../../contexts/Toast";
-import Tabs from "../../components/common/Tabs/Tabs";
-import Checkbox from "../../components/common/CheckBox/CheckBox";
 
 interface Props {}
 
@@ -27,81 +25,13 @@ const initialState = {
   day: "",
 };
 
-const state = {
-  Monday: {
-    school: "",
-    class_assigned: "",
-    subject: "",
-    teacher: "",
-    start_time: "",
-    end_time: "",
-    day: "Monday",
-  },
-  Tuesday: {
-    school: "",
-    class_assigned: "",
-    subject: "",
-    teacher: "",
-    start_time: "",
-    end_time: "",
-    day: "Tuesday",
-  },
-  Wednesday: {
-    school: "",
-    class_assigned: "",
-    subject: "",
-    teacher: "",
-    start_time: "",
-    end_time: "",
-    day: "Wednesday",
-  },
-  Thursday: {
-    school: "",
-    class_assigned: "",
-    subject: "",
-    teacher: "",
-    start_time: "",
-    end_time: "",
-    day: "Thursday",
-  },
-  Friday: {
-    school: "",
-    class_assigned: "",
-    subject: "",
-    teacher: "",
-    start_time: "",
-    end_time: "",
-    day: "Friday",
-  },
-  Saturday: {
-    school: "",
-    class_assigned: "",
-    subject: "",
-    teacher: "",
-    start_time: "",
-    end_time: "",
-    day: "Saturday",
-  },
-  Sunday: {
-    school: "",
-    class_assigned: "",
-    subject: "",
-    teacher: "",
-    start_time: "",
-    end_time: "",
-    day: "Sunday",
-  },
-};
-
 const CreateSchedule: React.FC<Props> = () => {
   const [data, setData] = useState(initialState);
-  const [weekData, setWeekData] = useState();
   const [isLoading, setIsLoading] = useState(false);
   const [schools, setSchools] = useState([]);
   const [classes, setClasses] = useState([]);
   const [teachers, setTeachers] = useState([]);
   const [subjects, setSubjects] = useState([]);
-  const [scheduleType, setScheduleType] = useState("");
 
   const toast = useToast();
 
@@ -195,8 +125,6 @@ const CreateSchedule: React.FC<Props> = () => {
   const navigateBack = () => {
     navigate("/schedule");
   };
-
-  console.log("start time===", data.start_time, data.end_time);
 
   const onSubmit = () => {
     setIsLoading(true);

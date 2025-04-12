@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import styles from "./Sidebar.module.css";
 import { SchoolIcon } from "../../../assets/svgs";
 import { sidebarItems } from "./SideBarList";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 interface SidebarProps {
   isMinimized: boolean;
@@ -12,6 +12,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isMinimized }) => {
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
   const [selectedItem, setSelectedItem] = useState<string | null>("");
   const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const currentPath = location.pathname;
@@ -27,13 +28,24 @@ const Sidebar: React.FC<SidebarProps> = ({ isMinimized }) => {
     }
   }, [location.pathname]);
 
+  console.log("selected item===", selectedItem);
+
+  const handleClick = (selectedItem: string, path: string) => {
+    navigate(path);
+    setSelectedItem(selectedItem);
+  };
+
   return (
     <aside
       className={`${styles.sidebar} ${isMinimized || true ? styles.open : ""} ${
         isMinimized ? styles.minimized : ""
       }`}
     >
-      <div className={`flex-center ${styles.iconContainer}`}>
+      <div
+        className={`flex-center ${styles.iconContainer} ${
+          isMinimized && styles.minimizedIconSize
+        }`}
+      >
         <SchoolIcon />
       </div>
 
@@ -49,9 +61,13 @@ const Sidebar: React.FC<SidebarProps> = ({ isMinimized }) => {
               } mb-3`}
               onMouseEnter={() => setHoveredItem(item.name)}
               onMouseLeave={() => setHoveredItem(null)}
-              onClick={() => setSelectedItem(item.name)}
+              onClick={() => handleClick(item.name, item.href)}
             >
-              <div className={styles.labelIcon}>
+              <div
+                className={`${styles.labelIcon} ${
+                  isMinimized && styles.labelIconMinimized
+                }`}
+              >
                 <item.Icon
                   fill={
                     hoveredItem === item.name || selectedItem === item.name
@@ -65,6 +81,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isMinimized }) => {
                   }
                 />
               </div>
+
               <Link
                 className={
                   selectedItem === item.name ? styles.anchorHoveredState : ""

@@ -42,8 +42,6 @@ export function generateTimeArray() {
     });
   }
 
-  console.log("time aray===", timeArray);
-
   return timeArray;
 }
 
