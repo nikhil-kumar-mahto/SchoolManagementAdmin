@@ -136,6 +136,31 @@ const CreateTeacher: React.FC<Props> = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [schools, setSchools] = useState([]);
 
+  const [personalInfo, setPersonalInfo] = useState({
+    teacher_name: "",
+    teacher_gender: "",
+    teacher_email: "",
+    teacher_phone: "",
+    // other personal info fields
+  });
+
+  const [addressInfo, setAddressInfo] = useState({
+    teacher_add1: "",
+    teacher_add2: "",
+    teacher_city: "",
+    teacher_state: "",
+    teacher_permanent_address: "",
+    // other address fields
+  });
+
+  const [bankInfo, setBankInfo] = useState({
+    teacher_bank_name: "",
+    teacher_bank: "",
+    teacher_bankac: "",
+    teacher_ifsc: "",
+    // other banking fields
+  });
+
   const excludedKeys = ["id", "teacher_school_id", "school"];
 
   const { id } = useParams();
@@ -232,7 +257,7 @@ const CreateTeacher: React.FC<Props> = () => {
             options={schools}
             value={data?.school}
             onChange={(value) => handleSelectChange(value, "school")}
-            error={errors?.school}
+            error={errors?.school && "Please select school."}
             className="w-25"
           />
 
@@ -250,7 +275,10 @@ const CreateTeacher: React.FC<Props> = () => {
                       onChange={(value) =>
                         handleSelectChange(value, "teacher_gender")
                       }
-                      error={errors?.teacher_gender}
+                      error={
+                        errors?.teacher_gender &&
+                        "Please select teacher gender."
+                      }
                     />
                   );
                 } else if (key === "teacher_marital_status") {
@@ -263,7 +291,10 @@ const CreateTeacher: React.FC<Props> = () => {
                       onChange={(value) =>
                         handleSelectChange(value, "teacher_marital_status")
                       }
-                      error={errors?.teacher_marital_status}
+                      error={
+                        errors?.teacher_marital_status &&
+                        "Please select teacher marital status."
+                      }
                     />
                   );
                 } else if (key === "teacher_blood_group") {
@@ -276,7 +307,10 @@ const CreateTeacher: React.FC<Props> = () => {
                       onChange={(value) =>
                         handleSelectChange(value, "teacher_blood_group")
                       }
-                      error={errors?.teacher_blood_group}
+                      error={
+                        errors?.teacher_blood_group &&
+                        "Please select teacher blood group."
+                      }
                     />
                   );
                 }

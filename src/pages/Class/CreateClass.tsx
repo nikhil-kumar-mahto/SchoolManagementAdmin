@@ -114,17 +114,17 @@ const CreateClass: React.FC<Props> = () => {
         <div className={styles.container}>
           <h2>{id ? "Update" : "Create"} Class</h2>
           <Select
-            label="Select school"
+            label="Select school*"
             options={schools}
             value={data?.school}
             onChange={handleSchoolChange}
             className="w-25"
-            error={errors?.school}
+            error={errors?.school && "Please select school."}
           />
           <div className={styles.row}>
             <div className={styles.column}>
               <Input
-                label="Class Name"
+                label="Class Name*"
                 name="name"
                 value={data.name}
                 onChange={handleChange}
@@ -134,7 +134,7 @@ const CreateClass: React.FC<Props> = () => {
             </div>
             <div className={styles.column}>
               <Input
-                label="Section"
+                label="Section*"
                 name="section"
                 value={data.section}
                 onChange={handleChange}

@@ -89,7 +89,7 @@ const CreateSchool: React.FC<Props> = () => {
           <div className={styles.row}>
             <div className={styles.column}>
               <Input
-                label="Name"
+                label="Name*"
                 name="name"
                 value={data.name}
                 onChange={handleChange}

@@ -148,11 +148,8 @@ const CreateSchedule: React.FC<Props> = () => {
     });
   };
 
-  let params = { ...data };
-  delete params.teacher;
-
   const { errors, handleSubmit, handleNewError } = FormC({
-    values: params,
+    values: data,
     onSubmit,
   });
 
@@ -173,64 +170,64 @@ const CreateSchedule: React.FC<Props> = () => {
           <div>
             <div className={`${styles.row} ${styles.selectContainer}`}>
               <Select
-                label="Select school"
+                label="Select school*"
                 options={schools}
                 value={data?.school}
                 onChange={(value: string) =>
                   handleSchoolChange(value, "school")
                 }
-                error={errors?.school}
+                error={errors?.school && "Please select school."}
               />
 
               <Select
-                label="Select class"
+                label="Select class*"
                 options={classes}
                 value={data?.class_assigned}
                 onChange={(value: string) =>
                   handleSchoolChange(value, "class_assigned")
                 }
-                error={errors?.class_assigned}
+                error={errors?.class_assigned && "Please select class."}
               />
 
               <Select
-                label="Select teacher"
+                label="Select teacher*"
                 options={teachers}
                 value={data?.teacher}
                 onChange={(value: string) =>
                   handleSchoolChange(value, "teacher")
                 }
-                error={errors?.teacher}
+                error={errors?.teacher && "Please select teacher."}
               />
 
               <Select
-                label="Select subject"
+                label="Select subject*"
                 options={subjects}
                 value={data?.subject}
                 onChange={(value: string) =>
                   handleSchoolChange(value, "subject")
                 }
-                error={errors?.subject}
+                error={errors?.subject && "Please select subject."}
               />
             </div>
 
             <div className={`${styles.row} ${styles.selectContainer}`}>
               <Select
-                label="Select start time"
+                label="Select start time*"
                 options={generateTimeArray()}
                 value={data?.start_time}
                 onChange={(value: string) =>
                   handleSchoolChange(value, "start_time")
                 }
-                error={errors?.start_time}
+                error={errors?.start_time && "Please select start time."}
               />
               <Select
-                label="Select end time"
+                label="Select end time*"
                 options={filterTimeArray(data?.start_time)}
                 value={data?.end_time}
                 onChange={(value: string) =>
                   handleSchoolChange(value, "end_time")
                 }
-                error={errors?.end_time}
+                error={errors?.end_time && "Please select end time."}
               />
             </div>
           </div>
