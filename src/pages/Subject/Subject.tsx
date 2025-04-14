@@ -7,7 +7,6 @@ import { useNavigate } from "react-router-dom";
 import { DeleteIcon, EditIcon } from "../../assets/svgs";
 import { useEffect, useState } from "react";
 import Fetch from "../../utils/form-handling/fetch";
-import { arrayString } from "../../utils/form-handling/arrayString";
 import { useToast } from "../../contexts/Toast";
 import Modal from "../../components/common/Modal/Modal";
 

@@ -18,6 +18,7 @@ import Subjects from "./pages/Subject/Subject";
 import CreateSubject from "./pages/Subject/CreateSubject";
 import Schedule from "./pages/Schedule/Schedule";
 import CreateSchedule from "./pages/Schedule/CreateSchedule.";
+import WeeklyCalendar from "./pages/WeeklyCalendar/WeeklyCalendar";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState<null | boolean>(null);
@@ -84,6 +85,10 @@ function App() {
         <Route
           path="/schedule/create/:id?"
           element={isLoggedIn ? <CreateSchedule /> : <Navigate to="/login" />}
+        />
+        <Route
+          path="/weekly-schedule"
+          element={isLoggedIn ? <WeeklyCalendar /> : <Navigate to="/login" />}
         />
         <Route path="*" element={<Navigate to="/dashboard" />} />
       </Routes>
