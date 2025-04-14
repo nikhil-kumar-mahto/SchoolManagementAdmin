@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import styles from "./WeeklyCalendar.module.css";
+import styles from "./ScheduleManagement.module.css";
 import Layout from "../../components/common/Layout/Layout";
 import { useNavigate, useParams } from "react-router-dom";
 import WeekDay from "../../components/CreateSchedule/WeeklyCalendar/WeekDay";
@@ -17,7 +17,7 @@ interface Time {
   startTime: string;
   endTime: string;
   subject: string;
-  class: string;
+  teacher: string;
 }
 
 interface Props {
@@ -28,7 +28,7 @@ interface Props {
   Friday: Array<Time>;
 }
 
-const emptyObj = { startTime: "", endTime: "", class: "", subject: "" };
+const emptyObj = { startTime: "", endTime: "", teacher: "", subject: "" };
 
 const initialState = {
   Monday: [emptyObj],
@@ -48,7 +48,7 @@ const initialState2 = {
   date: "",
 };
 
-const WeeklyCalendar: React.FC = () => {
+const ScheduleManagement: React.FC = () => {
   const [data, setData] = useState<Props>(initialState);
   const [viewMode, setViewMode] = useState<"date" | "day">("date");
   const [classes, setClasses] = useState([]);
@@ -152,7 +152,7 @@ const WeeklyCalendar: React.FC = () => {
   const handleChange = (
     day: Day,
     index: number,
-    type: "startTime" | "endTime" | "subject" | "class",
+    type: "startTime" | "endTime" | "subject" | "teacher",
     value: string
   ) => {
     setData((prevState) => {
@@ -245,13 +245,33 @@ const WeeklyCalendar: React.FC = () => {
     onSubmit,
   });
 
-  console.log("err===", errors);
-
   return (
     <Layout>
       <form action="" onSubmit={handleSubmit}>
         <div className={styles.container}>
           <h2>{id ? "Update" : "Create"} Schedule</h2>
+
+          <div className={`${styles.selectContainer} mt-4`}>
+            <Select
+              label="Select school*"
+              options={schools}
+              value={otherInfo?.school}
+              onChange={(value: string) =>
+                handleOtherInfoChange(value, "school")
+              }
+              error={errors?.school && "Please select school."}
+            />
+
+            <Select
+              label="Select class*"
+              options={classes}
+              value={dateState?.class_assigned}
+              onChange={(value: string) =>
+                handleOtherInfoChange(value, "class_assigned")
+              }
+              error={errors?.class_assigned && "Please select class."}
+            />
+          </div>
 
           <div className={`${styles.viewToggle} mt-3`}>
             <button
@@ -276,27 +296,6 @@ const WeeklyCalendar: React.FC = () => {
 
           {viewMode === "day" ? (
             <>
-              <div className={`${styles.schoolAndTeacher} mt-4`}>
-                <Select
-                  label="Select school*"
-                  options={schools}
-                  value={otherInfo?.school}
-                  onChange={(value: string) =>
-                    handleOtherInfoChange(value, "school")
-                  }
-                  error={errors?.school && "Please select school."}
-                />
-
-                <Select
-                  label="Select teacher*"
-                  options={teachers}
-                  value={otherInfo?.teacher}
-                  onChange={(value: string) =>
-                    handleOtherInfoChange(value, "teacher")
-                  }
-                  error={errors?.teacher && "Please select teacher."}
-                />
-              </div>
               {Object.entries(data).map(([key, value]) => (
                 <WeekDay
                   day={key}
@@ -304,14 +303,14 @@ const WeeklyCalendar: React.FC = () => {
                   addItem={() => addItem(key as Day)}
                   handleChange={(
                     index: number,
-                    type: "startTime" | "endTime" | "subject" | "class",
+                    type: "startTime" | "endTime" | "subject" | "teacher",
                     value: string
                   ) => handleChange(key as Day, index, type, value)}
                   handleDelete={(index: number) =>
                     handleDelete(key as Day, index)
                   }
-                  classes={classes}
                   errors={errors?.[key]}
+                  teachers={teachers}
                 />
               ))}
             </>
@@ -350,4 +349,4 @@ const WeeklyCalendar: React.FC = () => {
   );
 };
 
-export default WeeklyCalendar;
+export default ScheduleManagement;

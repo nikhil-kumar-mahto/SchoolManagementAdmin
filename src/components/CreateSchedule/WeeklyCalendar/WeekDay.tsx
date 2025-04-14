@@ -13,13 +13,13 @@ interface Time {
   startTime: string;
   endTime: string;
   subject: string;
-  selectedClass: string;
+  teacher: string;
   handleChange: (
-    type: "startTime" | "endTime" | "subject" | "class",
+    type: "startTime" | "endTime" | "subject" | "teacher",
     value: string
   ) => void;
   handleDelete: () => void;
-  classes: Array<{ label: string; value: string }>;
+  teachers: Array<{ label: string; value: string }>;
   errors: any;
 }
 
@@ -29,22 +29,23 @@ type Props = {
   addItem: () => void;
   handleChange: (
     index: number,
-    type: "startTime" | "endTime" | "subject" | "class",
+    type: "startTime" | "endTime" | "subject" | "teacher",
     value: string
   ) => void;
   handleDelete: (index: number) => void;
-  classes: Array<{ label: string; value: string }>;
+  // classes: Array<{ label: string; value: string }>;
+  teachers: Array<{ label: string; value: string }>;
   errors: any;
 };
 
-const TimeAndSubject: React.FC<Time> = ({
+const TimeEntry: React.FC<Time> = ({
   startTime,
   endTime,
   subject,
-  selectedClass,
+  teacher,
   handleChange,
   handleDelete,
-  classes,
+  teachers,
   errors = {},
 }) => {
   const { subjects } = useAppContext();
@@ -56,8 +57,6 @@ const TimeAndSubject: React.FC<Time> = ({
       };
     }
   );
-
-  console.log("errors===", errors);
 
   return (
     <div className={styles.timeAndSubject}>
@@ -77,11 +76,11 @@ const TimeAndSubject: React.FC<Time> = ({
       />
 
       <Select
-        label="Select class*"
-        options={classes}
-        value={selectedClass}
-        onChange={(value: string) => handleChange("class", value)}
-        error={errors?.class && "Please select class."}
+        label="Select teacher*"
+        options={teachers}
+        value={teacher}
+        onChange={(value: string) => handleChange("teacher", value)}
+        error={errors?.teacher && "Please select teacher."}
       />
 
       <Select
@@ -104,8 +103,8 @@ const WeekDay: React.FC<Props> = ({
   addItem,
   handleChange,
   handleDelete,
-  classes,
   errors = {},
+  teachers,
 }) => {
   return (
     <div>
@@ -113,18 +112,18 @@ const WeekDay: React.FC<Props> = ({
       <p className="mt-2">Enter schedule for {day}</p>
 
       {schedule.map((item, index) => (
-        <TimeAndSubject
+        <TimeEntry
           startTime={item.startTime}
           endTime={item.endTime}
           subject={item.subject}
-          selectedClass={item.class}
+          teacher={item.teacher}
           handleChange={(
-            type: "startTime" | "endTime" | "subject" | "class",
+            type: "startTime" | "endTime" | "subject" | "teacher",
             value: string
           ) => handleChange(index, type, value)}
           handleDelete={() => handleDelete(index)}
-          classes={classes}
           errors={errors?.[index]}
+          teachers={teachers}
         />
       ))}
       <Button text="Add Time Slot" onClick={addItem} className="mb-4" />

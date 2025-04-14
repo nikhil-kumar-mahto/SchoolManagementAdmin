@@ -51,27 +51,11 @@ const DateSchedule: React.FC<Props> = ({
         </div>
         <div className={`${styles.row} ${styles.selectContainer}`}>
           <Select
-            label="Select school*"
-            options={schools}
-            value={dateState?.school}
-            onChange={(value: string) => handleChange(value, "school")}
-            error={errors?.school && "Please select school."}
-          />
-
-          <Select
             label="Select teacher*"
             options={teachers}
             value={dateState?.teacher}
             onChange={(value: string) => handleChange(value, "teacher")}
             error={errors?.teacher && "Please select teacher."}
-          />
-
-          <Select
-            label="Select class*"
-            options={classes}
-            value={dateState?.class_assigned}
-            onChange={(value: string) => handleChange(value, "class_assigned")}
-            error={errors?.class_assigned && "Please select class."}
           />
 
           <Select

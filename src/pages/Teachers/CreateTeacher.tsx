@@ -9,126 +9,90 @@ import { FormC } from "../../utils/form-handling/validate";
 import Fetch from "../../utils/form-handling/fetch";
 import { arrayString } from "../../utils/form-handling/arrayString";
 import Select from "../../components/common/Select/Select";
+import { onKeyPress } from "../../utils/form-handling/validate";
 import {
   getBloodGroups,
+  getCategory,
   getGender,
   getMaritalStatus,
+  getStatuses,
   mapKeyToLabel,
 } from "../../utils/common/utility-functions";
 import formStyles from "./Teachers.module.css";
+import DatePicker from "../../components/DatePicker/DatePicker";
 
 interface Props {}
 
 const initialState = {
-  teacher_name: "",
-  // teacher_school_id: "",
-  teacher_comp_id: "",
-  teacher_branch_id: "",
+  email: "",
+  phone: "",
+  school_id: "",
+  branch_id: "",
   teacher_code: "",
   teacher_adt_reg_no: "",
-  teacher_card_no: "",
-  // teacher_fname: "",
-  teacher_gender: "",
-  teacher_email: "",
-  teacher_phone: "",
-  teacher_emergency_number: "",
-  teacher_emergency_name: "",
-  teacher_marital_status: "",
-  teacher_blood_group: "",
-  teacher_nomi_relation: "",
-  teacher_location: "",
-  teacher_location_category: "",
-  // teacher_oec_classification: "",
-  // teacher_oec_category: "",
-  // teacher_shop_category: "",
-  teacher_department_code: "",
-  teacher_department_head: "",
-  // teacher_immediate_reporting: "",
-  // teacher_SRA: "",
-  teacher_add1: "",
-  teacher_add2: "",
-  teacher_city: "",
-  teacher_state: "",
-  teacher_permanent_address: "",
-  teacher_branch: "",
-  teacher_date_of_birth: "",
-  teacher_date_joining: "",
-  // teacher_doc: "",
-  teacher_date_of_leaving: "",
-  // teacher_reason: "",
-  // teacher_cofirm: "",
-  // teacher_dor: "",
-  teacher_department: "",
-  teacher_cat: "",
-  teacher_degn: "",
-  teacher_grade: "",
+  card_number: "",
+  first_name: "",
+  last_name: "",
+  gender: "",
+  emergency_number: "",
+  emergency_name: "",
+  marital_status: "",
+  blood_group: "",
+  nominee: "",
+  nominee_relation: "",
+  location: "",
+  location_category: "",
+  organizational_classification: "",
+  organizational_category: "",
+  department_code: "",
+  department_head: "",
+  immediate_reporting: "",
+  teacher_SRA: "",
+  category_type: "",
+  address1: "",
+  address2: "",
+  city: "",
+  state: "",
+  permanent_address: "",
+  branch: "",
+  date_of_birth: "",
+  date_joining: "",
+  date_of_leaving: "",
+  reason: "",
+  teacher_cofirm: "",
+  date_of_retirement: "",
+  department: "",
+  designation: "",
+  grade: "",
   teacher_adhoc: "",
-  teacher_adhaar: "",
-  teacher_pan: "",
-  teacher_bank_name: "",
-  teacher_bank: "",
-  teacher_bankac: "",
-  teacher_ifsc: "",
-  // teacher_esi: "",
-  // teacher_disp: "",
-  // teacher_esic_mapping: "",
-  // teacher_gmc: "",
-  teacher_epf: "",
-  teacher_pension: "",
-  // teacher_VPF: "",
-  // teacher_epsdoj: "",
-  teacher_nominee: "",
-  teacher_uan: "",
-  teacher_gov_pf: "",
-  teacher_gov_pf_num: "",
-  teacher_file_passbook: "",
-  teacher_file_adhaar: "",
-  teacher_file_pancard: "",
-  // teacher_file_tic: "",
-  // teacher_form_11: "",
-  teacher_qualification: "",
-  teacher_university: "",
-  teacher_spl: "",
-  // teacher_pass: "",
-  teacher_status: "",
-  teacher_lastorg: "",
-  teacher_lastdesi: "",
-  // teacher_lastdol: "",
-  teacher_ref: "",
-  teacher_fmlyname1: "",
-  // teacher_fmlyname2: "",
-  // teacher_fmlyname3: "",
-  // teacher_fmlyname4: "",
-  // teacher_fmlyname5: "",
-  // teacher_fmlyname6: "",
-  teacher_relname1: "",
-  // teacher_relname2: "",
-  // teacher_relname3: "",
-  // teacher_relname4: "",
-  // teacher_relname5: "",
-  // teacher_relname6: "",
-  teacher_fmlyage1: "",
-  // teacher_fmlyage2: "",
-  // teacher_fmlyage3: "",
-  // teacher_fmlyage4: "",
-  // teacher_fmlyage5: "",
-  // teacher_fmlyage6: "",
-  teacher_fmlyadhaar1: "",
-  // teacher_fmlyadhaar2: "",
-  // teacher_fmlyadhaar3: "",
-  // teacher_fmlyadhaar4: "",
-  // teacher_fmlyadhaar5: "",
-  // teacher_fmlyadhaar6: "",
-  // teacher_1: "",
-  // teacher_2: "",
-  // teacher_3: "",
-  // teacher_4: "",
-  // teacher_5: "",
-  // teacher_6: "",
-  // teacher_salary_bank_map: "",
-  // teacher_sal_match: "",
-  // teacher_hide_ateen: "",
-  school: "",
+  adhaar: "",
+  pancard: "",
+  bank_name: "",
+  bank_account_number: "",
+  bank_ifsc_code: "",
+  teacher_disp: "",
+  pension_amount: "",
+  voluntary_provident_fund: "",
+  universal_account_number: "",
+  gov_provident_fund: "",
+  gov_provided_fund_number: "",
+  file_passbook: "",
+  file_adhaar: "",
+  file_pancard: "",
+  form_11: "",
+  academic_qualification: "",
+  academic_university: "",
+  specialization: "",
+  passing_year: "",
+  last_school: "",
+  last_designation: "",
+  last_date_of_leaving: "",
+  reference: "",
+  family_name1: "",
+  relation_name1: "",
+  family_age1: "",
+  family_adhaar1: "",
+  status: "",
 };
 
 const CreateTeacher: React.FC<Props> = () => {
@@ -136,32 +100,7 @@ const CreateTeacher: React.FC<Props> = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [schools, setSchools] = useState([]);
 
-  const [personalInfo, setPersonalInfo] = useState({
-    teacher_name: "",
-    teacher_gender: "",
-    teacher_email: "",
-    teacher_phone: "",
-    // other personal info fields
-  });
-
-  const [addressInfo, setAddressInfo] = useState({
-    teacher_add1: "",
-    teacher_add2: "",
-    teacher_city: "",
-    teacher_state: "",
-    teacher_permanent_address: "",
-    // other address fields
-  });
-
-  const [bankInfo, setBankInfo] = useState({
-    teacher_bank_name: "",
-    teacher_bank: "",
-    teacher_bankac: "",
-    teacher_ifsc: "",
-    // other banking fields
-  });
-
-  const excludedKeys = ["id", "teacher_school_id", "school"];
+  const excludedKeys: string[] = ["school_id", "id", "school", "user"];
 
   const { id } = useParams();
 
@@ -175,10 +114,12 @@ const CreateTeacher: React.FC<Props> = () => {
   const getTeacherInfo = () => {
     Fetch(`teachers/${id}/`).then((res: any) => {
       if (res.status) {
-        setData(res.data);
+        setData({ ...res.data, school_id: res?.data?.school });
       }
     });
   };
+
+  console.log("state===", data);
 
   const getSchools = () => {
     Fetch("schools/").then((res: any) => {
@@ -214,7 +155,7 @@ const CreateTeacher: React.FC<Props> = () => {
     } else {
       url = "teachers/";
     }
-    Fetch(url, data, { method: id ? "patch" : "post" }).then((res: any) => {
+    Fetch(url, data, { method: id ? "put" : "post" }).then((res: any) => {
       if (res.status) {
         showToast(
           id ? "Teacher updated successfully" : "Teacher added successfully"
@@ -247,17 +188,28 @@ const CreateTeacher: React.FC<Props> = () => {
     }
   }, []);
 
+  const getMaxLength = (type: string) => {
+    switch (type) {
+      case "family_age1":
+        return 12;
+      case "age":
+        return 3;
+      default:
+        return undefined;
+    }
+  };
+  
   return (
     <Layout>
       <form action="" onSubmit={handleSubmit}>
         <div className={styles.container}>
           <h2>{id ? "Update" : "Create"} Teacher</h2>
           <Select
-            label="Select school"
+            label="Select school*"
             options={schools}
-            value={data?.school}
-            onChange={(value) => handleSelectChange(value, "school")}
-            error={errors?.school && "Please select school."}
+            value={data?.school_id}
+            onChange={(value) => handleSelectChange(value, "school_id")}
+            error={errors?.school_id && "Please select school."}
             className="w-25"
           />
 
@@ -265,64 +217,124 @@ const CreateTeacher: React.FC<Props> = () => {
             {Object.keys(data)
               .filter((key) => !excludedKeys.includes(key))
               .map((key) => {
-                if (key === "teacher_gender") {
+                if (key === "gender") {
                   return (
                     <Select
                       key={key}
-                      label="Select gender"
+                      label="Select gender*"
                       options={getGender()}
-                      value={data?.teacher_gender}
-                      onChange={(value) =>
-                        handleSelectChange(value, "teacher_gender")
-                      }
-                      error={
-                        errors?.teacher_gender &&
-                        "Please select teacher gender."
-                      }
+                      value={data?.gender}
+                      onChange={(value) => handleSelectChange(value, "gender")}
+                      error={errors?.gender && "Please select gender."}
                     />
                   );
-                } else if (key === "teacher_marital_status") {
+                } else if (key === "marital_status") {
                   return (
                     <Select
                       key={key}
-                      label="Select marital status"
+                      label="Select marital status*"
                       options={getMaritalStatus()}
-                      value={data?.teacher_marital_status}
+                      value={data?.marital_status}
                       onChange={(value) =>
-                        handleSelectChange(value, "teacher_marital_status")
+                        handleSelectChange(value, "marital_status")
                       }
                       error={
-                        errors?.teacher_marital_status &&
-                        "Please select teacher marital status."
+                        errors?.marital_status &&
+                        "Please select marital status."
                       }
                     />
                   );
-                } else if (key === "teacher_blood_group") {
+                } else if (key === "blood_group") {
                   return (
                     <Select
                       key={key}
-                      label="Select blood group"
+                      label="Select blood group*"
                       options={getBloodGroups()}
-                      value={data?.teacher_blood_group}
+                      value={data?.blood_group}
                       onChange={(value) =>
-                        handleSelectChange(value, "teacher_blood_group")
+                        handleSelectChange(value, "blood_group")
                       }
                       error={
-                        errors?.teacher_blood_group &&
-                        "Please select teacher blood group."
+                        errors?.blood_group && "Please select blood group."
                       }
+                    />
+                  );
+                } else if (key === "category_type") {
+                  return (
+                    <Select
+                      key={key}
+                      label="Select category*"
+                      options={getCategory()}
+                      value={data?.category_type}
+                      onChange={(value) =>
+                        handleSelectChange(value, "category_type")
+                      }
+                      error={errors?.category_type && "Please select category."}
+                    />
+                  );
+                } else if (key === "status") {
+                  return (
+                    <Select
+                      key={key}
+                      label="Select status*"
+                      options={getStatuses()}
+                      value={data?.status}
+                      onChange={(value) => handleSelectChange(value, "status")}
+                      error={errors?.status && "Please select status."}
+                    />
+                  );
+                } else if (
+                  key === "date_of_birth" ||
+                  key === "date_joining" ||
+                  key === "date_of_leaving" ||
+                  key === "date_of_retirement" ||
+                  key === "last_date_of_leaving"
+                ) {
+                  return (
+                    <DatePicker
+                      label={`${mapKeyToLabel(key)}*`}
+                      selectedDate={data[key]}
+                      onDateChange={(e: ChangeEvent<HTMLInputElement>) =>
+                        handleSelectChange(e.target.value, key)
+                      }
+                      error={
+                        errors[key] &&
+                        `Please select ${mapKeyToLabel(
+                          key
+                        ).toLocaleLowerCase()}.`
+                      }
+                      className="w-100"
                     />
                   );
                 }
                 return (
                   <div className={formStyles["form-column"]} key={key}>
                     <Input
-                      label={mapKeyToLabel(key)}
+                      label={`${mapKeyToLabel(key)}*`}
                       name={key}
-                      value={data[key]}
-                      onChange={handleChange}
+                      defaultValue={data[key]}
+                      onBlur={handleChange}
                       placeholder={`Enter ${mapKeyToLabel(key).toLowerCase()}`}
-                      error={errors[key]}
+                      error={
+                        errors[key] &&
+                        `Please enter ${mapKeyToLabel(
+                          key
+                        ).toLocaleLowerCase()}.`
+                      }
+                      onKeyPress={
+                        key === "phone" ||
+                        key === "card_number" ||
+                        key === "emergency_number" ||
+                        key === "adhaar" ||
+                        key === "pension_amount" ||
+                        key === "passing_year" ||
+                        key === "gov_provident_fund" ||
+                        key === "family_age1" ||
+                        key === "family_adhaar1"
+                          ? onKeyPress
+                          : () => {}
+                      }
+                      maxLength={getMaxLength(key)}
                     />
                   </div>
                 );

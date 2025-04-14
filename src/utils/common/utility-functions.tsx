@@ -79,226 +79,144 @@ export function filterTimeArray(startTime) {
 
 export const mapKeyToLabel = (key: string) => {
   switch (key) {
-    case "teacher_name":
-      return "Teacher Name";
-    case "teacher_comp_id":
-      return "Company ID";
-    case "teacher_branch_id":
+    case "email":
+      return "Email Address";
+    case "phone":
+      return "Phone Number";
+    case "school_id":
+      return "School ID";
+    case "branch_id":
       return "Branch ID";
     case "teacher_code":
       return "Teacher Code";
     case "teacher_adt_reg_no":
       return "Registration Number";
-    case "teacher_card_no":
+    case "card_number":
       return "Card Number";
-    case "teacher_fname":
+    case "first_name":
       return "First Name";
-    case "teacher_gender":
+    case "last_name":
+      return "Last Name";
+    case "gender":
       return "Gender";
-    case "teacher_email":
-      return "Email Address";
-    case "teacher_phone":
-      return "Phone Number";
-    case "teacher_emergency_number":
+    case "emergency_number":
       return "Emergency Contact Number";
-    case "teacher_emergency_name":
+    case "emergency_name":
       return "Emergency Contact Name";
-    case "teacher_marital_status":
+    case "marital_status":
       return "Marital Status";
-    case "teacher_blood_group":
+    case "blood_group":
       return "Blood Group";
-    case "teacher_nomi_relation":
+    case "nominee":
+      return "Nominee";
+    case "nominee_relation":
       return "Nominee Relation";
-    case "teacher_location":
+    case "location":
       return "Location";
-    case "teacher_location_category":
+    case "location_category":
       return "Location Category";
-    case "teacher_oec_classification":
-      return "OEC Classification";
-    case "teacher_oec_category":
-      return "OEC Category";
-    case "teacher_shop_category":
-      return "Shop Category";
-    case "teacher_department_code":
+    case "organizational_classification":
+      return "Organizational Classification";
+    case "organizational_category":
+      return "Organizational Category";
+    case "department_code":
       return "Department Code";
-    case "teacher_department_head":
+    case "department_head":
       return "Department Head";
-    case "teacher_immediate_reporting":
+    case "immediate_reporting":
       return "Immediate Reporting";
     case "teacher_SRA":
       return "SRA";
-    case "teacher_add1":
+    case "category_type":
+      return "Category Type";
+    case "address1":
       return "Address Line 1";
-    case "teacher_add2":
+    case "address2":
       return "Address Line 2";
-    case "teacher_city":
+    case "city":
       return "City";
-    case "teacher_state":
+    case "state":
       return "State";
-    case "teacher_permanent_address":
+    case "permanent_address":
       return "Permanent Address";
-    case "teacher_branch":
+    case "branch":
       return "Branch";
-    case "teacher_date_of_birth":
+    case "date_of_birth":
       return "Date of Birth";
-    case "teacher_date_joining":
+    case "date_joining":
       return "Date of Joining";
-    case "teacher_doc":
-      return "Document";
-    case "teacher_date_of_leaving":
+    case "date_of_leaving":
       return "Date of Leaving";
-    case "teacher_reason":
+    case "reason":
       return "Reason";
     case "teacher_cofirm":
       return "Confirmation";
-    case "teacher_dor":
-      return "Date of Resignation";
-    case "teacher_department":
+    case "date_of_retirement":
+      return "Date of Retirement";
+    case "department":
       return "Department";
-    case "teacher_cat":
-      return "Category";
-    case "teacher_degn":
+    case "designation":
       return "Designation";
-    case "teacher_grade":
+    case "grade":
       return "Grade";
     case "teacher_adhoc":
       return "Adhoc";
-    case "teacher_adhaar":
+    case "adhaar":
       return "Adhaar Number";
-    case "teacher_pan":
+    case "pancard":
       return "PAN";
-    case "teacher_bank_name":
+    case "bank_name":
       return "Bank Name";
-    case "teacher_bank":
-      return "Bank";
-    case "teacher_bankac":
-      return "Bank Account";
-    case "teacher_ifsc":
-      return "IFSC Code";
-    case "teacher_esi":
-      return "ESI Number";
+    case "bank_account_number":
+      return "Bank Account Number";
+    case "bank_ifsc_code":
+      return "Bank IFSC Code";
     case "teacher_disp":
       return "Dispensation";
-    case "teacher_esic_mapping":
-      return "ESIC Mapping";
-    case "teacher_gmc":
-      return "GMC";
-    case "teacher_epf":
-      return "EPF";
-    case "teacher_pension":
-      return "Pension";
-    case "teacher_VPF":
-      return "VPF";
-    case "teacher_epsdoj":
-      return "EPS DOJ";
-    case "teacher_nominee":
-      return "Nominee";
-    case "teacher_uan":
-      return "UAN";
-    case "teacher_gov_pf":
-      return "Government PF";
-    case "teacher_gov_pf_num":
-      return "Government PF Number";
-    case "teacher_file_passbook":
-      return "Passbook";
-    case "teacher_file_adhaar":
+    case "pension_amount":
+      return "Pension Amount";
+    case "voluntary_provident_fund":
+      return "Voluntary Provident Fund (VPF)";
+    case "universal_account_number":
+      return "Universal Account Number (UAN)";
+    case "gov_provident_fund":
+      return "Government Provident Fund";
+    case "gov_provided_fund_number":
+      return "Government Provident Fund Number";
+    case "file_passbook":
+      return "Passbook File";
+    case "file_adhaar":
       return "Adhaar File";
-    case "teacher_file_pancard":
+    case "file_pancard":
       return "Pancard File";
-    case "teacher_file_tic":
-      return "TIC File";
-    case "teacher_form_11":
+    case "form_11":
       return "Form 11";
-    case "teacher_qualification":
-      return "Qualification";
-    case "teacher_university":
+    case "academic_qualification":
+      return "Academic Qualification";
+    case "academic_university":
       return "University";
-    case "teacher_spl":
+    case "specialization":
       return "Specialization";
-    case "teacher_pass":
-      return "Password";
-    case "teacher_status":
-      return "Status";
-    case "teacher_lastorg":
-      return "Last Organization";
-    case "teacher_lastdesi":
+    case "passing_year":
+      return "Passing Year";
+    case "last_school":
+      return "Last School";
+    case "last_designation":
       return "Last Designation";
-    case "teacher_lastdol":
-      return "Last Date of Leave";
-    case "teacher_ref":
+    case "last_date_of_leaving":
+      return "Last Date of Leaving";
+    case "reference":
       return "Reference";
-    case "teacher_fmlyname1":
+    case "family_name1":
       return "Family Member Name";
-    case "teacher_fmlyname2":
-      return "Family Member 2 Name";
-    case "teacher_fmlyname3":
-      return "Family Member 3 Name";
-    case "teacher_fmlyname4":
-      return "Family Member 4 Name";
-    case "teacher_fmlyname5":
-      return "Family Member 5 Name";
-    case "teacher_fmlyname6":
-      return "Family Member 6 Name";
-    case "teacher_relname1":
+    case "relation_name1":
       return "Relation Name";
-    case "teacher_relname2":
-      return "Relation 2 Name";
-    case "teacher_relname3":
-      return "Relation 3 Name";
-    case "teacher_relname4":
-      return "Relation 4 Name";
-    case "teacher_relname5":
-      return "Relation 5 Name";
-    case "teacher_relname6":
-      return "Relation 6 Name";
-    case "teacher_fmlyage1":
+    case "family_age1":
       return "Family Member Age";
-    case "teacher_fmlyage2":
-      return "Family Member 2 Age";
-    case "teacher_fmlyage3":
-      return "Family Member 3 Age";
-    case "teacher_fmlyage4":
-      return "Family Member 4 Age";
-    case "teacher_fmlyage5":
-      return "Family Member 5 Age";
-    case "teacher_fmlyage6":
-      return "Family Member 6 Age";
-    case "teacher_fmlyadhaar1":
+    case "family_adhaar1":
       return "Family Member Adhaar";
-    case "teacher_fmlyadhaar2":
-      return "Family Member 2 Adhaar";
-    case "teacher_fmlyadhaar3":
-      return "Family Member 3 Adhaar";
-    case "teacher_fmlyadhaar4":
-      return "Family Member 4 Adhaar";
-    case "teacher_fmlyadhaar5":
-      return "Family Member 5 Adhaar";
-    case "teacher_fmlyadhaar6":
-      return "Family Member 6 Adhaar";
-    case "teacher_1":
-      return "Attribute 1";
-    case "teacher_2":
-      return "Attribute 2";
-    case "teacher_3":
-      return "Attribute 3";
-    case "teacher_4":
-      return "Attribute 4";
-    case "teacher_5":
-      return "Attribute 5";
-    case "teacher_6":
-      return "Attribute 6";
-    case "teacher_salary_bank_map":
-      return "Salary Bank Mapping";
-    case "teacher_sal_match":
-      return "Salary Match";
-    case "teacher_hide_ateen":
-      return "Hide Ateen";
-    case "created_at":
-      return "Created At";
-    case "updated_at":
-      return "Updated At";
-    case "school":
-      return "School";
+    case "status":
+      return "Status";
     default:
       return key.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
   }
@@ -329,5 +247,27 @@ export const getBloodGroups = () => {
     { label: "AB-", value: "AB-" },
     { label: "O+", value: "O+" },
     { label: "O-", value: "O-" },
+  ];
+};
+
+export const getCategory = () => {
+  return [
+    { label: "Full-Time", value: "FT" },
+    { label: "Part-Time", value: "PT" },
+    { label: "Contract", value: "CT" },
+    { label: "Ad-Hoc", value: "AD" },
+    { label: "Guest Faculty", value: "GT" },
+    { label: "Temporary", value: "TM" },
+    { label: "Other", value: "OT" },
+  ];
+};
+
+export const getStatuses = () => {
+  return [
+    { label: "Active", value: "ACTIVE" },
+    { label: "Probation", value: "PROB" },
+    { label: "Resigned", value: "RESIGNED" },
+    { label: "Retired", value: "RETIRED" },
+    { label: "Terminated", value: "TERMINATED" },
   ];
 };

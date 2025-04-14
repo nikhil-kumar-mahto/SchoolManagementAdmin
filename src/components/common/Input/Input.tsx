@@ -3,8 +3,8 @@ import styles from "./Input.module.css";
 
 interface InputProps {
   label?: string;
-  value: string;
-  onChange: (event: ChangeEvent<HTMLInputElement>) => void;
+  value?: string;
+  onChange?: (event: ChangeEvent<HTMLInputElement>) => void;
   error?: string;
   type?: "text" | "password" | "email" | "number" | "tel" | "url";
   [key: string]: any;

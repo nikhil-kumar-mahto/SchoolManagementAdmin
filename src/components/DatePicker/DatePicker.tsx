@@ -6,6 +6,7 @@ interface DatePickerProps {
   selectedDate: string;
   onDateChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   error: string | undefined;
+  className?: string;
 }
 
 const DatePicker: React.FC<DatePickerProps> = ({
@@ -13,9 +14,10 @@ const DatePicker: React.FC<DatePickerProps> = ({
   selectedDate,
   onDateChange,
   error,
+  className,
 }) => {
   return (
-    <div className={styles["custom-date-picker"]}>
+    <div className={`${styles["custom-date-picker"]} ${className}`}>
       {label && <label className={styles["date-picker-label"]}>{label}</label>}
       <input
         type="date"

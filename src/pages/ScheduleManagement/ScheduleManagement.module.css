@@ -42,3 +42,8 @@
 .buttonContainer {
     display: flex;
 }
+
+.selectContainer {
+    display: flex;
+    gap: 1rem;
+}

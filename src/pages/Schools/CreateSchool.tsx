@@ -79,20 +79,25 @@ const CreateSchool: React.FC<Props> = () => {
     } else {
       url = "schools/";
     }
-    Fetch(url, data, { method: id ? "patch" : "post", inFormData: true }).then(
-      (res: any) => {
-        if (res.status) {
-          showToast(
-            id ? "School updated successfully" : "School added successfully"
-          );
-          navigate("/schools");
-        } else {
-          let resErr = arrayString(res);
-          handleNewError(resErr);
-        }
-        setIsLoading(false);
+    let params = { ...data };
+    if (!isLogoChanged && id) {
+      delete params.logo;
+    }
+    Fetch(url, params, {
+      method: id ? "patch" : "post",
+      inFormData: true,
+    }).then((res: any) => {
+      if (res.status) {
+        showToast(
+          id ? "School updated successfully" : "School added successfully"
+        );
+        navigate("/schools");
+      } else {
+        let resErr = arrayString(res);
+        handleNewError(resErr);
       }
-    );
+      setIsLoading(false);
+    });
   };
 
   let params = {

@@ -18,6 +18,7 @@
 
 .table th {
     background-color: var(--background-color);
+    min-width: 8rem;
 }
 
 .pagination {
