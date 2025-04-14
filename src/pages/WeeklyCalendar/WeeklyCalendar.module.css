@@ -6,3 +6,39 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
     background-color: #fff;
 }
+
+.viewToggle {
+    display: flex;
+}
+
+.toggleButton {
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: bold;
+    border: 1px solid #ccc;
+    background-color: #f9f9f9;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    border-radius: 4px;
+    margin: 0 5px;
+}
+
+.toggleButton.active {
+    background-color: var(--primary-color);
+    color: var(--white);
+    border-color: var(--primary-color);
+}
+
+.toggleButton:hover {
+    background-color: #0056b3;
+    color: var(--white);
+}
+
+.schoolAndTeacher {
+    display: flex;
+    gap: 1rem;
+}
+
+.buttonContainer {
+    display: flex;
+}

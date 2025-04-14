@@ -37,8 +37,7 @@ const Input: React.FC<InputProps> = ({
           {...props}
         />
       </div>
-      {/* {error && <p className={styles.errorMessage}>{error}</p>} */}
-      <p className={styles.errorMessage}>{error}</p>  
+      {error && <p className={styles.errorMessage}>{error}</p>}
     </div>
   );
 };

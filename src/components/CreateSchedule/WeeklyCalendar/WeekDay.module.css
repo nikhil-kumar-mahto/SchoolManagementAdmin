@@ -1,0 +1,13 @@
+.timeAndSubject {
+    display: flex;
+    justify-content: space-around;
+    gap: 1rem;
+    /* align-items: center; */
+}
+
+.iconContainer {
+    border: none;
+    background: none;
+    cursor: pointer;
+}
+

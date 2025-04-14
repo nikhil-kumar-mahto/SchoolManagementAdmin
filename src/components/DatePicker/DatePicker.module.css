@@ -1,0 +1,36 @@
+.custom-date-picker {
+    display: flex;
+    flex-direction: column;
+    width: 250px;
+    margin: 10px 0;
+    cursor: pointer;
+}
+
+.date-picker-label {
+    margin-bottom: 0.75rem;
+    font-weight: 500;
+    color: #37474f;
+    display: block;
+}
+
+.date-picker-input {
+    padding: 8px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    outline: none;
+    transition: border-color 0.3s ease;
+    min-height: 3rem;
+    background-color: #f8f8f8;
+}
+
+.date-picker-input:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 5px var(--primary-color);
+}
+
+.errorMessage {
+    color: var(--danger-color);
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+}

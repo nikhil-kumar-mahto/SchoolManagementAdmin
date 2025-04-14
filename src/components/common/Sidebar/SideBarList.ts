@@ -46,14 +46,14 @@ export const sidebarItems: SidebarItem[] = [
     Icon: ClassIcon,
     fill: "#000",
   },
+  // {
+  //   name: "Schedule Management",
+  //   href: "/schedule",
+  //   Icon: ScheduleIcon,
+  //   fill: "#000",
+  // },
   {
     name: "Schedule Management",
-    href: "/schedule",
-    Icon: ScheduleIcon,
-    fill: "#000",
-  },
-  {
-    name: "Weekly Schedule",
     href: "/weekly-schedule",
     Icon: ScheduleIcon,
     fill: "#000",
