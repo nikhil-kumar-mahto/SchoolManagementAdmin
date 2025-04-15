@@ -1,16 +1,16 @@
 import { useState, useEffect } from "react";
-export const validation = (data) => {
+export const validation = (data, selectFields = []) => {
   let errors = {};
   for (const property in data) {
-    console.log('property====', data);
     if (!data[property]?.length && Array.isArray(data[property])) {
-      errors[property] = `Please enter ${property?.split("_") ? property?.split("_").join(" ") + "." : property + "."
+      const isSelectField = selectFields.includes(property);
+      errors[property] = `Please ${isSelectField ? "select" : "enter"} ${property?.split("_") ? property?.split("_").join(" ") + "." : property + "."
         }`;
     } else if (data[property]?.length && Array.isArray(data[property])) {
       let arrayErrors = [];
       let index = 0;
       for (const propertyArray of data[property]) {
-        const arrayError = validation(propertyArray);
+        const arrayError = validation(propertyArray, selectFields);
         index++;
         if (Object.keys(arrayError)?.length) {
           for (let i = 0; i < index - 1; i++) {
@@ -25,14 +25,14 @@ export const validation = (data) => {
         errors[property] = arrayErrors;
       }
     } else if (typeof data[property] === "object") {
-      const objectErrors = validation(data[property]);
+      const objectErrors = validation(data[property], selectFields);
       if (Object.keys(objectErrors)?.length) {
         errors[property] = objectErrors;
       }
     } else {
       errors = {
         ...errors,
-        ...inputValidation(data, property),
+        ...inputValidation(data, property, selectFields),
       };
     }
   }
@@ -49,16 +49,14 @@ export const onKeyPress = (evt, reg) => {
     if (theEvent.preventDefault) theEvent.preventDefault();
   }
 };
-const inputValidation = (data, property) => {
+const inputValidation = (data, property, selectFields = []) => {
   const errors = {};
-  if (data[property] === null || data[property] === undefined || !data[property].toString().length)
-
-    errors[property] = property.startsWith("select.")
-      ? `Please select ${property.split(".")[1].replace(/_/g, " ")}.`
-      : `Please ${property.includes("photo") || property.includes("logo") ? "upload" : "enter"} ${property === "email"
-        ? "email address."
-        : property.replace(/_/g, " ") + "."
+  if (data[property] === null || data[property] === undefined || !data[property].toString().length) {
+    errors[property] = `Please ${selectFields.includes(property) ? "select" : property.includes("photo") || property.includes("logo") || property.includes("file_passbook") || property.includes("file_adhaar") || property.includes("file_pancard") || property.includes("form_11") ? "upload" : "enter"} ${property === "email"
+      ? "email address."
+      : property.replace(/_/g, " ") + "."
       }`;
+  }
 
   if (property.includes("email") && data[property]?.length) {
     if (ValidateEmailAddress(data[property])) {
@@ -111,7 +109,7 @@ export const ValidateEmailAddress = (emailString) => {
   const regex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
   if (!regex.test(emailString)) return "Your email is incorrect. Please try again";
 };
-export const FormC = ({ values, removeValidValue, onSubmit, onSubmitError }) => {
+export const FormC = ({ values, removeValidValue, onSubmit, onSubmitError, selectFields = [] }) => {
   const [err, setErr] = useState({});
   const [stateParam, setStateParam] = useState({ ...values });
   useEffect(() => {
@@ -125,7 +123,7 @@ export const FormC = ({ values, removeValidValue, onSubmit, onSubmitError }) => 
   const handleSubmit = (e) => {
     e?.preventDefault();
     const data = removeFormValidation(stateParam);
-    const error = validation(data);
+    const error = validation(data, selectFields);
     setErr(error);
     if (!Object?.keys(error)?.length) {
       setErr({});

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import styles from "./ScheduleDetails.module.css";
-import dummyScheduleData from "../../static/data";
 import Layout from "../../components/common/Layout/Layout";
 import Button from "../../components/common/Button/Button";
 import { useNavigate } from "react-router-dom";
@@ -20,10 +19,56 @@ const ScheduleList: React.FC<ScheduleListProps> = () => {
   const [classes, setClasses] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [schedule, setSchedule] = useState<any>({});
+  const [classId, setClassId] = useState("");
+
   const toast = useToast();
 
   const showToast = () => {
     toast.show("Schedule deleted successfully", 2000, "#dc3545");
+  };
+
+  const convertResponse = (data: any) => {
+    const convertedSchedule: { [key: string]: any[] } = {};
+    const dateBasedSchedule: { [key: string]: any[] } = {};
+
+    data.time_slots.forEach((slot: any) => {
+      const slotData = {
+        start_time: slot.start_time,
+        end_time: slot.end_time,
+        teacher: slot.teacher?.first_name + " " + slot.teacher?.last_name,
+        subject: slot.subject?.name,
+      };
+
+      console.log("slot====", slot);
+
+      if (slot.day_of_week) {
+        const day = slot.day_of_week;
+        if (!convertedSchedule[day]) {
+          convertedSchedule[day] = [];
+        }
+        convertedSchedule[day].push(slotData);
+      } else if (slot.date) {
+        const dateKey = slot.date;
+        if (!dateBasedSchedule[dateKey]) {
+          dateBasedSchedule[dateKey] = [];
+        }
+        dateBasedSchedule[dateKey].push(slotData);
+      }
+    });
+
+    return {
+      ...convertedSchedule,
+      ...dateBasedSchedule,
+    };
+  };
+
+  const getSchedule = (classId: string) => {
+    Fetch(`schedule/${classId}/`).then((res: any) => {
+      if (res.status) {
+        setSchedule(convertResponse(res?.data) || {});
+      }
+    });
   };
 
   const getSchools = () => {
@@ -40,8 +85,8 @@ const ScheduleList: React.FC<ScheduleListProps> = () => {
     });
   };
 
-  const getClasses = () => {
-    Fetch("classes/").then((res: any) => {
+  const getClasses = (id: string) => {
+    Fetch(`classes?school_id=${id}`).then((res: any) => {
       if (res.status) {
         let classes = res.data?.map(
           (item: { name: string; id: string; section: string }) => {
@@ -58,15 +103,27 @@ const ScheduleList: React.FC<ScheduleListProps> = () => {
 
   useEffect(() => {
     getSchools();
-    getClasses();
   }, []);
 
   const handleChange = (value: string, type: string) => {
+    if (type === "school") {
+      getClasses(value);
+    }
+    if (type === "class") {
+      getSchedule(value);
+      setClassId(value);
+    }
     setData((prevState) => {
-      return {
+      const updatedState = {
         ...prevState,
         [type]: value,
       };
+
+      if (type === "school") {
+        updatedState.class = "";
+      }
+
+      return updatedState;
     });
   };
 
@@ -74,12 +131,14 @@ const ScheduleList: React.FC<ScheduleListProps> = () => {
 
   const handleNavigate = (id: string = "") => {
     navigate(`/schedule/create${id ? `/${id}` : ""}`);
-  };  
+  };
 
   const handleDelete = () => {
     setIsLoading(true);
-    Fetch("schedule/id", {}, { method: "delete" }).then((res: any) => {
+    Fetch(`schedule/${classId}/`, {}, { method: "delete" }).then((res: any) => {
       if (res.status) {
+        setShowModal(false);
+        setSchedule({});
         showToast();
       }
       setIsLoading(false);
@@ -118,18 +177,18 @@ const ScheduleList: React.FC<ScheduleListProps> = () => {
           />
         </div>
         <div className={styles.schoolClassInfo}></div>
-        <table className={styles.scheduleTable}>
-          <thead>
-            <tr>
-              <th>Day</th>
-              <th>Time</th>
-              <th>Teacher</th>
-              <th>Subject</th>
-            </tr>
-          </thead>
-          <tbody>
-            {Object.entries(dummyScheduleData["day-time-slots"]).map(
-              ([day, timeSlots]) => (
+        {Object.entries(schedule).length > 0 && (
+          <table className={styles.scheduleTable}>
+            <thead>
+              <tr>
+                <th>Day</th>
+                <th>Time</th>
+                <th>Teacher</th>
+                <th>Subject</th>
+              </tr>
+            </thead>
+            <tbody>
+              {Object.entries(schedule).map(([day, timeSlots]) => (
                 <React.Fragment key={day}>
                   {timeSlots.length > 0 ? (
                     timeSlots.map((slot, slotIndex) => (
@@ -142,7 +201,7 @@ const ScheduleList: React.FC<ScheduleListProps> = () => {
                             {day}
                           </td>
                         )}
-                        <td>{`${slot.startTime} - ${slot.endTime}`}</td>
+                        <td>{`${slot.start_time} - ${slot.end_time}`}</td>
                         <td>{slot.teacher}</td>
                         <td>{slot.subject}</td>
                       </tr>
@@ -156,24 +215,30 @@ const ScheduleList: React.FC<ScheduleListProps> = () => {
                     </tr>
                   )}
                 </React.Fragment>
-              )
-            )}
-          </tbody>
-        </table>
+              ))}
+            </tbody>
+          </table>
+        )}
 
-        <div className={`${styles.buttonContainer} mt-4`}>
-          <Button
-            text="Edit"
-            onClick={handleNavigate}
-            style={{ width: "6rem" }}
-          />
-          <Button
-            text="Delete"
-            onClick={() => setShowModal(true)}
-            type="outline"
-            style={{ width: "6rem", borderColor: "#dc3545", color: "#dc3545" }}
-          />
-        </div>
+        {Object.entries(schedule).length > 0 && (
+          <div className={`${styles.buttonContainer} mt-4`}>
+            <Button
+              text="Edit"
+              onClick={handleNavigate}
+              style={{ width: "6rem" }}
+            />
+            <Button
+              text="Delete"
+              onClick={() => setShowModal(true)}
+              type="outline"
+              style={{
+                width: "6rem",
+                borderColor: "#dc3545",
+                color: "#dc3545",
+              }}
+            />
+          </div>
+        )}
       </div>
       <Modal
         title="Confirm!"

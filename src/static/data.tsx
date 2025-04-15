@@ -1,6 +1,6 @@
 interface TimeSlot {
-  startTime: string;
-  endTime: string;
+  start_time: string;
+  end_time: string;
   teacher: string;
   subject: string;
 }
@@ -26,100 +26,100 @@ const dummyScheduleData: ScheduleItem = {
   "day-time-slots": {
     Monday: [
       {
-        startTime: "09:00",
-        endTime: "09:45",
+        start_time: "09:00",
+        end_time: "09:45",
         teacher: "TCH001",
         subject: "Math",
       },
       {
-        startTime: "09:45",
-        endTime: "10:30",
+        start_time: "09:45",
+        end_time: "10:30",
         teacher: "TCH002",
         subject: "Science",
       },
       {
-        startTime: "10:45",
-        endTime: "11:30",
+        start_time: "10:45",
+        end_time: "11:30",
         teacher: "TCH003",
         subject: "English",
       },
     ],
     Tuesday: [
       {
-        startTime: "09:00",
-        endTime: "09:45",
+        start_time: "09:00",
+        end_time: "09:45",
         teacher: "TCH004",
         subject: "History",
       },
       {
-        startTime: "09:45",
-        endTime: "10:30",
+        start_time: "09:45",
+        end_time: "10:30",
         teacher: "TCH002",
         subject: "Science",
       },
       {
-        startTime: "10:45",
-        endTime: "11:30",
+        start_time: "10:45",
+        end_time: "11:30",
         teacher: "TCH005",
         subject: "Art",
       },
     ],
     Wednesday: [
       {
-        startTime: "09:00",
-        endTime: "09:45",
+        start_time: "09:00",
+        end_time: "09:45",
         teacher: "TCH001",
         subject: "Math",
       },
       {
-        startTime: "09:45",
-        endTime: "10:30",
+        start_time: "09:45",
+        end_time: "10:30",
         teacher: "TCH003",
         subject: "English",
       },
       {
-        startTime: "10:45",
-        endTime: "11:30",
+        start_time: "10:45",
+        end_time: "11:30",
         teacher: "TCH004",
         subject: "History",
       },
     ],
     Thursday: [
       {
-        startTime: "09:00",
-        endTime: "09:45",
+        start_time: "09:00",
+        end_time: "09:45",
         teacher: "TCH002",
         subject: "Science",
       },
       {
-        startTime: "09:45",
-        endTime: "10:30",
+        start_time: "09:45",
+        end_time: "10:30",
         teacher: "TCH005",
         subject: "Art",
       },
       {
-        startTime: "10:45",
-        endTime: "11:30",
+        start_time: "10:45",
+        end_time: "11:30",
         teacher: "TCH001",
         subject: "Math",
       },
     ],
     Friday: [
       {
-        startTime: "09:00",
-        endTime: "09:45",
+        start_time: "09:00",
+        end_time: "09:45",
         teacher: "TCH003",
         subject: "English",
       },
       {
-        startTime: "09:45",
-        endTime: "10:30",
+        start_time: "09:45",
+        end_time: "10:30",
         teacher: "TCH004",
         subject: "History",
       },
       {
-        startTime: "10:45",
-        endTime: "11:30",
+        start_time: "10:45",
+        end_time: "11:30",
         teacher: "TCH002",
         subject: "Science",
       },

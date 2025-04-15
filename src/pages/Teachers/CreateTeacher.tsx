@@ -195,8 +195,27 @@ const CreateTeacher: React.FC<Props> = () => {
     );
   };
 
+  let params = {
+    ...data,
+    file_passbook:
+      id && !isFilesModified.file_passbook
+        ? data.file_passbook
+        : data.file_passbook?.name,
+    file_adhaar:
+      id && !isFilesModified.file_adhaar
+        ? data.file_adhaar
+        : data.file_adhaar?.name,
+    file_pancard:
+      id && !isFilesModified.file_pancard
+        ? data.file_pancard
+        : data.file_pancard?.name,
+    form_11: id && !isFilesModified.form_11 ? data.form_11 : data.form_11?.name,
+  };
+
   const { errors, handleSubmit, handleNewError } = FormC({
-    values: data,
+    values: {
+      ...params,
+    },
     onSubmit,
   });
 

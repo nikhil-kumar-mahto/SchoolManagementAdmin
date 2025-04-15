@@ -4,6 +4,7 @@ import Sidebar from "../Sidebar/Sidebar";
 import { SideBarLeft, SideBarRight } from "../../../assets/svgs";
 import Button from "../Button/Button";
 import { useAppContext } from "../../../contexts/AppContext";
+import Auth from "../../../utils/form-handling/auth.js";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -15,6 +16,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
   const handleLogout = () => {
     localStorage.clear();
+    Auth.clearToken();
     toggleIsLoggedIn();
   };
 

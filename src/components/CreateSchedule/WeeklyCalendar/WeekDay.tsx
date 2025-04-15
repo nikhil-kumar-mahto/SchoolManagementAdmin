@@ -3,12 +3,12 @@ import Button from "../../common/Button/Button";
 import TimeEntry from "../TimeEntry/TimeEntry";
 
 interface Time {
-  startTime: string;
-  endTime: string;
+  start_time: string;
+  end_time: string;
   subject: string;
   teacher: string;
   handleChange: (
-    type: "startTime" | "endTime" | "subject" | "teacher",
+    type: "start_time" | "end_time" | "subject" | "teacher",
     value: string
   ) => void;
   handleDelete: () => void;
@@ -22,7 +22,7 @@ type Props = {
   addItem: () => void;
   handleChange: (
     index: number,
-    type: "startTime" | "endTime" | "subject" | "teacher",
+    type: "start_time" | "end_time" | "subject" | "teacher",
     value: string
   ) => void;
   handleDelete: (index: number) => void;
@@ -46,12 +46,12 @@ const WeekDay: React.FC<Props> = ({
 
       {schedule.map((item, index) => (
         <TimeEntry
-          startTime={item.startTime}
-          endTime={item.endTime}
+          start_time={item.start_time}
+          end_time={item.end_time}
           subject={item.subject}
           teacher={item.teacher}
           handleChange={(
-            type: "startTime" | "endTime" | "subject" | "teacher",
+            type: "start_time" | "end_time" | "subject" | "teacher",
             value: string
           ) => handleChange(index, type, value)}
           handleDelete={() => handleDelete(index)}

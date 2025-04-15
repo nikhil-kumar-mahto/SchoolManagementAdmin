@@ -6,8 +6,8 @@ import Button from "../../common/Button/Button";
 type Options = { label: string; value: string };
 
 interface Time {
-  startTime: string;
-  endTime: string;
+  start_time: string;
+  end_time: string;
   subject: string;
   teacher: string;
 }
@@ -17,8 +17,8 @@ interface Props {
     schedule: {
       subject: string;
       teacher: string;
-      startTime: string;
-      endTime: string;
+      start_time: string;
+      end_time: string;
     }[];
     date: string;
   };
@@ -29,7 +29,7 @@ interface Props {
   schedule: Array<Time>;
   handleTimeChange: (
     index: number,
-    type: "startTime" | "endTime" | "subject" | "teacher",
+    type: "start_time" | "end_time" | "subject" | "teacher",
     value: string
   ) => void;
   addItem: () => void;
@@ -54,20 +54,20 @@ const DateSchedule: React.FC<Props> = ({
         onDateChange={(e: ChangeEvent<HTMLInputElement>) =>
           handleChange(e.target.value, "date")
         }
-        error={errors?.date && "Please select date."}
+        error={errors?.date}
       />
       {schedule.map((item, index) => (
         <TimeEntry
-          startTime={item.startTime}
-          endTime={item.endTime}
+          start_time={item.start_time}
+          end_time={item.end_time}
           subject={item.subject}
           teacher={item.teacher}
           handleChange={(
-            type: "startTime" | "endTime" | "subject" | "teacher",
+            type: "start_time" | "end_time" | "subject" | "teacher",
             value: string
           ) => handleTimeChange(index, type, value)}
           handleDelete={() => handleDelete(index)}
-          errors={errors?.[index]}
+          errors={errors?.schedule?.[index]}
           teachers={teachers}
         />
       ))}

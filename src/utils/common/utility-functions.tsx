@@ -45,26 +45,26 @@ export function generateTimeArray() {
   return timeArray;
 }
 
-export function filterTimeArray(startTime) {
-  if (startTime === "23:00") {
+export function filterTimeArray(start_time) {
+  if (start_time === "23:00") {
     return [{ value: "00:00", label: "12:00 AM" }];
   }
 
   const timeArray = generateTimeArray();
-  if (!startTime) {
+  if (!start_time) {
     return timeArray;
   }
 
   let startHour;
-  if (typeof startTime === "string") {
-    const parsedTime = moment(startTime, "HH:mm", true);
+  if (typeof start_time === "string") {
+    const parsedTime = moment(start_time, "HH:mm", true);
     if (parsedTime.isValid()) {
       startHour = parsedTime.hour();
     } else {
       throw new Error("Invalid time format. Please use 'HH:mm' format.");
     }
-  } else if (typeof startTime === "number") {
-    startHour = startTime;
+  } else if (typeof start_time === "number") {
+    startHour = start_time;
   } else {
     throw new Error(
       "Invalid input type. Please provide a number or a string in 'HH:mm' format."

@@ -1,7 +1,6 @@
 import React, { ChangeEvent, useEffect, useState } from "react";
 import Input from "../../components/common/Input/Input";
 import Button from "../../components/common/Button/Button";
-// import styles from "./CreateClass.module.css";
 import styles from "../../styles/Forms.module.css";
 import Layout from "../../components/common/Layout/Layout";
 import { useNavigate, useParams } from "react-router-dom";
@@ -96,9 +95,12 @@ const CreateClass: React.FC<Props> = () => {
     });
   };
 
+  const selectFields = ["school"];
+
   const { errors, handleSubmit, handleNewError } = FormC({
     values: data,
     onSubmit,
+    selectFields,
   });
 
   const handleSchoolChange = (value: string) => {
@@ -119,7 +121,7 @@ const CreateClass: React.FC<Props> = () => {
             value={data?.school}
             onChange={handleSchoolChange}
             className="w-25"
-            error={errors?.school && "Please select school."}
+            error={errors?.school}
           />
           <div className={styles.row}>
             <div className={styles.column}>

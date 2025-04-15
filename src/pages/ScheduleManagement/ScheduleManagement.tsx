@@ -14,8 +14,8 @@ import Button from "../../components/common/Button/Button";
 type Day = "Monday" | "Tuesday" | "Wednesday" | "Thursday" | "Friday";
 
 interface Time {
-  startTime: string;
-  endTime: string;
+  start_time: string;
+  end_time: string;
   subject: string;
   teacher: string;
 }
@@ -28,7 +28,7 @@ interface Props {
   Friday: Array<Time>;
 }
 
-const emptyObj = { startTime: "", endTime: "", teacher: "", subject: "" };
+const emptyObj = { start_time: "", end_time: "", teacher: "", subject: "" };
 
 // when user selects day
 const initialState = {
@@ -58,7 +58,7 @@ const ScheduleManagement: React.FC = () => {
   const [teachers, setTeachers] = useState([]);
   const [subjects, setSubjects] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-
+  
   const { id } = useParams();
 
   const toast = useToast();
@@ -122,7 +122,6 @@ const ScheduleManagement: React.FC = () => {
 
   const getClasses = (id: string) => {
     Fetch(`classes?school_id=${id}`).then((res: any) => {
-      console.log("res===", res);
       if (res.status) {
         let classes = res.data?.map(
           (item: { name: string; id: string; section: string }) => {
@@ -158,7 +157,7 @@ const ScheduleManagement: React.FC = () => {
   const handleChange = (
     day: Day,
     index: number,
-    type: "startTime" | "endTime" | "subject" | "teacher",
+    type: "start_time" | "end_time" | "subject" | "teacher",
     value: string
   ) => {
     setDayState((prevState) => {
@@ -247,6 +246,49 @@ const ScheduleManagement: React.FC = () => {
     });
   };
 
+  const convertForm = (obj: any) => {
+    if (viewMode === "day") {
+      let object = {
+        school_id: obj.school,
+        class_id: obj.class_assigned,
+        time_slots: Object.entries(obj.time_slots).reduce(
+          (acc, [day, daySlots]) => {
+            const slotsForDay = daySlots.map((slot) => ({
+              day_of_week: day,
+              start_time: slot.start_time,
+              end_time: slot.end_time,
+              teacher: slot.teacher,
+              subject: slot.subject,
+            }));
+            return [...acc, ...slotsForDay];
+          },
+          [] as {
+            day: string;
+            type: string;
+            start_time: string;
+            end_time: string;
+          }[]
+        ),
+      };
+      return object;
+    } else {
+      let object = {
+        school_id: obj.school,
+        class_id: obj.class_assigned,
+        time_slots: obj.time_slots.map((item) => {
+          return {
+            date: obj.date,
+            start_time: item.start_time,
+            end_time: item.end_time,
+            teacher: item.teacher,
+            subject: item.subject,
+          };
+        }),
+      };
+      return object;
+    }
+  };
+
   const onSubmit = () => {
     setIsLoading(true);
     let url = "";
@@ -274,6 +316,8 @@ const ScheduleManagement: React.FC = () => {
       };
     }
 
+    params = convertForm(params);
+
     Fetch(url, params, { method: id ? "patch" : "post" }).then((res: any) => {
       if (res.status) {
         showToast(
@@ -293,17 +337,46 @@ const ScheduleManagement: React.FC = () => {
     removeAllError();
   };
 
+  const selectFields = [
+    "school",
+    "class_assigned",
+    "start_time",
+    "end_time",
+    "teacher",
+    "subject",
+    "date",
+    "class",
+  ];
+
+  let params = {
+    school: commonInfo.school,
+    class: commonInfo.class_assigned,
+  };
+
+  console.log();
+
   const { errors, handleSubmit, handleNewError, removeAllError } = FormC({
-    values: viewMode === "day" ? dayState : dateState,
+    values:
+      viewMode === "day"
+        ? { ...dayState, ...params }
+        : { ...dateState, ...params },
     onSubmit,
+    selectFields,
   });
+
+  console.log(
+    "err===",
+    errors,
+    viewMode === "day"
+      ? { ...dayState, ...params }
+      : { ...dateState, ...params }
+  );
 
   return (
     <Layout>
       <form action="" onSubmit={handleSubmit}>
         <div className={styles.container}>
           <h2>{id ? "Update" : "Create"} Schedule</h2>
-
           <div className={`${styles.selectContainer} mt-4`}>
             <Select
               label="Select school*"
@@ -312,7 +385,7 @@ const ScheduleManagement: React.FC = () => {
               onChange={(value: string) =>
                 handlecommonInfoChange(value, "school")
               }
-              error={errors?.school && "Please select school."}
+              error={errors?.school}
             />
 
             <Select
@@ -322,7 +395,7 @@ const ScheduleManagement: React.FC = () => {
               onChange={(value: string) =>
                 handlecommonInfoChange(value, "class_assigned")
               }
-              error={errors?.class_assigned && "Please select class."}
+              error={errors?.class}
             />
           </div>
 
@@ -356,7 +429,7 @@ const ScheduleManagement: React.FC = () => {
                   addItem={() => addItem("day", key as Day)}
                   handleChange={(
                     index: number,
-                    type: "startTime" | "endTime" | "subject" | "teacher",
+                    type: "start_time" | "end_time" | "subject" | "teacher",
                     value: string
                   ) => handleChange(key as Day, index, type, value)}
                   handleDelete={(index: number) =>
@@ -380,7 +453,7 @@ const ScheduleManagement: React.FC = () => {
               }
               handleTimeChange={(
                 index: number,
-                type: "startTime" | "endTime" | "subject" | "teacher",
+                type: "start_time" | "end_time" | "subject" | "teacher",
                 value: string
               ) => handleTimeChange(index, type, value)}
               teachers={teachers}

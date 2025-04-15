@@ -243,7 +243,6 @@ function Teachers() {
     <Layout>
       <div
         style={{
-          // height: "calc(100vh - 9rem)",
           backgroundColor: "#f8f9fa",
           padding: "20px",
           marginTop: "20px",

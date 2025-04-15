@@ -8,12 +8,12 @@ import {
 import Select from "../../common/Select/Select";
 
 interface Time {
-  startTime: string;
-  endTime: string;
+  start_time: string;
+  end_time: string;
   subject: string;
   teacher: string;
   handleChange: (
-    type: "startTime" | "endTime" | "subject" | "teacher",
+    type: "start_time" | "end_time" | "subject" | "teacher",
     value: string
   ) => void;
   handleDelete: () => void;
@@ -22,8 +22,8 @@ interface Time {
 }
 
 const TimeEntry: React.FC<Time> = ({
-  startTime,
-  endTime,
+  start_time,
+  end_time,
   subject,
   teacher,
   handleChange,
@@ -41,21 +41,23 @@ const TimeEntry: React.FC<Time> = ({
     }
   );
 
+  console.log("checking errors===", errors);
+
   return (
     <div className={styles.timeAndSubject}>
       <Select
         label="Select start time*"
         options={generateTimeArray()}
-        value={startTime}
-        onChange={(value: string) => handleChange("startTime", value)}
-        error={errors?.startTime && "Please select start time."}
+        value={start_time}
+        onChange={(value: string) => handleChange("start_time", value)}
+        error={errors?.start_time}
       />
       <Select
         label="Select end time*"
-        options={filterTimeArray(startTime)}
-        value={endTime}
-        onChange={(value: string) => handleChange("endTime", value)}
-        error={errors?.endTime && "Please select end time."}
+        options={filterTimeArray(start_time)}
+        value={end_time}
+        onChange={(value: string) => handleChange("end_time", value)}
+        error={errors?.end_time}
       />
 
       <Select
@@ -63,7 +65,7 @@ const TimeEntry: React.FC<Time> = ({
         options={teachers}
         value={teacher}
         onChange={(value: string) => handleChange("teacher", value)}
-        error={errors?.teacher && "Please select teacher."}
+        error={errors?.teacher}
       />
 
       <Select
@@ -71,7 +73,7 @@ const TimeEntry: React.FC<Time> = ({
         options={subjectsFormatted}
         value={subject}
         onChange={(value: string) => handleChange("subject", value)}
-        error={errors?.subject && "Please select subject."}
+        error={errors?.subject}
       />
       <button className={styles.iconContainer} onClick={handleDelete}>
         <DeleteIcon />

@@ -21,6 +21,10 @@ class auth {
       return false;
     }
   }
+  clearToken() {
+    this.token = ""
+    localStorage.clear()
+  }
   removeStorage() {
     localStorage.clear();
     this.token = "";
