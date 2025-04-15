@@ -17,19 +17,10 @@ import CreateSchool from "./pages/Schools/CreateSchool";
 import Subjects from "./pages/Subject/Subject";
 import CreateSubject from "./pages/Subject/CreateSubject";
 import ScheduleManagement from "./pages/ScheduleManagement/ScheduleManagement";
+import { useAppContext } from "./contexts/AppContext";
 
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState<null | boolean>(null);
-
-  const isAuthenticated = () => {
-    const token = localStorage.getItem("authToken");
-    return !!token;
-  };
-
-  useEffect(() => {
-    // setIsLoggedIn(isAuthenticated());
-    setIsLoggedIn(true);
-  }, []);
+  const { isLoggedIn } = useAppContext();
 
   if (isLoggedIn === null) return <div>Loading...</div>;
 

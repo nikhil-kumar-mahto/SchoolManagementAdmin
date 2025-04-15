@@ -7,7 +7,7 @@ import { FormC } from "../../utils/form-handling/validate";
 import Fetch from "../../utils/form-handling/fetch";
 import { arrayString } from "../../utils/form-handling/arrayString";
 
-import { useNavigate } from "react-router-dom";
+import { useAppContext } from "../../contexts/AppContext";
 
 const initialState = {
   username: "",
@@ -17,7 +17,7 @@ const initialState = {
 const LoginScreen: React.FC = () => {
   const [data, setData] = useState(initialState);
   const [isLoading, setIsLoading] = useState(false);
-  const navigate = useNavigate();
+  const { toggleIsLoggedIn } = useAppContext();
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -35,7 +35,7 @@ const LoginScreen: React.FC = () => {
       if (res.status) {
         const { access } = res.data;
         localStorage.setItem("authToken", access);
-        navigate("/dashboard"); 
+        toggleIsLoggedIn();
       } else {
         let resErr = arrayString(res);
         handleNewError(resErr);

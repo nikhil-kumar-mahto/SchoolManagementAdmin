@@ -3,7 +3,6 @@ import styles from "./Layout.module.css";
 import Sidebar from "../Sidebar/Sidebar";
 import { SideBarLeft, SideBarRight } from "../../../assets/svgs";
 import Button from "../Button/Button";
-import { useNavigate } from "react-router-dom";
 import { useAppContext } from "../../../contexts/AppContext";
 
 interface LayoutProps {
@@ -12,11 +11,11 @@ interface LayoutProps {
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const { isSidebarOpen, toggleSidebar } = useAppContext();
-  const navigate = useNavigate();
+  const { toggleIsLoggedIn } = useAppContext();
 
   const handleLogout = () => {
     localStorage.clear();
-    navigate("/login");
+    toggleIsLoggedIn();
   };
 
   return (

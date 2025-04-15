@@ -16,7 +16,7 @@ type Day = "Monday" | "Tuesday" | "Wednesday" | "Thursday" | "Friday";
 interface Time {
   startTime: string;
   endTime: string;
-  subject: string;
+  subject: string;  
   teacher: string;
 }
 

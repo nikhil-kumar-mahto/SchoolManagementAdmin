@@ -5,6 +5,8 @@ type AppContextType = {
   isSidebarOpen: boolean;
   toggleSidebar: () => void;
   subjects: Array<Object>;
+  toggleIsLoggedIn: () => void;
+  isLoggedIn: boolean | null;
 };
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -16,6 +18,20 @@ type AppProviderProps = {
 const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [subjects, setSubjects] = useState([]);
+  const [isLoggedIn, setIsLoggedIn] = useState<null | boolean>(null);
+
+  const toggleIsLoggedIn = () => {
+    setIsLoggedIn((prevState) => !prevState);
+  };
+
+  const isAuthenticated = () => {
+    const token = localStorage.getItem("authToken");
+    return !!token;
+  };
+
+  useEffect(() => {
+    setIsLoggedIn(isAuthenticated());
+  }, []);
 
   const getSubjects = () => {
     Fetch("subjects/").then((res: any) => {
@@ -34,7 +50,15 @@ const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   };
 
   return (
-    <AppContext.Provider value={{ isSidebarOpen, toggleSidebar, subjects }}>
+    <AppContext.Provider
+      value={{
+        isSidebarOpen,
+        toggleSidebar,
+        subjects,
+        toggleIsLoggedIn,
+        isLoggedIn,
+      }}
+    >
       {children}
     </AppContext.Provider>
   );
