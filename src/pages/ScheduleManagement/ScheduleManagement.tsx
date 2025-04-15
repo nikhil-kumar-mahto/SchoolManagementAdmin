@@ -16,7 +16,7 @@ type Day = "Monday" | "Tuesday" | "Wednesday" | "Thursday" | "Friday";
 interface Time {
   startTime: string;
   endTime: string;
-  subject: string;  
+  subject: string;
   teacher: string;
 }
 
@@ -111,7 +111,7 @@ const ScheduleManagement: React.FC = () => {
       if (res.status) {
         let teachers = res.data?.map((item: { name: string; id: string }) => {
           return {
-            label: item?.name,
+            label: item?.first_name + " " + item?.last_name,
             value: item?.id,
           };
         });
@@ -120,8 +120,9 @@ const ScheduleManagement: React.FC = () => {
     });
   };
 
-  const getClasses = () => {
-    Fetch("classes/").then((res: any) => {
+  const getClasses = (id: string) => {
+    Fetch(`classes?school_id=${id}`).then((res: any) => {
+      console.log("res===", res);
       if (res.status) {
         let classes = res.data?.map(
           (item: { name: string; id: string; section: string }) => {
@@ -204,7 +205,6 @@ const ScheduleManagement: React.FC = () => {
   useEffect(() => {
     getSchools();
     getTeachers();
-    getClasses();
     getSubjects();
 
     if (id) {
@@ -217,6 +217,9 @@ const ScheduleManagement: React.FC = () => {
   };
 
   const handlecommonInfoChange = (value: string, type: string) => {
+    if (type === "school") {
+      getClasses(value);
+    }
     setCommonInfo((prevState) => {
       return {
         ...prevState,
@@ -252,7 +255,26 @@ const ScheduleManagement: React.FC = () => {
     } else {
       url = "schedule/";
     }
-    Fetch(url, dayState, { method: id ? "patch" : "post" }).then((res: any) => {
+
+    let params = {};
+
+    if (viewMode === "date") {
+      params = {
+        ...commonInfo,
+        ...dateState,
+        schedule_type: viewMode,
+        time_slots: dateState.schedule,
+      };
+      delete params.schedule;
+    } else {
+      params = {
+        ...commonInfo,
+        schedule_type: "week",
+        time_slots: dayState,
+      };
+    }
+
+    Fetch(url, params, { method: id ? "patch" : "post" }).then((res: any) => {
       if (res.status) {
         showToast(
           id ? "Schedule updated successfully" : "Schedule added successfully"
@@ -321,7 +343,7 @@ const ScheduleManagement: React.FC = () => {
               }`}
               onClick={() => changeViewMode("day")}
             >
-              Day
+              Week
             </button>
           </div>
 

@@ -30,12 +30,16 @@ const LoginScreen: React.FC = () => {
   };
 
   const onSubmit = () => {
+    // localStorage.setItem("token", "access12345");
+    // localStorage.setItem("refresh_token", "refresh12345");
+    // toggleIsLoggedIn();
+    localStorage.clear();
     setIsLoading(true);
     Fetch("login/", data, { method: "post" }).then((res: any) => {
       if (res.status) {
         const { access, refresh } = res.data;
-        localStorage.setItem("authToken", access);
-        localStorage.setItem("refresh", refresh);
+        localStorage.setItem("token", access);
+        localStorage.setItem("refresh_token", refresh);
         toggleIsLoggedIn();
       } else {
         let resErr = arrayString(res);

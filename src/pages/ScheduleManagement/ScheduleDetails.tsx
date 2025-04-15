@@ -74,7 +74,7 @@ const ScheduleList: React.FC<ScheduleListProps> = () => {
 
   const handleNavigate = (id: string = "") => {
     navigate(`/schedule/create${id ? `/${id}` : ""}`);
-  };
+  };  
 
   const handleDelete = () => {
     setIsLoading(true);
@@ -90,7 +90,7 @@ const ScheduleList: React.FC<ScheduleListProps> = () => {
     <Layout>
       <div
         style={{
-          height: "calc(100vh - 9rem)",
+          // height: "calc(100vh - 9rem)",
           backgroundColor: "#f8f9fa",
           padding: "20px",
           marginTop: "20px",
@@ -99,7 +99,7 @@ const ScheduleList: React.FC<ScheduleListProps> = () => {
       >
         <div className={styles.titleContainer}>
           <h2 className="mb-3">Schedule</h2>
-          <Button text="Create" onClick={handleNavigate} />
+          <Button text="Create" onClick={() => handleNavigate()} />
         </div>
 
         <div className={`${styles.selectContainer} mt-4`}>

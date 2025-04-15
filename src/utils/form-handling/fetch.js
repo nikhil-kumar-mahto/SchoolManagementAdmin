@@ -40,6 +40,7 @@ export default function Fetch(endPoint, params = {}, option = {}, isFile = false
   };
 
   const fetch = (token) => {
+    console.log('token===', token);
     return axios[method](
       url ? url : baseURL + endPoint,
       inFormData
@@ -64,9 +65,22 @@ export default function Fetch(endPoint, params = {}, option = {}, isFile = false
 
         return dataParse;
       })
-      .catch((err) => {
+      .catch(async (err) => {
         if (err?.response?.status === 500) {
           return { err: ["Something Went axiosWrong"], status: false };
+        } else if (err?.response?.status === 401) {
+          let errRes = {}
+          const newToken = await refreshToken();
+          if (newToken === 'expired') {
+            window.location.href = "/login";
+            errRes = { err: ["expired"], status: false };
+          } else if (newToken) {
+            errRes = await fetch(newToken);
+          } else {
+            errRes = { err: ["Unauthorized"], status: false };
+          }
+
+          return errRes
         } else {
           return { ...err?.response?.data, status: false };
         }
@@ -77,3 +91,46 @@ export default function Fetch(endPoint, params = {}, option = {}, isFile = false
   }
   return Auth.getAsyncToken().then((res) => fetch(res.token));
 }
+
+
+export async function refreshToken() {
+  const refresh_token = localStorage.getItem("refresh_token");
+  if (refresh_token) {
+    let expTime = decodeToken(refresh_token);
+    let expireToken = isTokenExpired(expTime)
+    if (expireToken) {
+      localStorage.clear();
+      return 'expired';
+    }
+  }
+  if (refresh_token) {
+    const refreshResponse = await axios.post(
+      `${apiUrl}accounts/refresh/`,
+      { refresh: refresh_token }
+    );
+    if (refreshResponse?.data?.access) {
+      const newToken = refreshResponse.data.access;
+      // const newRefreshToken = refreshResponse.data?.refresh
+      // localStorage.setItem("refresh_token") = newRefreshToken
+      localStorage.setItem("token", newToken);
+      return newToken;
+    } else {
+      return null;
+    }
+  }
+}
+export const isTokenExpired = (token) => {
+  const expirationTime = token.exp;
+
+  const currentTime = Math.floor(Date.now() / 1000);
+  return expirationTime < currentTime;
+}
+export const decodeToken = (token) => {
+  const a = token.split('.')[1];
+  const b = a.replace(/-/g, '+').replace(/_/g, '/');
+  const jsonPayload = decodeURIComponent(atob(b).split('').map(function (c) {
+    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+  }).join(''));
+
+  return JSON.parse(jsonPayload);
+};

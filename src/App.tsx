@@ -6,7 +6,6 @@ import {
 } from "react-router-dom";
 
 import LoginScreen from "./pages/authentication/Login";
-import { useEffect, useState } from "react";
 import Dashboard from "./pages/Dashboard";
 import CreateTeacher from "./pages/Teachers/CreateTeacher";
 import Teachers from "./pages/Teachers/Teachers";
