@@ -18,6 +18,8 @@ const ImagePicker: React.FC<ImagePickerProps> = ({
 }) => {
   const [fileName, setFileName] = useState<string | null>(value ? value : null);
 
+  console.log("filename====", fileName, value);
+
   useEffect(() => {
     if (!fileName) {
       setFileName(value);

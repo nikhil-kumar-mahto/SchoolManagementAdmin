@@ -1,4 +1,25 @@
+import { DeleteIcon } from "../../../assets/svgs";
 import { useAppContext } from "../../../contexts/AppContext";
+import styles from "./TimeEntry.module.css";
+import {
+  filterTimeArray,
+  generateTimeArray,
+} from "../../../utils/common/utility-functions";
+import Select from "../../common/Select/Select";
+
+interface Time {
+  startTime: string;
+  endTime: string;
+  subject: string;
+  teacher: string;
+  handleChange: (
+    type: "startTime" | "endTime" | "subject" | "teacher",
+    value: string
+  ) => void;
+  handleDelete: () => void;
+  teachers: Array<{ label: string; value: string }>;
+  errors: any;
+}
 
 const TimeEntry: React.FC<Time> = ({
   startTime,

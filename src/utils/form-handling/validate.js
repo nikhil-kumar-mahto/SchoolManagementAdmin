@@ -1,7 +1,8 @@
-import { useState, useEffect, FormEvent } from "react";
+import { useState, useEffect } from "react";
 export const validation = (data) => {
   let errors = {};
   for (const property in data) {
+    console.log('property====', data);
     if (!data[property]?.length && Array.isArray(data[property])) {
       errors[property] = `Please enter ${property?.split("_") ? property?.split("_").join(" ") + "." : property + "."
         }`;

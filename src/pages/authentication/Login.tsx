@@ -10,7 +10,7 @@ import { arrayString } from "../../utils/form-handling/arrayString";
 import { useNavigate } from "react-router-dom";
 
 const initialState = {
-  userName: "",
+  username: "",
   password: "",
 };
 
@@ -31,11 +31,11 @@ const LoginScreen: React.FC = () => {
 
   const onSubmit = () => {
     setIsLoading(true);
-    Fetch("apiurl", data, { method: "post" }).then((res: any) => {
+    Fetch("login/", data, { method: "post" }).then((res: any) => {
       if (res.status) {
         const { access } = res.data;
-        localStorage.setItem("token", access);
-        navigate("/dashboards");
+        localStorage.setItem("authToken", access);
+        navigate("/dashboard"); 
       } else {
         let resErr = arrayString(res);
         handleNewError(resErr);
@@ -45,7 +45,7 @@ const LoginScreen: React.FC = () => {
   };
 
   const { errors, handleSubmit, handleNewError } = FormC({
-    values: { email_or_phone: data.userName, password: data.password },
+    values: { email_or_phone: data.username, password: data.password },
     onSubmit,
   });
 
@@ -62,8 +62,8 @@ const LoginScreen: React.FC = () => {
 
             <Input
               label="Email / Phone"
-              name="userName"
-              value={data.userName}
+              name="username"
+              value={data.username}
               onChange={handleChange}
               placeholder="Please enter your email or phone number"
               error={errors?.email_or_phone}

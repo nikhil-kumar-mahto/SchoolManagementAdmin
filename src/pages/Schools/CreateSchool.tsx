@@ -179,7 +179,6 @@ const CreateSchool: React.FC<Props> = () => {
             <div className={styles.column}>
               <ImagePicker
                 label="Logo*"
-                // value={id ? data.logo : data.logo ? data.logo.name : null}
                 value={getValue()}
                 onChange={handleLogoChange}
                 error={errors?.logo}

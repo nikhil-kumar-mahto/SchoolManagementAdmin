@@ -20,6 +20,7 @@ import {
 } from "../../utils/common/utility-functions";
 import formStyles from "./Teachers.module.css";
 import DatePicker from "../../components/DatePicker/DatePicker";
+import ImagePicker from "../../components/common/ImagePicker/ImagePicker";
 
 interface Props {}
 
@@ -76,10 +77,10 @@ const initialState = {
   universal_account_number: "",
   gov_provident_fund: "",
   gov_provided_fund_number: "",
-  file_passbook: "",
-  file_adhaar: "",
-  file_pancard: "",
-  form_11: "",
+  // file_passbook: "",
+  // file_adhaar: "",
+  // file_pancard: "",
+  // form_11: "",
   academic_qualification: "",
   academic_university: "",
   specialization: "",
@@ -119,8 +120,6 @@ const CreateTeacher: React.FC<Props> = () => {
     });
   };
 
-  console.log("state===", data);
-
   const getSchools = () => {
     Fetch("schools/").then((res: any) => {
       if (res.status) {
@@ -155,18 +154,20 @@ const CreateTeacher: React.FC<Props> = () => {
     } else {
       url = "teachers/";
     }
-    Fetch(url, data, { method: id ? "put" : "post" }).then((res: any) => {
-      if (res.status) {
-        showToast(
-          id ? "Teacher updated successfully" : "Teacher added successfully"
-        );
-        navigate("/teachers");
-      } else {
-        let resErr = arrayString(res);
-        handleNewError(resErr);
+    Fetch(url, data, { method: id ? "put" : "post", inFormData: true }).then(
+      (res: any) => {
+        if (res.status) {
+          showToast(
+            id ? "Teacher updated successfully" : "Teacher added successfully"
+          );
+          navigate("/teachers");
+        } else {
+          let resErr = arrayString(res);
+          handleNewError(resErr);
+        }
+        setIsLoading(false);
       }
-      setIsLoading(false);
-    });
+    );
   };
 
   const { errors, handleSubmit, handleNewError } = FormC({
@@ -190,15 +191,35 @@ const CreateTeacher: React.FC<Props> = () => {
 
   const getMaxLength = (type: string) => {
     switch (type) {
-      case "family_age1":
+      case "phone":
         return 12;
-      case "age":
+      case "family_age1":
         return 3;
       default:
         return undefined;
     }
   };
-  
+
+  const getValue = (key: string) => {
+    if (id) {
+      return data?.[key];
+    } else {
+      if (data?.[key]) {
+        return data?.[key]?.name;
+      }
+    }
+    return null;
+  };
+
+  const handleFileChange = (file: File | null, key: string) => {
+    console.log("key===", key);
+
+    setData((prevData: any) => ({
+      ...prevData,
+      [key]: file,
+    }));
+  };
+
   return (
     <Layout>
       <form action="" onSubmit={handleSubmit}>
@@ -304,6 +325,25 @@ const CreateTeacher: React.FC<Props> = () => {
                         ).toLocaleLowerCase()}.`
                       }
                       className="w-100"
+                    />
+                  );
+                } else if (
+                  key === "file_passbook" ||
+                  key === "file_adhaar" ||
+                  key === "file_pancard" ||
+                  key === "form_11"
+                ) {
+                  return (
+                    <ImagePicker
+                      key={key}
+                      label={`${mapKeyToLabel(key)}*`}
+                      value={getValue(key)}
+                      onChange={(file: File | null) =>
+                        handleFileChange(file, key)
+                      }
+                      error={
+                        errors?.[key] && `Please upload ${mapKeyToLabel(key)}`
+                      }
                     />
                   );
                 }

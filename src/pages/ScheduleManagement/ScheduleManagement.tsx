@@ -30,6 +30,7 @@ interface Props {
 
 const emptyObj = { startTime: "", endTime: "", teacher: "", subject: "" };
 
+// when user selects day
 const initialState = {
   Monday: [emptyObj],
   Tuesday: [emptyObj],
@@ -38,29 +39,25 @@ const initialState = {
   Friday: [emptyObj],
 };
 
+// when user selects date
 const initialState2 = {
-  school: "",
-  class_assigned: "",
-  subject: "",
-  teacher: "",
-  start_time: "",
-  end_time: "",
   date: "",
+  schedule: [emptyObj],
 };
 
 const ScheduleManagement: React.FC = () => {
-  const [data, setData] = useState<Props>(initialState);
+  const [commonInfo, setCommonInfo] = useState({
+    school: "",
+    class_assigned: "",
+  });
+  const [dayState, setDayState] = useState<Props>(initialState); // when user selects day
+  const [dateState, setDateState] = useState(initialState2); // when user selects date
   const [viewMode, setViewMode] = useState<"date" | "day">("date");
   const [classes, setClasses] = useState([]);
   const [schools, setSchools] = useState([]);
   const [teachers, setTeachers] = useState([]);
   const [subjects, setSubjects] = useState([]);
-  const [otherInfo, setOtherInfo] = useState({
-    school: "",
-    teacher: "",
-  });
   const [isLoading, setIsLoading] = useState(false);
-  const [dateState, setDateState] = useState(initialState2);
 
   const { id } = useParams();
 
@@ -75,7 +72,6 @@ const ScheduleManagement: React.FC = () => {
   const getScheduleInfo = () => {
     Fetch(`schedule/${id}/`).then((res: any) => {
       if (res.status) {
-        // setData(res.data);
       }
     });
   };
@@ -140,13 +136,22 @@ const ScheduleManagement: React.FC = () => {
     });
   };
 
-  const addItem = (day: Day) => {
-    setData((prevState) => {
-      return {
-        ...prevState,
-        [day]: [...prevState[day], emptyObj],
-      };
-    });
+  const addItem = (type: "day" | "date", day: Day = "Monday") => {
+    if (type === "day") {
+      setDayState((prevState) => {
+        return {
+          ...prevState,
+          [day]: [...prevState[day], emptyObj],
+        };
+      });
+    } else {
+      setDateState((prevState) => {
+        return {
+          ...prevState,
+          schedule: [...prevState.schedule, emptyObj],
+        };
+      });
+    }
   };
 
   const handleChange = (
@@ -155,7 +160,7 @@ const ScheduleManagement: React.FC = () => {
     type: "startTime" | "endTime" | "subject" | "teacher",
     value: string
   ) => {
-    setData((prevState) => {
+    setDayState((prevState) => {
       const updatedDay = [...prevState[day]];
       const updatedTime = { ...updatedDay[index] };
 
@@ -169,24 +174,31 @@ const ScheduleManagement: React.FC = () => {
     });
   };
 
-  const handleDateStateChange = (value: string, type: string) => {
-    setDateState((prevData) => ({
-      ...prevData,
-      [type]: value,
-      ...(type === "start_time" && { end_time: "" }),
-    }));
-  };
+  const handleDelete = (
+    index: number,
+    type: "day" | "date",
+    day: Day = "Monday"
+  ) => {
+    if (type === "day") {
+      setDayState((prevState) => {
+        const updatedDay = [...prevState[day]];
+        updatedDay.splice(index, 1);
 
-  const handleDelete = (day: Day, index: number) => {
-    setData((prevState) => {
-      const updatedDay = [...prevState[day]];
-      updatedDay.splice(index, 1);
-
-      return {
-        ...prevState,
-        [day]: updatedDay,
-      };
-    });
+        return {
+          ...prevState,
+          [day]: updatedDay,
+        };
+      });
+    } else {
+      setDateState((prevState) => {
+        const schedule = [...prevState.schedule];
+        schedule.splice(index, 1);
+        return {
+          ...prevState,
+          schedule: schedule,
+        };
+      });
+    }
   };
 
   useEffect(() => {
@@ -204,11 +216,30 @@ const ScheduleManagement: React.FC = () => {
     navigate("/schedule");
   };
 
-  const handleOtherInfoChange = (value: string, type: string) => {
-    setOtherInfo((prevState) => {
+  const handlecommonInfoChange = (value: string, type: string) => {
+    setCommonInfo((prevState) => {
       return {
         ...prevState,
         [type]: value,
+      };
+    });
+  };
+
+  const handleTimeChange = (index: number, type: string, val: string) => {
+    setDateState((prevState) => {
+      const updatedSchedule = prevState.schedule.map((item, i) => {
+        if (i === index) {
+          return {
+            ...item,
+            [type]: val,
+          };
+        }
+        return item;
+      });
+
+      return {
+        ...prevState,
+        schedule: updatedSchedule,
       };
     });
   };
@@ -221,7 +252,7 @@ const ScheduleManagement: React.FC = () => {
     } else {
       url = "schedule/";
     }
-    Fetch(url, data, { method: id ? "patch" : "post" }).then((res: any) => {
+    Fetch(url, dayState, { method: id ? "patch" : "post" }).then((res: any) => {
       if (res.status) {
         showToast(
           id ? "Schedule updated successfully" : "Schedule added successfully"
@@ -241,7 +272,7 @@ const ScheduleManagement: React.FC = () => {
   };
 
   const { errors, handleSubmit, handleNewError, removeAllError } = FormC({
-    values: viewMode === "day" ? data : dateState,
+    values: viewMode === "day" ? dayState : dateState,
     onSubmit,
   });
 
@@ -255,9 +286,9 @@ const ScheduleManagement: React.FC = () => {
             <Select
               label="Select school*"
               options={schools}
-              value={otherInfo?.school}
+              value={commonInfo?.school}
               onChange={(value: string) =>
-                handleOtherInfoChange(value, "school")
+                handlecommonInfoChange(value, "school")
               }
               error={errors?.school && "Please select school."}
             />
@@ -265,9 +296,9 @@ const ScheduleManagement: React.FC = () => {
             <Select
               label="Select class*"
               options={classes}
-              value={dateState?.class_assigned}
+              value={commonInfo.class_assigned}
               onChange={(value: string) =>
-                handleOtherInfoChange(value, "class_assigned")
+                handlecommonInfoChange(value, "class_assigned")
               }
               error={errors?.class_assigned && "Please select class."}
             />
@@ -296,18 +327,18 @@ const ScheduleManagement: React.FC = () => {
 
           {viewMode === "day" ? (
             <>
-              {Object.entries(data).map(([key, value]) => (
+              {Object.entries(dayState).map(([key, value]) => (
                 <WeekDay
                   day={key}
                   schedule={value}
-                  addItem={() => addItem(key as Day)}
+                  addItem={() => addItem("day", key as Day)}
                   handleChange={(
                     index: number,
                     type: "startTime" | "endTime" | "subject" | "teacher",
                     value: string
                   ) => handleChange(key as Day, index, type, value)}
                   handleDelete={(index: number) =>
-                    handleDelete(key as Day, index)
+                    handleDelete(index, "day", key as Day)
                   }
                   errors={errors?.[key]}
                   teachers={teachers}
@@ -318,13 +349,24 @@ const ScheduleManagement: React.FC = () => {
             <DateSchedule
               dateState={dateState}
               handleChange={(value: string, type: string) =>
-                handleDateStateChange(value, type)
+                setDateState((prevState) => {
+                  return {
+                    ...prevState,
+                    [type]: value,
+                  };
+                })
               }
-              schools={schools}
+              handleTimeChange={(
+                index: number,
+                type: "startTime" | "endTime" | "subject" | "teacher",
+                value: string
+              ) => handleTimeChange(index, type, value)}
               teachers={teachers}
-              classes={classes}
               subjects={subjects}
               errors={errors}
+              schedule={dateState.schedule}
+              addItem={() => addItem("date")}
+              handleDelete={(index: number) => handleDelete(index, "date")}
             />
           )}
           <div className={styles.buttonContainer}>
