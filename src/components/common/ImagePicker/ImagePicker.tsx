@@ -7,6 +7,7 @@ interface ImagePickerProps {
   onChange: (file: File | null) => void;
   className?: string;
   error?: string;
+  componentKey?: string;
 }
 
 const ImagePicker: React.FC<ImagePickerProps> = ({
@@ -15,10 +16,9 @@ const ImagePicker: React.FC<ImagePickerProps> = ({
   onChange,
   className,
   error,
+  componentKey,
 }) => {
   const [fileName, setFileName] = useState<string | null>(value ? value : null);
-
-  console.log("filename====", fileName, value);
 
   useEffect(() => {
     if (!fileName) {
@@ -43,12 +43,15 @@ const ImagePicker: React.FC<ImagePickerProps> = ({
       <div className={styles.inputWrapper}>
         <input
           type="file"
-          id="imageInput"
+          id={`imageInput-${componentKey}`}
           accept="image/*"
           onChange={handleFileChange}
           className={styles.input}
         />
-        <label htmlFor="imageInput" className={`${styles.fileLabel} mb-0`}>
+        <label
+          htmlFor={`imageInput-${componentKey}`}
+          className={`${styles.fileLabel} mb-0`}
+        >
           {fileName ? fileName : "Choose File"}
         </label>
       </div>

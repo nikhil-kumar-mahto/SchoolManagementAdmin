@@ -33,8 +33,9 @@ const LoginScreen: React.FC = () => {
     setIsLoading(true);
     Fetch("login/", data, { method: "post" }).then((res: any) => {
       if (res.status) {
-        const { access } = res.data;
+        const { access, refresh } = res.data;
         localStorage.setItem("authToken", access);
+        localStorage.setItem("refresh", refresh);
         toggleIsLoggedIn();
       } else {
         let resErr = arrayString(res);

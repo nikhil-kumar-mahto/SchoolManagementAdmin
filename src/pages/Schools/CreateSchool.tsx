@@ -182,6 +182,7 @@ const CreateSchool: React.FC<Props> = () => {
                 value={getValue()}
                 onChange={handleLogoChange}
                 error={errors?.logo}
+                componentKey="logo"
               />
             </div>
             <div className={styles.column}>

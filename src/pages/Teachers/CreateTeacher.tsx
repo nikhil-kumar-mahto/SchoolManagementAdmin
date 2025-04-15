@@ -77,10 +77,10 @@ const initialState = {
   universal_account_number: "",
   gov_provident_fund: "",
   gov_provided_fund_number: "",
-  // file_passbook: "",
-  // file_adhaar: "",
-  // file_pancard: "",
-  // form_11: "",
+  file_passbook: "",
+  file_adhaar: "",
+  file_pancard: "",
+  form_11: "",
   academic_qualification: "",
   academic_university: "",
   specialization: "",
@@ -100,6 +100,12 @@ const CreateTeacher: React.FC<Props> = () => {
   const [data, setData] = useState(initialState);
   const [isLoading, setIsLoading] = useState(false);
   const [schools, setSchools] = useState([]);
+  const [isFilesModified, setIsFilesModified] = useState({
+    file_passbook: false,
+    file_adhaar: false,
+    file_pancard: false,
+    form_11: false,
+  });
 
   const excludedKeys: string[] = ["school_id", "id", "school", "user"];
 
@@ -154,7 +160,26 @@ const CreateTeacher: React.FC<Props> = () => {
     } else {
       url = "teachers/";
     }
-    Fetch(url, data, { method: id ? "put" : "post", inFormData: true }).then(
+
+    let params = { ...data };
+
+    // dont include these fields if they have not been changed in edit mode
+    if (id) {
+      const fieldsToDelete = [
+        "file_adhaar",
+        "file_pancard",
+        "file_passbook",
+        "form_11",
+      ];
+
+      fieldsToDelete.forEach((key) => {
+        if (!isFilesModified[key]) {
+          delete params[key];
+        }
+      });
+    }
+
+    Fetch(url, params, { method: id ? "put" : "post", inFormData: true }).then(
       (res: any) => {
         if (res.status) {
           showToast(
@@ -212,8 +237,14 @@ const CreateTeacher: React.FC<Props> = () => {
   };
 
   const handleFileChange = (file: File | null, key: string) => {
-    console.log("key===", key);
-
+    if (id) {
+      setIsFilesModified((prevState) => {
+        return {
+          ...prevState,
+          [key]: true,
+        };
+      });
+    }
     setData((prevData: any) => ({
       ...prevData,
       [key]: file,
@@ -336,11 +367,12 @@ const CreateTeacher: React.FC<Props> = () => {
                   return (
                     <ImagePicker
                       key={key}
+                      componentKey={key}
                       label={`${mapKeyToLabel(key)}*`}
                       value={getValue(key)}
-                      onChange={(file: File | null) =>
-                        handleFileChange(file, key)
-                      }
+                      onChange={(file: File | null) => {
+                        handleFileChange(file, key);
+                      }}
                       error={
                         errors?.[key] && `Please upload ${mapKeyToLabel(key)}`
                       }

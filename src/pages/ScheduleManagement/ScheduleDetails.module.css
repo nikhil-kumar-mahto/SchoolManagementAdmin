@@ -1,0 +1,75 @@
+.scheduleListContainer {
+    font-family: "Arial", sans-serif;
+    padding: 20px;
+}
+
+.scheduleItem {
+    border: 1px solid #ccc;
+    margin-bottom: 20px;
+    padding: 15px;
+    border-radius: 5px;
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.schoolClassInfo {
+    margin-bottom: 15px;
+    font-weight: bold;
+    font-size: 16px;
+    color: #333;
+}
+
+.scheduleTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.scheduleTable th,
+.scheduleTable td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: left;
+    font-size: 14px;
+}
+
+.scheduleTable th {
+    background-color: #f4f4f4;
+    font-weight: bold;
+    color: #333;
+}
+
+.scheduleTable tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.scheduleTable tr:hover {
+    background-color: #f1f1f1;
+}
+
+.dayCell {
+    font-weight: bold;
+    text-transform: capitalize;
+    background-color: #f9f9f9;
+}
+
+.emptySchedule {
+    text-align: center;
+    font-style: italic;
+    color: #777;
+}
+
+.titleContainer {
+    display: flex;
+    justify-content: space-between;
+}
+
+.selectContainer {
+    display: flex;
+    gap: 1rem;
+}
+
+.buttonContainer {
+    display: flex;
+    gap: 1rem;
+}
