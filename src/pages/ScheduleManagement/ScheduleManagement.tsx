@@ -58,7 +58,7 @@ const ScheduleManagement: React.FC = () => {
   const [teachers, setTeachers] = useState([]);
   const [subjects, setSubjects] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  
+
   const { id } = useParams();
 
   const toast = useToast();

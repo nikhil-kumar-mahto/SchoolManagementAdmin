@@ -7,6 +7,8 @@ import Select from "../../components/common/Select/Select";
 import Fetch from "../../utils/form-handling/fetch";
 import { useToast } from "../../contexts/Toast";
 import Modal from "../../components/common/Modal/Modal";
+import Loader from "../../components/common/Loader/Loader";
+import { DeleteIcon, EditIcon } from "../../assets/svgs";
 
 interface ScheduleListProps {}
 
@@ -21,6 +23,8 @@ const ScheduleList: React.FC<ScheduleListProps> = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [schedule, setSchedule] = useState<any>({});
   const [classId, setClassId] = useState("");
+  const [isTableLoading, setIsTableLoading] = useState(false);
+  const [deleteRequestId, setDeleteRequestId] = useState("");
 
   const toast = useToast();
 
@@ -39,8 +43,6 @@ const ScheduleList: React.FC<ScheduleListProps> = () => {
         teacher: slot.teacher?.first_name + " " + slot.teacher?.last_name,
         subject: slot.subject?.name,
       };
-
-      console.log("slot====", slot);
 
       if (slot.day_of_week) {
         const day = slot.day_of_week;
@@ -64,10 +66,12 @@ const ScheduleList: React.FC<ScheduleListProps> = () => {
   };
 
   const getSchedule = (classId: string) => {
+    setIsTableLoading(true);
     Fetch(`schedule/${classId}/`).then((res: any) => {
       if (res.status) {
         setSchedule(convertResponse(res?.data) || {});
       }
+      setIsTableLoading(false);
     });
   };
 
@@ -106,6 +110,7 @@ const ScheduleList: React.FC<ScheduleListProps> = () => {
   }, []);
 
   const handleChange = (value: string, type: string) => {
+    setSchedule({});
     if (type === "school") {
       getClasses(value);
     }
@@ -135,14 +140,17 @@ const ScheduleList: React.FC<ScheduleListProps> = () => {
 
   const handleDelete = () => {
     setIsLoading(true);
-    Fetch(`schedule/${classId}/`, {}, { method: "delete" }).then((res: any) => {
-      if (res.status) {
-        setShowModal(false);
-        setSchedule({});
-        showToast();
+    // earlier classId was passed in place of deleteRequestId
+    Fetch(`schedule/${deleteRequestId}/`, {}, { method: "delete" }).then(
+      (res: any) => {
+        if (res.status) {
+          setShowModal(false);
+          setSchedule({});
+          showToast();
+        }
+        setIsLoading(false);
       }
-      setIsLoading(false);
-    });
+    );
   };
 
   return (
@@ -176,15 +184,34 @@ const ScheduleList: React.FC<ScheduleListProps> = () => {
             onChange={(value: string) => handleChange(value, "class")}
           />
         </div>
-        <div className={styles.schoolClassInfo}></div>
+        {!isTableLoading && !data.class && (
+          <h5 className="flex-center my-5 ">
+            Please select a class to view the timetable
+          </h5>
+        )}
+        {!isTableLoading &&
+          Object.keys(schedule).length === 0 &&
+          data.class && (
+            <h5 className="flex-center my-5">
+              No timetable available. Please create one
+            </h5>
+          )}
+
+        {isTableLoading && (
+          <div className="mt-4">
+            <Loader text="Loading data..." className="flex-center w-100" />
+          </div>
+        )}
+
         {Object.entries(schedule).length > 0 && (
           <table className={styles.scheduleTable}>
             <thead>
               <tr>
                 <th>Day</th>
-                <th>Time</th>
                 <th>Teacher</th>
                 <th>Subject</th>
+                <th>Time</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -201,9 +228,32 @@ const ScheduleList: React.FC<ScheduleListProps> = () => {
                             {day}
                           </td>
                         )}
-                        <td>{`${slot.start_time} - ${slot.end_time}`}</td>
                         <td>{slot.teacher}</td>
                         <td>{slot.subject}</td>
+                        <td>{`${slot.start_time} - ${slot.end_time}`}</td>
+                        <td>
+                          <button
+                            style={{
+                              border: "none",
+                              background: "none",
+                              cursor: "pointer",
+                            }}
+                            className="mr-3"
+                            onClick={() => setDeleteRequestId(slot?.id)}
+                          >
+                            <DeleteIcon size={20} color="#d32f2f" />
+                          </button>
+                          <button
+                            style={{
+                              border: "none",
+                              background: "none",
+                              cursor: "pointer",
+                            }}
+                            onClick={() => handleNavigate(slot?.id)}
+                          >
+                            <EditIcon size={20} color="#1976d2" />
+                          </button>
+                        </td>
                       </tr>
                     ))
                   ) : (
@@ -219,7 +269,7 @@ const ScheduleList: React.FC<ScheduleListProps> = () => {
             </tbody>
           </table>
         )}
-
+        {/* 
         {Object.entries(schedule).length > 0 && (
           <div className={`${styles.buttonContainer} mt-4`}>
             <Button
@@ -238,7 +288,7 @@ const ScheduleList: React.FC<ScheduleListProps> = () => {
               }}
             />
           </div>
-        )}
+        )} */}
       </div>
       <Modal
         title="Confirm!"

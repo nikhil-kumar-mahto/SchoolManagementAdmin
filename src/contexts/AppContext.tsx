@@ -30,7 +30,8 @@ const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   };
 
   useEffect(() => {
-    setIsLoggedIn(isAuthenticated());
+    // setIsLoggedIn(isAuthenticated());
+    setIsLoggedIn(true)
   }, []);
 
   const getSubjects = () => {
