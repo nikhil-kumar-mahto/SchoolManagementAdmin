@@ -5,6 +5,7 @@ type AppContextType = {
   isSidebarOpen: boolean;
   toggleSidebar: () => void;
   subjects: Array<Object>;
+  schools: Array<Object>;
   toggleIsLoggedIn: () => void;
   isLoggedIn: boolean | null;
 };
@@ -19,6 +20,7 @@ const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [subjects, setSubjects] = useState([]);
   const [isLoggedIn, setIsLoggedIn] = useState<null | boolean>(null);
+  const [schools, setSchools] = useState([]);
 
   const toggleIsLoggedIn = () => {
     setIsLoggedIn((prevState) => !prevState);
@@ -34,6 +36,20 @@ const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     // setIsLoggedIn(true)
   }, []);
 
+  const getSchools = () => {
+    Fetch("schools/").then((res: any) => {
+      if (res.status) {
+        let schools = res.data?.map((item: { name: string; id: string }) => {
+          return {
+            label: item?.name,
+            value: item?.id,
+          };
+        });
+        setSchools(schools);
+      }
+    });
+  };
+
   const getSubjects = () => {
     Fetch("subjects/").then((res: any) => {
       if (res.status) {
@@ -43,8 +59,11 @@ const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   };
 
   useEffect(() => {
-    getSubjects();
-  }, []);
+    if (isLoggedIn) {
+      getSubjects();
+      getSchools();
+    }
+  }, [isLoggedIn]);
 
   const toggleSidebar = () => {
     setIsSidebarOpen((prevState) => !prevState);
@@ -56,6 +75,7 @@ const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
         isSidebarOpen,
         toggleSidebar,
         subjects,
+        schools,
         toggleIsLoggedIn,
         isLoggedIn,
       }}

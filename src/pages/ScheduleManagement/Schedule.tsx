@@ -8,24 +8,62 @@ import { useEffect, useState } from "react";
 import Fetch from "../../utils/form-handling/fetch";
 import { useToast } from "../../contexts/Toast";
 import Modal from "../../components/common/Modal/Modal";
+import { useAppContext } from "../../contexts/AppContext";
+import Select from "../../components/common/Select/Select";
 
 function Class() {
   const [data, setData] = useState([]);
+  const [filteredData, setFilteredData] = useState([]);
   const [isLoading, setIsLoading] = useState<"listing" | "delete" | "">("");
   const [showModal, setShowModal] = useState(false);
   const [itemToDelete, setItemToDelete] = useState("");
   const navigate = useNavigate();
   const toast = useToast();
+  const [classes, setClasses] = useState([]);
+  const [selectedSchool, setSelectedSchool] = useState("");
+  const [selectedClass, setSelectedClass] = useState("");
+
+  const { schools } = useAppContext();
 
   const showToast = () => {
     toast.show("Schedule deleted successfully", 2000, "#dc3545");
+  };
+
+  const getClasses = (id: string) => {
+    Fetch(`classes?school_id=${id}`).then((res: any) => {
+      if (res.status) {
+        let classes = res.data?.map(
+          (item: { name: string; id: string; section: string }) => {
+            return {
+              label: item?.name + " " + item?.section,
+              value: item?.id,
+            };
+          }
+        );
+        setClasses(classes);
+      }
+    });
+  };
+
+  const selectClass = (id: string) => {
+    // modify data in this
+    let filteredData = data.filter((item) => item.id === id);
+    setFilteredData(filteredData);
+    setSelectedClass(id);
+  };
+
+  const selectSchool = (id: string) => {
+    setSelectedClass("");
+    getClasses(id);
+    setSelectedSchool(id);
   };
 
   const getData = () => {
     setIsLoading("listing");
     Fetch("schedule/").then((res: any) => {
       if (res.status) {
-        setData(res.data);
+        setData(res.data.filter((item) => item?.time_slots.length > 0));
+        setFilteredData(res.data.filter((item) => item?.time_slots.length > 0));
       }
       setIsLoading("");
     });
@@ -84,7 +122,7 @@ function Class() {
       header: "Actions",
       render: (item: any) => (
         <div>
-          <button
+          {/* <button
             style={{
               border: "none",
               background: "none",
@@ -94,7 +132,7 @@ function Class() {
             onClick={() => handleDeleteRequest(item?.id)}
           >
             <DeleteIcon size={20} color="#d32f2f" />
-          </button>
+          </button> */}
           <button
             style={{ border: "none", background: "none", cursor: "pointer" }}
             onClick={() => handleEdit(item?.id)}
@@ -130,8 +168,24 @@ function Class() {
           <Button text="Create" onClick={handleNavigate} />
         </div>
 
+        <div className={`${styles.selectContainer} mt-4`}>
+          <Select
+            label="Select school"
+            options={schools as { value: string; label: string }[]}
+            value={selectedSchool}
+            onChange={selectSchool}
+          />
+
+          <Select
+            label="Select class"
+            options={classes}
+            value={selectedClass}
+            onChange={selectClass}
+          />
+        </div>
+
         <DataTable
-          data={data}
+          data={filteredData}
           columns={columns}
           itemsPerPage={10}
           isLoading={isLoading === "listing"}

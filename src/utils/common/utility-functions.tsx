@@ -31,49 +31,89 @@ export function getIdFromUrl(url: any) {
   return false;
 }
 
+// export function generateTimeArray() {
+//   const timeArray = [];
+
+//   for (let hour = 0; hour < 24; hour++) {
+//     const time = moment({ hour });
+//     timeArray.push({
+//       value: time.format("HH:mm"),
+//       label: time.format("hh:mm A"),
+//     });
+//   }
+
+//   return timeArray;
+// }
+
 export function generateTimeArray() {
   const timeArray = [];
+  const interval = 15; // 15 minutes
 
   for (let hour = 0; hour < 24; hour++) {
-    const time = moment({ hour });
-    timeArray.push({
-      value: time.format("HH:mm"),
-      label: time.format("hh:mm A"),
-    });
+    for (let minute = 0; minute < 60; minute += interval) {
+      const time = moment({ hour, minute });
+      timeArray.push({
+        value: time.format("HH:mm"),
+        label: time.format("hh:mm A"),
+      });
+    }
   }
 
   return timeArray;
 }
 
-export function filterTimeArray(start_time) {
-  if (start_time === "23:00") {
-    return [{ value: "00:00", label: "12:00 AM" }];
-  }
+// export function filterTimeArray(start_time) {
+//   if (start_time === "23:00") {
+//     return [{ value: "00:00", label: "12:00 AM" }];
+//   }
 
+//   const timeArray = generateTimeArray();
+//   if (!start_time) {
+//     return timeArray;
+//   }
+
+//   let startHour;
+//   if (typeof start_time === "string") {
+//     const parsedTime = moment(start_time, "HH:mm", true);
+//     if (parsedTime.isValid()) {
+//       startHour = parsedTime.hour();
+//     } else {
+//       throw new Error("Invalid time format. Please use 'HH:mm' format.");
+//     }
+//   } else if (typeof start_time === "number") {
+//     startHour = start_time;
+//   } else {
+//     throw new Error(
+//       "Invalid input type. Please provide a number or a string in 'HH:mm' format."
+//     );
+//   }
+
+//   return timeArray.filter((time) => {
+//     const hour = parseInt(time.value.split(":")[0], 10);
+//     return hour > startHour;
+//   });
+// }
+
+export function filterTimeArray(start_time) {
   const timeArray = generateTimeArray();
+
   if (!start_time) {
     return timeArray;
   }
 
-  let startHour;
-  if (typeof start_time === "string") {
-    const parsedTime = moment(start_time, "HH:mm", true);
-    if (parsedTime.isValid()) {
-      startHour = parsedTime.hour();
-    } else {
-      throw new Error("Invalid time format. Please use 'HH:mm' format.");
-    }
-  } else if (typeof start_time === "number") {
-    startHour = start_time;
-  } else {
-    throw new Error(
-      "Invalid input type. Please provide a number or a string in 'HH:mm' format."
-    );
+  const parsedStartTime = moment(start_time, "HH:mm", true);
+
+  if (!parsedStartTime.isValid()) {
+    throw new Error("Invalid time format. Please use 'HH:mm' format.");
+  }
+
+  if (parsedStartTime.isSameOrAfter(moment({ hour: 23, minute: 0 }))) {
+    return [{ value: "00:00", label: "12:00 AM" }];
   }
 
   return timeArray.filter((time) => {
-    const hour = parseInt(time.value.split(":")[0], 10);
-    return hour > startHour;
+    const currentTime = moment(time.value, "HH:mm");
+    return currentTime.isAfter(parsedStartTime);
   });
 }
 

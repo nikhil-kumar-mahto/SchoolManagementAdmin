@@ -68,7 +68,6 @@ const ScheduleManagement: React.FC = () => {
   const [subjects, setSubjects] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [deletedTimeSlots, setDeletedTimeSlots] = useState([]);
-  const [extraTimeSlots, setExtraTimeSlots] = useState([]);
 
   const { id } = useParams();
 
@@ -432,14 +431,6 @@ const ScheduleManagement: React.FC = () => {
     }
   };
 
-  const convertAccordingToPutRequest = (obj: any) => {
-    let object = {
-      school_id: obj.school_id,
-      deleted_time_slots: deletedTimeSlots,
-      // time_slots: obj?.time_slots?.filter(item =>)
-    };
-  };
-
   const onSubmit = () => {
     setIsLoading(true);
     let url = "";
@@ -468,8 +459,6 @@ const ScheduleManagement: React.FC = () => {
     }
 
     params = convertForm(params);
-
-    // params = convertAccordingToPutRequest(params);
 
     if (id) {
       params = {
