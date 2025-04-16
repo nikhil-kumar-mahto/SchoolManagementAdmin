@@ -2,6 +2,7 @@ import React, { ChangeEvent } from "react";
 import DatePicker from "../../DatePicker/DatePicker";
 import TimeEntry from "../TimeEntry/TimeEntry";
 import Button from "../../common/Button/Button";
+import { PlusCircleIcon } from "../../../assets/svgs";
 
 type Options = { label: string; value: string };
 
@@ -48,6 +49,25 @@ const DateSchedule: React.FC<Props> = ({
 }) => {
   return (
     <div className="mt-4">
+      <div style={{ display: "flex", justifyContent: "space-between" }}>
+        <h4>Select Date</h4>
+        <button
+          onClick={addItem}
+          style={{
+            width: "1.875rem",
+            height: "1.875rem",
+            border: "none",
+            outline: "none",
+            background: "none",
+            cursor: "pointer",
+          }}
+          type="button"   
+        >
+          <PlusCircleIcon />
+        </button>
+      </div>
+
+      <p className="mt-2">Enter schedule for a particular date</p>
       <DatePicker
         label="Pick a Date*"
         selectedDate={dateState.date}
@@ -69,9 +89,14 @@ const DateSchedule: React.FC<Props> = ({
           handleDelete={() => handleDelete(index)}
           errors={errors?.schedule?.[index]}
           teachers={teachers}
+          minStartTime={index > 0 ? schedule[index - 1].end_time : undefined}
+          minEndTime={
+            schedule[index].start_time ? schedule[index].start_time : undefined
+          }
+          index={index}
         />
       ))}
-      <Button text="Add Time Slot" onClick={addItem} className="mb-4" />
+      {/* <Button text="Add Time Slot" onClick={addItem} className="mb-4" /> */}
     </div>
   );
 };

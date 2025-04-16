@@ -1,6 +1,7 @@
 import React from "react";
 import Button from "../../common/Button/Button";
 import TimeEntry from "../TimeEntry/TimeEntry";
+import { PlusCircleIcon } from "../../../assets/svgs";
 
 interface Time {
   start_time: string;
@@ -40,8 +41,27 @@ const WeekDay: React.FC<Props> = ({
   teachers,
 }) => {
   return (
-    <div>
-      <h4 className="mt-4">{day}</h4>
+    <div className="mb-4">
+      <div
+        style={{ display: "flex", justifyContent: "space-between" }}
+        className="mt-3"
+      >
+        <h4>{day}</h4>
+        <button
+          onClick={addItem}
+          style={{
+            width: "1.875rem",
+            height: "1.875rem",
+            border: "none",
+            outline: "none",
+            background: "none",
+            cursor: "pointer",
+          }}
+          type="button"
+        >
+          <PlusCircleIcon />
+        </button>
+      </div>
       <p className="mt-2">Enter schedule for {day}</p>
 
       {schedule.map((item, index) => (
@@ -59,7 +79,7 @@ const WeekDay: React.FC<Props> = ({
           teachers={teachers}
         />
       ))}
-      <Button text="Add Time Slot" onClick={addItem} className="mb-4" />
+      {/* <Button text="Add Time Slot" onClick={addItem} className="mb-4" /> */}
       <hr />
     </div>
   );

@@ -40,7 +40,6 @@ export default function Fetch(endPoint, params = {}, option = {}, isFile = false
   };
 
   const fetch = (token) => {
-    console.log('token===', token);
     return axios[method](
       url ? url : baseURL + endPoint,
       inFormData

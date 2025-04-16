@@ -7,6 +7,8 @@ interface DatePickerProps {
   onDateChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   error: string | undefined;
   className?: string;
+  type?: string;
+  min?: string | number | undefined;
 }
 
 const DatePicker: React.FC<DatePickerProps> = ({
@@ -15,15 +17,22 @@ const DatePicker: React.FC<DatePickerProps> = ({
   onDateChange,
   error,
   className,
+  type = "date",
+  min = undefined,
+  ...props
 }) => {
+  console.log("endtime===", min);
+
   return (
     <div className={`${styles["custom-date-picker"]} ${className}`}>
       {label && <label className={styles["date-picker-label"]}>{label}</label>}
       <input
-        type="date"
+        type={type}
         value={selectedDate}
         onChange={onDateChange}
         className={styles["date-picker-input"]}
+        min={min}
+        {...props}
       />
       {error && <p className={styles.errorMessage}>{error}</p>}
     </div>
