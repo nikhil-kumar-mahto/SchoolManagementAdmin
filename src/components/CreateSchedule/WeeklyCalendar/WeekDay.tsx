@@ -26,7 +26,7 @@ type Props = {
     type: "start_time" | "end_time" | "subject" | "teacher",
     value: string
   ) => void;
-  handleDelete: (index: number) => void;
+  handleDelete: (index: number, id: string | undefined) => void;
   teachers: Array<{ label: string; value: string }>;
   errors: any;
 };
@@ -74,7 +74,7 @@ const WeekDay: React.FC<Props> = ({
             type: "start_time" | "end_time" | "subject" | "teacher",
             value: string
           ) => handleChange(index, type, value)}
-          handleDelete={() => handleDelete(index)}
+          handleDelete={() => handleDelete(index, item?.id)}
           errors={errors?.[index]}
           teachers={teachers}
         />

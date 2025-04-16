@@ -34,7 +34,7 @@ interface Props {
     value: string
   ) => void;
   addItem: () => void;
-  handleDelete: (index: number) => void;
+  handleDelete: (index: number, id: string | undefined) => void;
 }
 
 const DateSchedule: React.FC<Props> = ({
@@ -61,7 +61,7 @@ const DateSchedule: React.FC<Props> = ({
             background: "none",
             cursor: "pointer",
           }}
-          type="button"   
+          type="button"
         >
           <PlusCircleIcon />
         </button>
@@ -86,7 +86,7 @@ const DateSchedule: React.FC<Props> = ({
             type: "start_time" | "end_time" | "subject" | "teacher",
             value: string
           ) => handleTimeChange(index, type, value)}
-          handleDelete={() => handleDelete(index)}
+          handleDelete={() => handleDelete(index, item?.id)}
           errors={errors?.schedule?.[index]}
           teachers={teachers}
           minStartTime={index > 0 ? schedule[index - 1].end_time : undefined}

@@ -11,16 +11,6 @@ import Select from "../../components/common/Select/Select";
 import { useToast } from "../../contexts/Toast";
 import Button from "../../components/common/Button/Button";
 
-const days = [
-  "Monday",
-  "Tuesday",
-  "Wednesday",
-  "Thursday",
-  "Friday",
-  "Saturday",
-  "Sunday",
-];
-
 type Day =
   | "Monday"
   | "Tuesday"
@@ -49,19 +39,19 @@ const emptyObj = { start_time: "", end_time: "", teacher: "", subject: "" };
 
 // when user selects day
 const initialState = {
-  Monday: [],
-  Tuesday: [],
-  Wednesday: [],
-  Thursday: [],
-  Friday: [],
-  Saturday: [],
-  Sunday: [],
+  Monday: [emptyObj],
+  Tuesday: [emptyObj],
+  Wednesday: [emptyObj],
+  Thursday: [emptyObj],
+  Friday: [emptyObj],
+  Saturday: [emptyObj],
+  Sunday: [emptyObj],
 };
 
 // when user selects date
 const initialState2 = {
   date: "",
-  schedule: [],
+  schedule: [emptyObj],
 };
 
 const ScheduleManagement: React.FC = () => {
@@ -77,6 +67,8 @@ const ScheduleManagement: React.FC = () => {
   const [teachers, setTeachers] = useState([]);
   const [subjects, setSubjects] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [deletedTimeSlots, setDeletedTimeSlots] = useState([]);
+  const [extraTimeSlots, setExtraTimeSlots] = useState([]);
 
   const { id } = useParams();
 
@@ -88,9 +80,78 @@ const ScheduleManagement: React.FC = () => {
 
   const navigate = useNavigate();
 
+  const convertToDayState = (data: any[]) => {
+    const result: Record<string, (typeof emptyObj)[]> = {
+      Monday: [],
+      Tuesday: [],
+      Wednesday: [],
+      Thursday: [],
+      Friday: [],
+      Saturday: [],
+      Sunday: [],
+    };
+
+    data.forEach((entry) => {
+      const day = entry.day_of_week;
+      if (result[day]) {
+        result[day].push({
+          start_time: entry.start_time || "",
+          end_time: entry.end_time || "",
+          teacher: entry.teacher?.id || "",
+          subject: entry.subject?.id || "",
+          id: entry?.id,
+        });
+      }
+    });
+
+    // for (const day in result) {
+    //   if (result[day].length === 0) {
+    //     result[day].push({ ...emptyObj });
+    //   }
+    // }
+
+    Object.keys(result).forEach((day) => {
+      if (result[day].length === 0) {
+        delete result[day];
+      }
+    });
+
+    return result;
+  };
+
+  const convertToDateState = (data: any[]) => {
+    let convertedFormat = {};
+    convertedFormat.date = data?.time_slots?.[0]?.date;
+    convertedFormat.schedule = data?.time_slots?.map((item) => {
+      return {
+        start_time: item?.start_time,
+        end_time: item?.end_time,
+        teacher: item?.teacher?.id,
+        subject: item?.subject?.id,
+        id: item?.id,
+      };
+    });
+
+    return convertedFormat;
+  };
+
   const getScheduleInfo = () => {
     Fetch(`schedule/${id}/`).then((res: any) => {
       if (res.status) {
+        getClasses(res?.data?.school?.id);
+        setCommonInfo({
+          school: res?.data?.school?.id,
+          class_assigned: res?.data?.id,
+        });
+        if (res?.data?.time_slots[0]?.day_of_week) {
+          // set state for week
+          setViewMode("day");
+          let convertedFormat = convertToDayState(res?.data?.time_slots);
+          setDayState(convertedFormat as any);
+        } else {
+          // set state for date
+          setDateState(convertToDateState(res?.data) as any);
+        }
       }
     });
   };
@@ -160,14 +221,20 @@ const ScheduleManagement: React.FC = () => {
       setDayState((prevState) => {
         return {
           ...prevState,
-          [day]: [...prevState[day], emptyObj],
+          [day]: [
+            ...prevState[day],
+            { ...emptyObj, isEdited: id ? true : false }, // isEdited is added to keep track of all those items that have been added during update mode
+          ],
         };
       });
     } else {
       setDateState((prevState) => {
         return {
           ...prevState,
-          schedule: [...prevState.schedule, emptyObj],
+          schedule: [
+            ...prevState.schedule,
+            { ...emptyObj, isEdited: id ? true : false }, // isEdited is added to keep track of all those items that have been added during update mode
+          ],
         };
       });
     }
@@ -196,8 +263,14 @@ const ScheduleManagement: React.FC = () => {
   const handleDelete = (
     index: number,
     type: "day" | "date",
-    day: Day = "Monday"
+    day: Day = "Monday",
+    deletedId = undefined
   ) => {
+    if (id && deletedId) {
+      setDeletedTimeSlots((prevState) => {
+        return [...prevState, deletedId];
+      });
+    }
     if (type === "day") {
       setDayState((prevState) => {
         const updatedDay = [...prevState[day]];
@@ -265,14 +338,61 @@ const ScheduleManagement: React.FC = () => {
     });
   };
 
-  const convertForm = (obj: any, viewMode: string) => {
+  // const convertForm = (obj: any) => {
+  //   if (viewMode === "day") {
+  //     let object = {
+  //       school_id: obj.school,
+  //       class_id: obj.class_assigned,
+  //       time_slots: Object.entries(obj.time_slots).reduce(
+  //         (acc, [day, daySlots]) => {
+  //           const slotsForDay = daySlots.map((slot) => ({
+  //             day_of_week: day,
+  //             start_time: slot.start_time,
+  //             end_time: slot.end_time,
+  //             teacher: slot.teacher,
+  //             subject: slot.subject,
+  //           }));
+  //           return [...acc, ...slotsForDay];
+  //         },
+  //         [] as {
+  //           day: string;
+  //           type: string;
+  //           start_time: string;
+  //           end_time: string;
+  //         }[]
+  //       ),
+  //     };
+  //     return object;
+  //   } else {
+  //     let object = {
+  //       school_id: obj.school,
+  //       class_id: obj.class_assigned,
+  //       time_slots: obj.time_slots.map((item) => {
+  //         return {
+  //           date: obj.date,
+  //           start_time: item.start_time,
+  //           end_time: item.end_time,
+  //           teacher: item.teacher,
+  //           subject: item.subject,
+  //         };
+  //       }),
+  //     };
+  //     return object;
+  //   }
+  // };
+
+  const convertForm = (obj: any) => {
     if (viewMode === "day") {
       let object = {
-        // school_id: obj.school,
-        // class_id: obj.class_assigned,
+        school_id: obj.school,
+        class_id: obj.class_assigned,
         time_slots: Object.entries(obj.time_slots).reduce(
           (acc, [day, daySlots]) => {
-            const slotsForDay = daySlots.map((slot) => ({
+            let slots = [...daySlots];
+            if (id) {
+              slots = slots.filter((item) => item.isEdited === true);
+            }
+            const slotsForDay = slots.map((slot) => ({
               day_of_week: day,
               start_time: slot.start_time,
               end_time: slot.end_time,
@@ -291,10 +411,14 @@ const ScheduleManagement: React.FC = () => {
       };
       return object;
     } else {
+      let slots = [...obj?.time_slots];
+      if (id) {
+        slots = slots.filter((item) => item?.isEdited === true);
+      }
       let object = {
-        // school_id: obj.school,
-        // class_id: obj.class_assigned,
-        time_slots: obj.time_slots.map((item) => {
+        school_id: obj.school,
+        class_id: obj.class_assigned,
+        time_slots: slots.map((item) => {
           return {
             date: obj.date,
             start_time: item.start_time,
@@ -308,15 +432,15 @@ const ScheduleManagement: React.FC = () => {
     }
   };
 
-  const isDataPresent = () => {
-    const isDatePresent = dateState.schedule.length > 0;
-    return days.some((day) => dayState[day]?.length > 0) || isDatePresent;
+  const convertAccordingToPutRequest = (obj: any) => {
+    let object = {
+      school_id: obj.school_id,
+      deleted_time_slots: deletedTimeSlots,
+      // time_slots: obj?.time_slots?.filter(item =>)
+    };
   };
 
   const onSubmit = () => {
-    if (!isDataPresent()) {
-      return;
-    }
     setIsLoading(true);
     let url = "";
     if (id) {
@@ -326,46 +450,36 @@ const ScheduleManagement: React.FC = () => {
     }
 
     let params = {};
-    let params1 = {
-      ...commonInfo,
-      ...dateState,
-      schedule_type: viewMode,
-      time_slots: dateState.schedule,
-    };
-    let params2 = {
-      ...commonInfo,
-      schedule_type: "week",
-      time_slots: dayState,
-    };
 
-    // if (viewMode === "date") {
-    //   params = {
-    //     ...commonInfo,
-    //     ...dateState,
-    //     schedule_type: viewMode,
-    //     time_slots: dateState.schedule,
-    //   };
-    //   delete params.schedule;
-    // } else {
-    //   params = {
-    //     ...commonInfo,
-    //     schedule_type: "week",
-    //     time_slots: dayState,
-    //   };
-    // }
+    if (viewMode === "date") {
+      params = {
+        ...commonInfo,
+        ...dateState,
+        schedule_type: viewMode,
+        time_slots: dateState.schedule,
+      };
+      delete params.schedule;
+    } else {
+      params = {
+        ...commonInfo,
+        schedule_type: "week",
+        time_slots: dayState,
+      };
+    }
 
-    params = {
-      class_id: commonInfo.class_assigned,
-      school_id: commonInfo.school,
-      time_slots: [
-        ...convertForm(params1, "date").time_slots,
-        ...convertForm(params2, "day").time_slots,
-      ],
-    };
+    params = convertForm(params);
 
-    console.log("params===", params);
+    // params = convertAccordingToPutRequest(params);
 
-    Fetch(url, params, { method: id ? "patch" : "post" }).then((res: any) => {
+    if (id) {
+      params = {
+        school_id: params?.school_id,
+        deleted_time_slots: deletedTimeSlots,
+        time_slots: params?.time_slots,
+      };
+    }
+
+    Fetch(url, params, { method: id ? "put" : "post" }).then((res: any) => {
       if (res.status) {
         showToast(
           id ? "Schedule updated successfully" : "Schedule added successfully"
@@ -398,22 +512,28 @@ const ScheduleManagement: React.FC = () => {
   let params = {
     school: commonInfo.school,
     class: commonInfo.class_assigned,
-    ...dayState,
-    ...(dateState.schedule.length > 0 ? { ...dateState } : {}),
   };
 
-  days.forEach((day) => {
-    if (dayState[day]?.length === 0) {
-      delete params[day];
+  let dayParams = { ...dayState };
+  [
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+    "Sunday",
+  ].forEach((day) => {
+    if (Array.isArray(dayParams[day]) && dayParams[day].length === 0) {
+      delete dayParams[day];
     }
   });
 
   const { errors, handleSubmit, handleNewError, removeAllError } = FormC({
-    // values:
-    //   viewMode === "day"
-    //     ? { ...dayState, ...params }
-    //     : { ...dateState, ...params },
-    values: params,
+    values:
+      viewMode === "day"
+        ? { ...dayParams, ...params }
+        : { ...dateState, ...params },
     onSubmit,
     selectFields,
   });
@@ -447,7 +567,7 @@ const ScheduleManagement: React.FC = () => {
             />
           </div>
 
-          {/* <div className={`${styles.viewToggle} mt-3`}>
+          <div className={`${styles.viewToggle} mt-3`}>
             <button
               type="button"
               className={`${styles.toggleButton} ${
@@ -466,9 +586,9 @@ const ScheduleManagement: React.FC = () => {
             >
               Week
             </button>
-          </div> */}
+          </div>
 
-          {/* {viewMode === "day" ? (
+          {viewMode === "day" ? (
             <>
               {Object.entries(dayState).map(([key, value]) => (
                 <WeekDay
@@ -480,8 +600,8 @@ const ScheduleManagement: React.FC = () => {
                     type: "start_time" | "end_time" | "subject" | "teacher",
                     value: string
                   ) => handleChange(key as Day, index, type, value)}
-                  handleDelete={(index: number) =>
-                    handleDelete(index, "day", key as Day)
+                  handleDelete={(index: number, id = undefined) =>
+                    handleDelete(index, "day", key as Day, id)
                   }
                   errors={errors?.[key]}
                   teachers={teachers}
@@ -509,50 +629,11 @@ const ScheduleManagement: React.FC = () => {
               errors={errors}
               schedule={dateState.schedule}
               addItem={() => addItem("date")}
-              handleDelete={(index: number) => handleDelete(index, "date")}
-            />
-          )} */}
-
-          <DateSchedule
-            dateState={dateState}
-            handleChange={(value: string, type: string) =>
-              setDateState((prevState) => {
-                return {
-                  ...prevState,
-                  [type]: value,
-                };
-              })
-            }
-            handleTimeChange={(
-              index: number,
-              type: "start_time" | "end_time" | "subject" | "teacher",
-              value: string
-            ) => handleTimeChange(index, type, value)}
-            teachers={teachers}
-            subjects={subjects}
-            errors={errors}
-            schedule={dateState.schedule}
-            addItem={() => addItem("date")}
-            handleDelete={(index: number) => handleDelete(index, "date")}
-          />
-          <hr />
-          {Object.entries(dayState).map(([key, value]) => (
-            <WeekDay
-              day={key}
-              schedule={value}
-              addItem={() => addItem("day", key as Day)}
-              handleChange={(
-                index: number,
-                type: "start_time" | "end_time" | "subject" | "teacher",
-                value: string
-              ) => handleChange(key as Day, index, type, value)}
-              handleDelete={(index: number) =>
-                handleDelete(index, "day", key as Day)
+              handleDelete={(index: number, id = undefined) =>
+                handleDelete(index, "date", id)
               }
-              errors={errors?.[key]}
-              teachers={teachers}
             />
-          ))}
+          )}
 
           {errors?.non_field_errors && (
             <p className="error">{errors?.non_field_errors}</p>

@@ -52,14 +52,14 @@ const TimeEntry: React.FC<Time> = ({
 
   return (
     <div className={styles.timeAndSubject}>
-      {/* <Select
+      <Select
         label="Select start time*"
         options={generateTimeArray()}
         value={start_time}
         onChange={(value: string) => handleChange("start_time", value)}
         error={errors?.start_time}
-      /> */}
-      <DatePicker
+      />
+      {/* <DatePicker
         label="Select start time*"
         selectedDate={start_time}
         onDateChange={(e: ChangeEvent<HTMLInputElement>) =>
@@ -69,15 +69,15 @@ const TimeEntry: React.FC<Time> = ({
         type="time"
         className="w-100"
         min={minStartTime}
-      />
-      {/* <Select
+      /> */}
+      <Select
         label="Select end time*"
         options={filterTimeArray(start_time)}
         value={end_time}
         onChange={(value: string) => handleChange("end_time", value)}
         error={errors?.end_time}
-      /> */}
-      <DatePicker
+      />
+      {/* <DatePicker
         label="Select end time*"
         selectedDate={end_time}
         onDateChange={(e: ChangeEvent<HTMLInputElement>) =>
@@ -87,7 +87,7 @@ const TimeEntry: React.FC<Time> = ({
         type="time"
         className="w-100"
         min={minEndTime}
-      />
+      /> */}
 
       <Select
         label="Select teacher*"

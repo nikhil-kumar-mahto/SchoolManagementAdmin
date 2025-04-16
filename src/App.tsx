@@ -17,7 +17,7 @@ import Subjects from "./pages/Subject/Subject";
 import CreateSubject from "./pages/Subject/CreateSubject";
 import ScheduleManagement from "./pages/ScheduleManagement/ScheduleManagement";
 import { useAppContext } from "./contexts/AppContext";
-import ScheduleList from "./pages/ScheduleManagement/ScheduleDetails";
+import ScheduleList from "./pages/ScheduleManagement/Schedule";
 
 function App() {
   const { isLoggedIn } = useAppContext();
