@@ -94,6 +94,7 @@ const initialState = {
   family_age1: "",
   family_adhaar1: "",
   status: "",
+  school: "",
 };
 
 const CreateTeacher: React.FC<Props> = () => {
@@ -179,6 +180,8 @@ const CreateTeacher: React.FC<Props> = () => {
       });
     }
 
+    delete params.school_id;
+
     Fetch(url, params, { method: id ? "put" : "post", inFormData: true }).then(
       (res: any) => {
         if (res.status) {
@@ -211,6 +214,8 @@ const CreateTeacher: React.FC<Props> = () => {
         : data.file_pancard?.name,
     form_11: id && !isFilesModified.form_11 ? data.form_11 : data.form_11?.name,
   };
+
+  delete params.school_id;
 
   const { errors, handleSubmit, handleNewError } = FormC({
     values: {
@@ -278,9 +283,9 @@ const CreateTeacher: React.FC<Props> = () => {
           <Select
             label="Select school*"
             options={schools}
-            value={data?.school_id}
-            onChange={(value) => handleSelectChange(value, "school_id")}
-            error={errors?.school_id && "Please select school."}
+            value={data?.school}
+            onChange={(value) => handleSelectChange(value, "school")}
+            error={errors?.school && "Please select school."}
             className="w-25"
           />
 
