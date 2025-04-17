@@ -139,7 +139,12 @@ const ScheduleManagement: React.FC = () => {
   const getScheduleInfo = () => {
     Fetch(`schedule/${id}/`).then((res: any) => {
       if (res.status) {
-        getClasses(res?.data?.school?.id);
+        // getClasses(res?.data?.school?.id);
+        let classes = schools
+          .find((item) => item?.value === res?.data?.school?.id)
+          ?.classes?.map((item) => ({ label: item?.name, value: item?.id }));
+
+        setClasses(classes);
         setCommonInfo({
           school: res?.data?.school?.id,
           class_assigned: res?.data?.id,
@@ -229,6 +234,21 @@ const ScheduleManagement: React.FC = () => {
         [day]: updatedDay,
       };
     });
+
+    // setDayState((prevState) => {
+    //   const updatedDay = [...prevState[day]];
+    //   const updatedTime = { ...updatedDay[index] };
+
+    //   updatedTime[type] = value;
+    //   updatedDay[index] = updatedTime;
+
+    //   return {
+    //     ...prevState,
+    //     [day]: updatedDay,
+    //   };
+    // });
+
+    // handleTimeSlots({ schedule: updatedState.schedule });
   };
 
   const handleDelete = (
@@ -277,7 +297,12 @@ const ScheduleManagement: React.FC = () => {
 
   const handlecommonInfoChange = (value: string, type: string) => {
     if (type === "school") {
-      getClasses(value);
+      // getClasses(value);
+      let classes = schools
+        .find((item) => item?.value === value)
+        ?.classes?.map((item) => ({ label: item?.name, value: item?.id }));
+
+      setClasses(classes);
     }
     setCommonInfo((prevState) => {
       return {
