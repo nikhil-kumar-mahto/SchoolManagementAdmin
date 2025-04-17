@@ -144,7 +144,7 @@ const ScheduleManagement: React.FC = () => {
           .find((item) => item?.value === res?.data?.school?.id)
           ?.classes?.map((item) => ({ label: item?.name, value: item?.id }));
 
-        setClasses(classes);
+        setClasses(classes || []);
         setCommonInfo({
           school: res?.data?.school?.id,
           class_assigned: res?.data?.id,
@@ -187,7 +187,7 @@ const ScheduleManagement: React.FC = () => {
             };
           }
         );
-        setClasses(classes);
+        setClasses(classes || []);
       }
     });
   };
@@ -235,20 +235,20 @@ const ScheduleManagement: React.FC = () => {
       };
     });
 
+    // const updatedDay = [...dayState[day]];
+    // const updatedTime = { ...updatedDay[index] };
+
+    // updatedTime[type] = value;
+    // updatedDay[index] = updatedTime;
+
     // setDayState((prevState) => {
-    //   const updatedDay = [...prevState[day]];
-    //   const updatedTime = { ...updatedDay[index] };
-
-    //   updatedTime[type] = value;
-    //   updatedDay[index] = updatedTime;
-
     //   return {
     //     ...prevState,
     //     [day]: updatedDay,
     //   };
     // });
-
-    // handleTimeSlots({ schedule: updatedState.schedule });
+    // console.log("check===", { ...dayState, [day]: updatedDay });
+    // handleTimeSlots({ schedule: { ...dayState, [day]: updatedDay } });
   };
 
   const handleDelete = (
@@ -302,7 +302,7 @@ const ScheduleManagement: React.FC = () => {
         .find((item) => item?.value === value)
         ?.classes?.map((item) => ({ label: item?.name, value: item?.id }));
 
-      setClasses(classes);
+      setClasses(classes || []);
     }
     setCommonInfo((prevState) => {
       return {
@@ -444,6 +444,8 @@ const ScheduleManagement: React.FC = () => {
   };
 
   const onSubmit = () => {
+    console.log('called===');
+    
     if (showModal) {
       setIsLoading("modal");
     } else {
@@ -483,8 +485,6 @@ const ScheduleManagement: React.FC = () => {
         time_slots: params?.time_slots,
       };
     }
-
-    console.log("paramss===");
 
     Fetch(
       url,
@@ -566,7 +566,6 @@ const ScheduleManagement: React.FC = () => {
   });
 
   console.log("errors====", errors);
-  console.log("isloading===", isLoading);
 
   return (
     <Layout>

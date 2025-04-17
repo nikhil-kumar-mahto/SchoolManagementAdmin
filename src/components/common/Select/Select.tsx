@@ -24,8 +24,8 @@ function Select({
   type = "",
   disabled = false,
 }: SelectProps) {
-  const isValueInOptions = options.some((option) => option.value === value);
-
+  const isValueInOptions =
+    options.some((option) => option.value === value) ?? false;
   return (
     <div className={`${styles.selectContainer} ${className || ""}`}>
       {label && (
