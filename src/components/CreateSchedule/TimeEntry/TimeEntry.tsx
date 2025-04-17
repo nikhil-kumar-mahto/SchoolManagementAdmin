@@ -82,7 +82,11 @@ const TimeEntry: React.FC<Time> = ({
         error={errors?.subject}
       />
 
-      <button className={styles.iconContainer} onClick={handleDelete}>
+      <button
+        className={styles.iconContainer}
+        onClick={handleDelete}
+        type="button"
+      >
         <DeleteIcon />
       </button>
     </div>

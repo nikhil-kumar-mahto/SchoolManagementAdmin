@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Button from "../../common/Button/Button";
 import TimeEntry from "../TimeEntry/TimeEntry";
 import { PlusCircleIcon } from "../../../assets/svgs";
@@ -40,6 +40,22 @@ const WeekDay: React.FC<Props> = ({
   errors = {},
   teachers,
 }) => {
+  let disableAddingMore =
+    !!errors?.schedule?.length ||
+    !schedule[schedule.length - 1]?.start_time ||
+    !schedule[schedule.length - 1]?.end_time ||
+    !schedule[schedule.length - 1]?.teacher ||
+    !schedule[schedule.length - 1]?.subject;
+
+  const [showModal, setShowModal] = useState(false);
+  const handleAddMore = () => {
+    if (disableAddingMore) {
+      setShowModal(true);
+    } else {
+      addItem();
+    }
+  };
+
   return (
     <div className="mb-4">
       <div
@@ -78,6 +94,7 @@ const WeekDay: React.FC<Props> = ({
           handleDelete={() => handleDelete(index, item?.id)}
           errors={errors?.[index]}
           teachers={teachers}
+          minStartTime={index > 0 ? schedule[index - 1].end_time : undefined}
         />
       ))}
       <hr />

@@ -574,6 +574,7 @@ const ScheduleManagement: React.FC = () => {
 
           <div className={`${styles.viewToggle} mt-3`}>
             <button
+              disabled={id ? true : false}
               type="button"
               className={`${styles.toggleButton} ${
                 viewMode === "date" ? styles.active : ""
@@ -583,6 +584,7 @@ const ScheduleManagement: React.FC = () => {
               Date
             </button>
             <button
+              disabled={id ? true : false}
               type="button"
               className={`${styles.toggleButton} ${
                 viewMode === "day" ? styles.active : ""
@@ -636,7 +638,7 @@ const ScheduleManagement: React.FC = () => {
               schedule={dateState.schedule}
               addItem={() => addItem("date")}
               handleDelete={(index: number, id = undefined) =>
-                handleDelete(index, "date", id)
+                handleDelete(index, "date", "", id)
               }
             />
           )}

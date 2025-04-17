@@ -54,12 +54,6 @@ const DateSchedule: React.FC<Props> = ({
     !schedule[schedule.length - 1]?.teacher ||
     !schedule[schedule.length - 1]?.subject;
 
-  console.log(
-    "check===",
-    !!errors?.schedule?.length,
-    !!schedule[schedule.length - 1]?.start_time
-  );
-
   const [showModal, setShowModal] = useState(false);
   const handleAddMore = () => {
     if (disableAddingMore) {
