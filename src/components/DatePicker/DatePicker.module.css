@@ -34,3 +34,12 @@
     margin-top: 0.5rem;
     font-size: 0.875rem;
 }
+
+.errorLabel {
+    color: var(--danger-color)
+}
+
+.errorState {
+    color: var(--danger-color);
+    border-color: 1px solid var(--danger-color);
+}

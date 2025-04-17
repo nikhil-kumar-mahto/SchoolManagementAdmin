@@ -60,3 +60,16 @@
 .rounded {
     border-radius: 6px;
 }
+
+.errorLabel {
+    color: var(--danger-color)
+}
+
+.errorState {
+    color: var(--danger-color);
+    border-color: 1px solid var(--danger-color);
+}
+
+.errorState .input::placeholder {
+    color: var(--danger-color);
+}

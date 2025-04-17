@@ -214,19 +214,20 @@ export const FormC = ({ values, removeValidValue, onSubmit, onSubmitError, selec
   // handle validation of multiple time slots based on time added
   const handleTimeSlots = (values) => {
     const error = {
-      date: values.date ? '' : 'Please select date',
-      school: values.school ? '' : 'Please select school',
-      class: values.class ? '' : 'Please select class',
+      // date: values.date ? '' : 'Please select date',
+      // school: values.school ? '' : 'Please select school',
+      // class: values.class ? '' : 'Please select class',
       schedule: []
     };
 
-    let hasError = !!(error.date || error.school || error.class);
+    // let hasError = !!(error.date || error.school || error.class);
+    let hasError = false
 
     const requiredFields = {
-      start_time: "Please select start time", 
-      end_time: "Please select end time",
-      teacher: "Please select teacher",
-      subject: "Please select subject"
+      start_time: "Please select start time.",
+      end_time: "Please select end time.",
+      teacher: "Please select teacher.",
+      subject: "Please select subject."
     };
 
     const slotTimes = [];
@@ -237,16 +238,16 @@ export const FormC = ({ values, removeValidValue, onSubmit, onSubmitError, selec
       const end = moment(slot.end_time, 'HH:mm');
 
       // Required field validation
-      Object.entries(requiredFields).forEach(([field, message]) => {
-        if (!slot[field]) {
-          slotError[field] = message;
-          hasError = true;
-        }
-      });
+      // Object.entries(requiredFields).forEach(([field, message]) => {
+      //   if (!slot[field]) {
+      //     slotError[field] = message;
+      //     hasError = true;
+      //   }
+      // });
 
       if (start.isValid() && end.isValid()) {
         if (!start.isBefore(end)) {
-          slotError.start_time = "Start time must be before end time";
+          slotError.start_time = "Start time must be before end time.";
           hasError = true;
         } else {
           slotTimes.push({ index, start, end });
@@ -264,7 +265,7 @@ export const FormC = ({ values, removeValidValue, onSubmit, onSubmitError, selec
         const { index: iB, start: startB, end: endB } = slotTimes[j];
 
         if (startA.isBefore(endB) && startB.isBefore(endA)) {
-          const overlapMsg = "Time slot overlaps with another entry";
+          const overlapMsg = "Time slot overlaps with another entry.";
 
           // Decide where to show the error:
           if (startB.isBefore(endA)) {

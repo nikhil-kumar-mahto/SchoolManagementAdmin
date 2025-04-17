@@ -35,4 +35,17 @@
     color: var(--danger-color);
     margin-top: 0.5rem;
     font-size: 0.875rem;
-}   
+}
+
+.errorLabel {
+    color: var(--danger-color) !important;
+}
+
+.errorState {
+    color: var(--danger-color);
+    border-color: 1px solid var(--danger-color);
+}
+
+.errorState .input::placeholder {
+    color: var(--danger-color);
+}

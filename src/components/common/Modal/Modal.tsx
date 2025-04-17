@@ -5,13 +5,13 @@ import Button from "../Button/Button";
 interface ModalProps {
   title: string;
   message: string;
-  onCancel: () => void;
+  onCancel?: () => void;
   onConfirm: () => void;
   cancelText?: string;
   confirmText?: string;
   className?: string;
   visible: boolean;
-  isLoading: boolean;
+  isLoading?: boolean;
 }
 
 const Modal: React.FC<ModalProps> = ({
@@ -35,13 +35,16 @@ const Modal: React.FC<ModalProps> = ({
         <h2 className={styles.modalTitle}>{title}</h2>
         <p className={styles.modalMessage}>{message}</p>
         <div className={styles.modalButtons}>
-          <Button
-            text={cancelText}
-            onClick={onCancel}
-            type="outline"
-            className={styles.cancelButton}
-            style={{ width: "6rem" }}
-          />
+          {cancelText && onCancel && (
+            <Button
+              text={cancelText}
+              onClick={onCancel}
+              type="outline"
+              className={styles.cancelButton}
+              style={{ width: "6rem" }}
+            />
+          )}
+
           <Button
             text={confirmText}
             onClick={onConfirm}

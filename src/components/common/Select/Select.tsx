@@ -28,7 +28,7 @@ function Select({
     <div className={`${styles.selectContainer} ${className || ""}`}>
       {label && (
         <label
-          className={`${styles.label} ${error ? styles.errorMessage : ""}`}
+          className={`${styles.label} ${error ? styles.errorLabel : ""}`}
         >
           {label}
         </label>

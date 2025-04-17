@@ -58,3 +58,7 @@
     border: 1px solid var(--danger-color);
     color: var(--danger-color);
 }
+
+.errorLabel {
+    color: var(--danger-color);;
+}

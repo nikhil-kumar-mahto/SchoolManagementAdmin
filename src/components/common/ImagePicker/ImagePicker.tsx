@@ -39,18 +39,24 @@ const ImagePicker: React.FC<ImagePickerProps> = ({
 
   return (
     <div className={`${styles.imagePickerContainer} ${className || ""}`}>
-      {label && <label className={styles.label}>{label}</label>}
-      <div className={styles.inputWrapper}>
+      {label && (
+        <label className={`${styles.label} ${error ? styles.errorState : ""}`}>
+          {label}
+        </label>
+      )}
+      <div
+        className={`${styles.inputWrapper} ${error ? styles.errorState : ""}`}
+      >
         <input
           type="file"
           id={`imageInput-${componentKey}`}
           accept="image/*"
           onChange={handleFileChange}
-          className={styles.input}
+          className={`${styles.input} ${error ? styles.errorState : ""}`}
         />
         <label
           htmlFor={`imageInput-${componentKey}`}
-          className={`${styles.fileLabel} mb-0`}
+          className={`${styles.fileLabel} mb-0 ${error ? styles.errorLabel : ""}`}
         >
           {fileName ? fileName : "Choose File"}
         </label>

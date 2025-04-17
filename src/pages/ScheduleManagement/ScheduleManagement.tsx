@@ -333,6 +333,7 @@ const ScheduleManagement: React.FC = () => {
       schedule: updatedSchedule,
     };
     setDateState(updatedState);
+    delete updatedState.date;
     handleTimeSlots(updatedState);
     // setDateState((prevState) => {
     //   const updatedSchedule = prevState.schedule.map((item, i) => {

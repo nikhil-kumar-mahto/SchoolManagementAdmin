@@ -25,15 +25,21 @@ const Input: React.FC<InputProps> = ({
 }) => {
   return (
     <div className={styles.inputContainer}>
-      {label && <label className={styles.label}>{label}</label>}
-      <div className={`${styles.inputWrapper} ${error ? styles.error : ""}`}>
+      {label && (
+        <label className={`${styles.label} ${error ? styles.errorLabel : ""}`}>
+          {label} 
+        </label>
+      )}
+      <div
+        className={`${styles.inputWrapper} ${error ? styles.errorState : ""}`}
+      >
         <input
           type={type}
           value={value}
           onChange={onChange}
-          className={styles.input}
+          className={`${styles.input}`}
           onKeyDown={onKeyPress}
-          maxLength={maxLength}
+          maxLength={maxLength} 
           {...props}
         />
       </div>

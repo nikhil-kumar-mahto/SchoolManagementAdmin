@@ -23,12 +23,22 @@ const DatePicker: React.FC<DatePickerProps> = ({
 }) => {
   return (
     <div className={`${styles["custom-date-picker"]} ${className}`}>
-      {label && <label className={styles["date-picker-label"]}>{label}</label>}
+      {label && (
+        <label
+          className={`${styles["date-picker-label"]} ${
+            error ? styles.errorLabel : ""
+          }`}
+        >
+          {label}
+        </label>
+      )}
       <input
         type={type}
         value={selectedDate}
         onChange={onDateChange}
-        className={styles["date-picker-input"]}
+        className={`${styles["date-picker-input"]} ${
+          error ? styles.errorState : ""
+        }`}
         min={min}
         {...props}
       />

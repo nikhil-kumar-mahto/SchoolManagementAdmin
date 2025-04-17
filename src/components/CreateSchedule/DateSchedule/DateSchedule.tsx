@@ -1,7 +1,8 @@
-import React, { ChangeEvent } from "react";
+import React, { ChangeEvent, useState } from "react";
 import DatePicker from "../../DatePicker/DatePicker";
 import TimeEntry from "../TimeEntry/TimeEntry";
 import { PlusCircleIcon } from "../../../assets/svgs";
+import Modal from "../../common/Modal/Modal";
 
 type Options = { label: string; value: string };
 
@@ -46,53 +47,83 @@ const DateSchedule: React.FC<Props> = ({
   addItem,
   handleDelete,
 }) => {
-  return (
-    <div className="mt-4">
-      <div style={{ display: "flex", justifyContent: "space-between" }}>
-        <h4>Select Date</h4>
-        <button
-          onClick={addItem}
-          style={{
-            width: "1.875rem",
-            height: "1.875rem",
-            border: "none",
-            outline: "none",
-            background: "none",
-            cursor: "pointer",
-          }}
-          type="button"
-        >
-          <PlusCircleIcon />
-        </button>
-      </div>
+  let disableAddingMore =
+    !!errors?.schedule?.length ||
+    !schedule[schedule.length - 1]?.start_time ||
+    !schedule[schedule.length - 1]?.end_time ||
+    !schedule[schedule.length - 1]?.teacher ||
+    !schedule[schedule.length - 1]?.subject;
 
-      <p className="mt-2">Enter schedule for a particular date</p>
-      <DatePicker
-        label="Pick a Date*"
-        selectedDate={dateState.date}
-        onDateChange={(e: ChangeEvent<HTMLInputElement>) =>
-          handleChange(e.target.value, "date")
-        }
-        error={errors?.date}
-      />
-      {schedule.map((item, index) => (
-        <TimeEntry
-          key={index}
-          start_time={item.start_time}
-          end_time={item.end_time}
-          subject={item.subject}
-          teacher={item.teacher}
-          handleChange={(
-            type: "start_time" | "end_time" | "subject" | "teacher",
-            value: string
-          ) => handleTimeChange(index, type, value)}
-          handleDelete={() => handleDelete(index, item?.id)}
-          errors={errors?.schedule?.[index]}
-          teachers={teachers}
-          minStartTime={index > 0 ? schedule[index - 1].end_time : undefined}
+  console.log(
+    "check===",
+    !!errors?.schedule?.length,
+    !!schedule[schedule.length - 1]?.start_time
+  );
+
+  const [showModal, setShowModal] = useState(false);
+  const handleAddMore = () => {
+    if (disableAddingMore) {
+      setShowModal(true);
+    } else {
+      addItem();
+    }
+  };
+  return (
+    <>
+      <div className="mt-4">
+        <div style={{ display: "flex", justifyContent: "space-between" }}>
+          <h4>Select Date</h4>
+          <button
+            onClick={handleAddMore}
+            style={{
+              width: "1.875rem",
+              height: "1.875rem",
+              border: "none",
+              outline: "none",
+              background: "none",
+              cursor: "pointer",
+            }}
+            type="button"
+          >
+            <PlusCircleIcon />
+          </button>
+        </div>
+
+        <p className="mt-2">Enter schedule for a particular date</p>
+        <DatePicker
+          label="Pick a Date*"
+          selectedDate={dateState.date}
+          onDateChange={(e: ChangeEvent<HTMLInputElement>) =>
+            handleChange(e.target.value, "date")
+          }
+          error={errors?.date}
         />
-      ))}
-    </div>
+        {schedule.map((item, index) => (
+          <TimeEntry
+            key={index}
+            start_time={item.start_time}
+            end_time={item.end_time}
+            subject={item.subject}
+            teacher={item.teacher}
+            handleChange={(
+              type: "start_time" | "end_time" | "subject" | "teacher",
+              value: string
+            ) => handleTimeChange(index, type, value)}
+            handleDelete={() => handleDelete(index, item?.id)}
+            errors={errors?.schedule?.[index]}
+            teachers={teachers}
+            minStartTime={index > 0 ? schedule[index - 1].end_time : undefined}
+          />
+        ))}
+      </div>
+      <Modal
+        title="Alert!"
+        message="Please ensure all fields are filled out correctly before adding more time slots."
+        onConfirm={() => setShowModal(false)}
+        visible={showModal}
+        confirmText="OK"
+      />
+    </>
   );
 };
 
