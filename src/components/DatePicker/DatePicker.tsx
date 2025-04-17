@@ -21,8 +21,6 @@ const DatePicker: React.FC<DatePickerProps> = ({
   min = undefined,
   ...props
 }) => {
-  console.log("endtime===", min);
-
   return (
     <div className={`${styles["custom-date-picker"]} ${className}`}>
       {label && <label className={styles["date-picker-label"]}>{label}</label>}

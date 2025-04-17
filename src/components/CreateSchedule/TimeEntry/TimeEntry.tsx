@@ -6,8 +6,6 @@ import {
   generateTimeArray,
 } from "../../../utils/common/utility-functions";
 import Select from "../../common/Select/Select";
-import DatePicker from "../../DatePicker/DatePicker";
-import { ChangeEvent } from "react";
 
 interface Time {
   start_time: string;
@@ -22,7 +20,6 @@ interface Time {
   teachers: Array<{ label: string; value: string }>;
   errors: any;
   minStartTime?: undefined | number | string;
-  minEndTime?: undefined | number | string;
 }
 
 const TimeEntry: React.FC<Time> = ({
@@ -34,8 +31,7 @@ const TimeEntry: React.FC<Time> = ({
   handleDelete,
   teachers,
   minStartTime = undefined,
-  minEndTime = undefined,
-  index,
+
   errors = {},
 }) => {
   const { subjects } = useAppContext();
@@ -48,28 +44,18 @@ const TimeEntry: React.FC<Time> = ({
     }
   );
 
-  console.log(minStartTime, minEndTime, index, "min====");
-
   return (
     <div className={styles.timeAndSubject}>
       <Select
         label="Select start time*"
-        options={generateTimeArray()}
+        options={
+          minStartTime ? filterTimeArray(minStartTime) : generateTimeArray()
+        }
         value={start_time}
         onChange={(value: string) => handleChange("start_time", value)}
         error={errors?.start_time}
       />
-      {/* <DatePicker
-        label="Select start time*"
-        selectedDate={start_time}
-        onDateChange={(e: ChangeEvent<HTMLInputElement>) =>
-          handleChange("start_time", e.target.value)
-        }
-        error={errors?.start_time}
-        type="time"
-        className="w-100"
-        min={minStartTime}
-      /> */}
+
       <Select
         label="Select end time*"
         options={filterTimeArray(start_time)}
@@ -77,17 +63,6 @@ const TimeEntry: React.FC<Time> = ({
         onChange={(value: string) => handleChange("end_time", value)}
         error={errors?.end_time}
       />
-      {/* <DatePicker
-        label="Select end time*"
-        selectedDate={end_time}
-        onDateChange={(e: ChangeEvent<HTMLInputElement>) =>
-          handleChange("end_time", e.target.value)
-        }
-        error={errors?.end_time}
-        type="time"
-        className="w-100"
-        min={minEndTime}
-      /> */}
 
       <Select
         label="Select teacher*"

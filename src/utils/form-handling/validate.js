@@ -49,6 +49,7 @@ export const onKeyPress = (evt, reg) => {
     if (theEvent.preventDefault) theEvent.preventDefault();
   }
 };
+
 const inputValidation = (data, property, selectFields = []) => {
   const errors = {};
   if (data[property] === null || data[property] === undefined || !data[property].toString().length) {

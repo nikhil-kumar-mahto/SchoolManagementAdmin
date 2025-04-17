@@ -1,7 +1,6 @@
 import React, { ChangeEvent } from "react";
 import DatePicker from "../../DatePicker/DatePicker";
 import TimeEntry from "../TimeEntry/TimeEntry";
-import Button from "../../common/Button/Button";
 import { PlusCircleIcon } from "../../../assets/svgs";
 
 type Options = { label: string; value: string };
@@ -90,13 +89,8 @@ const DateSchedule: React.FC<Props> = ({
           errors={errors?.schedule?.[index]}
           teachers={teachers}
           minStartTime={index > 0 ? schedule[index - 1].end_time : undefined}
-          minEndTime={
-            schedule[index].start_time ? schedule[index].start_time : undefined
-          }
-          index={index}
         />
       ))}
-      {/* <Button text="Add Time Slot" onClick={addItem} className="mb-4" /> */}
     </div>
   );
 };

@@ -79,7 +79,6 @@ const WeekDay: React.FC<Props> = ({
           teachers={teachers}
         />
       ))}
-      {/* <Button text="Add Time Slot" onClick={addItem} className="mb-4" /> */}
       <hr />
     </div>
   );

@@ -518,16 +518,17 @@ const ScheduleManagement: React.FC = () => {
     }
   });
 
-  const { errors, handleSubmit, handleNewError, removeAllError } = FormC({
-    values:
-      viewMode === "day"
-        ? { ...dayParams, ...params }
-        : { ...dateState, ...params },
-    onSubmit,
-    selectFields,
-  });
+  const { errors, handleSubmit, handleNewError, removeAllError, handleBlur } =
+    FormC({
+      values:
+        viewMode === "day"
+          ? { ...dayParams, ...params }
+          : { ...dateState, ...params },
+      onSubmit,
+      selectFields,
+    });
 
-  console.log("errors====", errors);
+  console.log("handleblur====", handleBlur);
 
   return (
     <Layout>

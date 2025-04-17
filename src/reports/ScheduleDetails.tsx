@@ -22,11 +22,8 @@ const ScheduleList: React.FC<ScheduleListProps> = () => {
   const [showModal, setShowModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [schedule, setSchedule] = useState<any>({});
-  const [classId, setClassId] = useState("");
   const [isTableLoading, setIsTableLoading] = useState(false);
   const [deleteRequestId, setDeleteRequestId] = useState("");
-
-  console.log("schedule===", schedule);
 
   const toast = useToast();
 
@@ -118,7 +115,6 @@ const ScheduleList: React.FC<ScheduleListProps> = () => {
     }
     if (type === "class") {
       getSchedule(value);
-      setClassId(value);
     }
     setData((prevState) => {
       const updatedState = {
