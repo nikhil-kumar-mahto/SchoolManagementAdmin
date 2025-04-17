@@ -10,6 +10,7 @@ interface SelectProps {
   className?: string;
   error?: string;
   type?: string;
+  disabled?: boolean;
 }
 
 function Select({
@@ -21,19 +22,19 @@ function Select({
   className,
   error,
   type = "",
+  disabled = false,
 }: SelectProps) {
   const isValueInOptions = options.some((option) => option.value === value);
 
   return (
     <div className={`${styles.selectContainer} ${className || ""}`}>
       {label && (
-        <label
-          className={`${styles.label} ${error ? styles.errorLabel : ""}`}
-        >
+        <label className={`${styles.label} ${error ? styles.errorLabel : ""}`}>
           {label}
         </label>
       )}
       <select
+        disabled={disabled}
         className={`${styles.select} ${error ? styles.errorState : ""}`}
         value={value || ""}
         onChange={(e) => {

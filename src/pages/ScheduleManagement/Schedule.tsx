@@ -13,7 +13,6 @@ import Select from "../../components/common/Select/Select";
 
 function Class() {
   const [data, setData] = useState([]);
-  const [filteredData, setFilteredData] = useState([]);
   const [isLoading, setIsLoading] = useState<"listing" | "delete" | "">("");
   const [showModal, setShowModal] = useState(false);
   const [itemToDelete, setItemToDelete] = useState("");
@@ -29,44 +28,33 @@ function Class() {
     toast.show("Schedule deleted successfully", 2000, "#dc3545");
   };
 
-  const getClasses = (id: string) => {
-    Fetch(`classes?school_id=${id}`).then((res: any) => {
-      if (res.status) {
-        let classes = res.data?.map(
-          (item: { name: string; id: string; section: string }) => {
-            return {
-              label: item?.name + " " + item?.section,
-              value: item?.id,
-            };
-          }
-        );
-        setClasses(classes);
-      }
-    });
-  };
-
   const selectClass = (id: string) => {
-    // modify data in this
-    let filteredData = data.filter((item) => item.id === id);
-    setFilteredData(filteredData);
     setSelectedClass(id);
+    getData(selectedSchool, id);
   };
 
   const selectSchool = (id: string) => {
     setSelectedClass("");
-    getClasses(id);
+
+    let classes = schools
+      .find((item) => item?.value === id)
+      ?.classes?.map((item) => ({ label: item?.name, value: item?.id }));
+
+    setClasses(classes);
     setSelectedSchool(id);
+    getData(id, selectedClass);
   };
 
-  const getData = () => {
+  const getData = (school_id: string = "", class_id: string = "") => {
     setIsLoading("listing");
-    Fetch("schedule/").then((res: any) => {
-      if (res.status) {
-        setData(res.data.filter((item) => item?.time_slots.length > 0));
-        setFilteredData(res.data.filter((item) => item?.time_slots.length > 0));
+    Fetch(`schedule?school_id=${school_id}&class_id=${class_id}`).then(
+      (res: any) => {
+        if (res.status) {
+          setData(res?.data);
+        }
+        setIsLoading("");
       }
-      setIsLoading("");
-    });
+    );
   };
 
   const handleDelete = () => {
@@ -157,7 +145,6 @@ function Class() {
     <Layout>
       <div
         style={{
-          // height: "calc(100vh - 9rem)",
           backgroundColor: "#f8f9fa",
           padding: "20px",
           marginTop: "20px",
@@ -185,7 +172,7 @@ function Class() {
         </div>
 
         <DataTable
-          data={filteredData}
+          data={data}
           columns={columns}
           itemsPerPage={10}
           isLoading={isLoading === "listing"}

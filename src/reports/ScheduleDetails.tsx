@@ -9,6 +9,7 @@ import { useToast } from "../../contexts/Toast";
 import Modal from "../../components/common/Modal/Modal";
 import Loader from "../../components/common/Loader/Loader";
 import { DeleteIcon, EditIcon } from "../../assets/svgs";
+import { useAppContext } from "../contexts/AppContext";
 
 interface ScheduleListProps {}
 
@@ -17,7 +18,6 @@ const ScheduleList: React.FC<ScheduleListProps> = () => {
     school: "",
     class: "",
   });
-  const [schools, setSchools] = useState([]);
   const [classes, setClasses] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -26,6 +26,7 @@ const ScheduleList: React.FC<ScheduleListProps> = () => {
   const [deleteRequestId, setDeleteRequestId] = useState("");
 
   const toast = useToast();
+  const { schools } = useAppContext();
 
   const showToast = () => {
     toast.show("Schedule deleted successfully", 2000, "#dc3545");
@@ -74,20 +75,6 @@ const ScheduleList: React.FC<ScheduleListProps> = () => {
     });
   };
 
-  const getSchools = () => {
-    Fetch("schools/").then((res: any) => {
-      if (res.status) {
-        let schools = res.data?.map((item: { name: string; id: string }) => {
-          return {
-            label: item?.name,
-            value: item?.id,
-          };
-        });
-        setSchools(schools);
-      }
-    });
-  };
-
   const getClasses = (id: string) => {
     Fetch(`classes?school_id=${id}`).then((res: any) => {
       if (res.status) {
@@ -103,10 +90,6 @@ const ScheduleList: React.FC<ScheduleListProps> = () => {
       }
     });
   };
-
-  useEffect(() => {
-    getSchools();
-  }, []);
 
   const handleChange = (value: string, type: string) => {
     setSchedule({});

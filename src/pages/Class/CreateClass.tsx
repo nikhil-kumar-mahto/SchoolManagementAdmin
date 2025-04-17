@@ -9,6 +9,7 @@ import Fetch from "../../utils/form-handling/fetch";
 import { arrayString } from "../../utils/form-handling/arrayString";
 import Select from "../../components/common/Select/Select";
 import { useToast } from "../../contexts/Toast";
+import { useAppContext } from "../../contexts/AppContext";
 
 interface Props {}
 
@@ -21,7 +22,7 @@ const initialState = {
 const CreateClass: React.FC<Props> = () => {
   const [data, setData] = useState(initialState);
   const [isLoading, setIsLoading] = useState(false);
-  const [schools, setSchools] = useState([]);
+  const { schools } = useAppContext();
 
   const navigate = useNavigate();
   const toast = useToast();
@@ -38,24 +39,9 @@ const CreateClass: React.FC<Props> = () => {
     });
   };
 
-  const getSchools = () => {
-    Fetch("schools/").then((res: any) => {
-      if (res.status) {
-        let schools = res.data?.map((item: { name: string; id: string }) => {
-          return {
-            label: item?.name,
-            value: item?.id,
-          };
-        });
-        setSchools(schools);
-      }
-    });
-  };
-
   const { id } = useParams();
 
   useEffect(() => {
-    getSchools();
     if (id) {
       getClassInfo();
     }

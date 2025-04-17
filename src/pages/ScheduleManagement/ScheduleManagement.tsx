@@ -10,6 +10,8 @@ import { arrayString } from "../../utils/form-handling/arrayString";
 import Select from "../../components/common/Select/Select";
 import { useToast } from "../../contexts/Toast";
 import Button from "../../components/common/Button/Button";
+import { useAppContext } from "../../contexts/AppContext";
+import Modal from "../../components/common/Modal/Modal";
 
 type Day =
   | "Monday"
@@ -63,15 +65,15 @@ const ScheduleManagement: React.FC = () => {
   const [dateState, setDateState] = useState(initialState2); // when user selects date
   const [viewMode, setViewMode] = useState<"date" | "day">("date");
   const [classes, setClasses] = useState([]);
-  const [schools, setSchools] = useState([]);
   const [teachers, setTeachers] = useState([]);
-  const [subjects, setSubjects] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState("");
   const [deletedTimeSlots, setDeletedTimeSlots] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  const [message, setMessage] = useState("");
 
   const { id } = useParams();
-
   const toast = useToast();
+  const { schools, subjects } = useAppContext();
 
   const showToast = (message: string) => {
     toast.show(message, 2000, "#4CAF50");
@@ -151,36 +153,6 @@ const ScheduleManagement: React.FC = () => {
           // set state for date
           setDateState(convertToDateState(res?.data) as any);
         }
-      }
-    });
-  };
-
-  const getSubjects = () => {
-    Fetch("subjects/").then((res: any) => {
-      if (res.status) {
-        let subjects = res.data?.map(
-          (item: { name: string; id: string; section: string }) => {
-            return {
-              label: item?.name,
-              value: item?.id,
-            };
-          }
-        );
-        setSubjects(subjects);
-      }
-    });
-  };
-
-  const getSchools = () => {
-    Fetch("schools/").then((res: any) => {
-      if (res.status) {
-        let schools = res.data?.map((item: { name: string; id: string }) => {
-          return {
-            label: item?.name,
-            value: item?.id,
-          };
-        });
-        setSchools(schools);
       }
     });
   };
@@ -293,10 +265,7 @@ const ScheduleManagement: React.FC = () => {
   };
 
   useEffect(() => {
-    getSchools();
     getTeachers();
-    getSubjects();
-
     if (id) {
       getScheduleInfo();
     }
@@ -333,8 +302,10 @@ const ScheduleManagement: React.FC = () => {
       schedule: updatedSchedule,
     };
     setDateState(updatedState);
-    delete updatedState.date;
-    handleTimeSlots(updatedState);
+    // delete updatedState.date;
+    // handleTimeSlots(updatedState);
+    handleTimeSlots({ schedule: updatedState.schedule });
+
     // setDateState((prevState) => {
     //   const updatedSchedule = prevState.schedule.map((item, i) => {
     //     if (i === index) {
@@ -448,7 +419,11 @@ const ScheduleManagement: React.FC = () => {
   };
 
   const onSubmit = () => {
-    setIsLoading(true);
+    if (showModal) {
+      setIsLoading("modal");
+    } else {
+      setIsLoading("button");
+    }
     let url = "";
     if (id) {
       url = `schedule/${id}/`;
@@ -484,7 +459,14 @@ const ScheduleManagement: React.FC = () => {
       };
     }
 
-    Fetch(url, params, { method: id ? "put" : "post" }).then((res: any) => {
+    console.log("paramss===");
+
+    Fetch(
+      url,
+      { ...params, is_override: showModal },
+      { method: id ? "put" : "post" }
+    ).then((res: any) => {
+      setIsLoading("");
       if (res.status) {
         showToast(
           id ? "Schedule updated successfully" : "Schedule added successfully"
@@ -493,12 +475,21 @@ const ScheduleManagement: React.FC = () => {
       } else {
         let resErr = arrayString(res);
         handleNewError(resErr);
+        if (resErr?.non_field_errors) {
+          setMessage(resErr?.non_field_errors);
+          setShowModal(true);
+          return;
+        }
       }
-      setIsLoading(false);
+      // setIsLoading("");
+      setShowModal(false);
     });
   };
 
   const changeViewMode = (type: "date" | "day") => {
+    if (id) {
+      return;
+    }
     setViewMode(type);
     removeAllError();
   };
@@ -550,6 +541,7 @@ const ScheduleManagement: React.FC = () => {
   });
 
   console.log("errors====", errors);
+  console.log("isloading===", isLoading);
 
   return (
     <Layout>
@@ -565,6 +557,7 @@ const ScheduleManagement: React.FC = () => {
                 handlecommonInfoChange(value, "school")
               }
               error={errors?.school}
+              disabled={id ? true : false}
             />
 
             <Select
@@ -575,6 +568,7 @@ const ScheduleManagement: React.FC = () => {
                 handlecommonInfoChange(value, "class_assigned")
               }
               error={errors?.class}
+              disabled={id ? true : false}
             />
           </div>
 
@@ -647,9 +641,9 @@ const ScheduleManagement: React.FC = () => {
             />
           )}
 
-          {errors?.non_field_errors && (
+          {/* {errors?.non_field_errors && (
             <p className="error">{errors?.non_field_errors}</p>
-          )}
+          )} */}
 
           <div className={styles.buttonContainer}>
             <Button
@@ -663,12 +657,27 @@ const ScheduleManagement: React.FC = () => {
               text={id ? "Update" : "Submit"}
               onClick={handleSubmit}
               className="mt-2"
-              isLoading={isLoading}
+              isLoading={isLoading === "button"}
               style={{ width: "8rem" }}
             />
           </div>
         </div>
       </form>
+      <Modal
+        title="Confirm!"
+        message={errors?.non_field_errors}
+        onConfirm={() => setShowModal(false)}
+        visible={showModal}
+        confirmText="OK"
+      />
+      <Modal
+        title="Confirm!"
+        message={message}
+        onConfirm={handleSubmit}
+        onCancel={() => setShowModal(false)}
+        visible={showModal}
+        isLoading={isLoading === "modal"}
+      />
     </Layout>
   );
 };

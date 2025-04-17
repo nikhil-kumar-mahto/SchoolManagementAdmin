@@ -4,8 +4,12 @@ import Fetch from "../utils/form-handling/fetch";
 type AppContextType = {
   isSidebarOpen: boolean;
   toggleSidebar: () => void;
-  subjects: Array<Object>;
-  schools: Array<Object>;
+  subjects: { label: string; value: string }[];
+  schools: {
+    label: string;
+    value: string;
+    classes: { id: string; name: string }[];
+  }[];
   toggleIsLoggedIn: () => void;
   isLoggedIn: boolean | null;
 };
@@ -39,12 +43,19 @@ const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   const getSchools = () => {
     Fetch("schools/").then((res: any) => {
       if (res.status) {
-        let schools = res.data?.map((item: { name: string; id: string }) => {
-          return {
-            label: item?.name,
-            value: item?.id,
-          };
-        });
+        let schools = res.data?.map(
+          (item: {
+            name: string;
+            id: string;
+            classes: { id: string; name: string }[];
+          }) => {
+            return {
+              label: item?.name,
+              value: item?.id,
+              classes: item?.classes,
+            };
+          }
+        );
         setSchools(schools);
       }
     });

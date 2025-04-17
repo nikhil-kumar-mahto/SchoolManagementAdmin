@@ -21,6 +21,7 @@ import {
 import formStyles from "./Teachers.module.css";
 import DatePicker from "../../components/DatePicker/DatePicker";
 import ImagePicker from "../../components/common/ImagePicker/ImagePicker";
+import { useAppContext } from "../../contexts/AppContext";
 
 interface Props {}
 
@@ -100,7 +101,6 @@ const initialState = {
 const CreateTeacher: React.FC<Props> = () => {
   const [data, setData] = useState(initialState);
   const [isLoading, setIsLoading] = useState(false);
-  const [schools, setSchools] = useState([]);
   const [isFilesModified, setIsFilesModified] = useState({
     file_passbook: false,
     file_adhaar: false,
@@ -111,6 +111,7 @@ const CreateTeacher: React.FC<Props> = () => {
   const excludedKeys: string[] = ["school_id", "id", "school", "user"];
 
   const { id } = useParams();
+  const { schools } = useAppContext();
 
   const navigate = useNavigate();
   const toast = useToast();
@@ -123,20 +124,6 @@ const CreateTeacher: React.FC<Props> = () => {
     Fetch(`teachers/${id}/`).then((res: any) => {
       if (res.status) {
         setData({ ...res.data, school_id: res?.data?.school });
-      }
-    });
-  };
-
-  const getSchools = () => {
-    Fetch("schools/").then((res: any) => {
-      if (res.status) {
-        let schools = res.data?.map((item: { name: string; id: string }) => {
-          return {
-            label: item?.name,
-            value: item?.id,
-          };
-        });
-        setSchools(schools);
       }
     });
   };
@@ -232,7 +219,6 @@ const CreateTeacher: React.FC<Props> = () => {
   };
 
   useEffect(() => {
-    getSchools();
     if (id) {
       getTeacherInfo();
     }
