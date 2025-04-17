@@ -319,22 +319,37 @@ const ScheduleManagement: React.FC = () => {
   };
 
   const handleTimeChange = (index: number, type: string, val: string) => {
-    setDateState((prevState) => {
-      const updatedSchedule = prevState.schedule.map((item, i) => {
-        if (i === index) {
-          return {
-            ...item,
-            [type]: val,
-          };
-        }
-        return item;
-      });
-
-      return {
-        ...prevState,
-        schedule: updatedSchedule,
-      };
+    const updatedSchedule = dateState.schedule.map((item, i) => {
+      if (i === index) {
+        return {
+          ...item,
+          [type]: val,
+        };
+      }
+      return item;
     });
+    let updatedState = {
+      ...dateState,
+      schedule: updatedSchedule,
+    };
+    setDateState(updatedState);
+    handleTimeSlots(updatedState);
+    // setDateState((prevState) => {
+    //   const updatedSchedule = prevState.schedule.map((item, i) => {
+    //     if (i === index) {
+    //       return {
+    //         ...item,
+    //         [type]: val,
+    //       };
+    //     }
+    //     return item;
+    //   });
+
+    //   return {
+    //     ...prevState,
+    //     schedule: updatedSchedule,
+    //   };
+    // });
   };
 
   // const convertForm = (obj: any) => {
@@ -518,17 +533,22 @@ const ScheduleManagement: React.FC = () => {
     }
   });
 
-  const { errors, handleSubmit, handleNewError, removeAllError, handleBlur } =
-    FormC({
-      values:
-        viewMode === "day"
-          ? { ...dayParams, ...params }
-          : { ...dateState, ...params },
-      onSubmit,
-      selectFields,
-    });
+  const {
+    errors,
+    handleSubmit,
+    handleNewError,
+    removeAllError,
+    handleTimeSlots,
+  } = FormC({
+    values:
+      viewMode === "day"
+        ? { ...dayParams, ...params }
+        : { ...dateState, ...params },
+    onSubmit,
+    selectFields,
+  });
 
-  console.log("handleblur====", handleBlur);
+  console.log("errors====", errors);
 
   return (
     <Layout>
