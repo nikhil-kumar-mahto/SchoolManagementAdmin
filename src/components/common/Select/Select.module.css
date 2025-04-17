@@ -53,3 +53,8 @@
     margin-top: 0.5rem;
     font-size: 0.875rem;
 }
+
+.errorState {
+    border: 1px solid var(--danger-color);
+    color: var(--danger-color);
+}

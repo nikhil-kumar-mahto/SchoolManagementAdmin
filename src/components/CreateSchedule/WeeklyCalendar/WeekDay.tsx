@@ -66,6 +66,7 @@ const WeekDay: React.FC<Props> = ({
 
       {schedule.map((item, index) => (
         <TimeEntry
+          key={index}
           start_time={item.start_time}
           end_time={item.end_time}
           subject={item.subject}

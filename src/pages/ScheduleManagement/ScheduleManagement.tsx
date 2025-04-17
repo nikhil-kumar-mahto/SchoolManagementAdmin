@@ -602,6 +602,7 @@ const ScheduleManagement: React.FC = () => {
             <>
               {Object.entries(dayState).map(([key, value]) => (
                 <WeekDay
+                  key={key}
                   day={key}
                   schedule={value}
                   addItem={() => addItem("day", key as Day)}

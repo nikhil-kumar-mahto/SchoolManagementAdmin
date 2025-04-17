@@ -54,6 +54,7 @@ const TimeEntry: React.FC<Time> = ({
         value={start_time}
         onChange={(value: string) => handleChange("start_time", value)}
         error={errors?.start_time}
+        type="time"
       />
 
       <Select
@@ -62,6 +63,7 @@ const TimeEntry: React.FC<Time> = ({
         value={end_time}
         onChange={(value: string) => handleChange("end_time", value)}
         error={errors?.end_time}
+        type="time"
       />
 
       <Select

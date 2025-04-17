@@ -49,9 +49,9 @@ const Sidebar: React.FC<SidebarProps> = ({ isMinimized }) => {
 
       <nav>
         <ul>
-          {sidebarItems.map((item) => (
+          {sidebarItems.map((item, index) => (
             <li
-              key={item.name}
+              key={index}
               className={`${styles.labelContainer} ${
                 hoveredItem === item.name || selectedItem === item.name
                   ? styles.hoverState

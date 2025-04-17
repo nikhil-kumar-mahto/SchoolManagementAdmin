@@ -1,3 +1,4 @@
+import moment from "moment";
 import styles from "./Select.module.css";
 
 interface SelectProps {
@@ -8,6 +9,7 @@ interface SelectProps {
   placeholder?: string;
   className?: string;
   error?: string;
+  type?: string;
 }
 
 function Select({
@@ -18,20 +20,40 @@ function Select({
   placeholder = "Select an option",
   className,
   error,
+  type = "",
 }: SelectProps) {
+  const isValueInOptions = options.some((option) => option.value === value);
+
   return (
     <div className={`${styles.selectContainer} ${className || ""}`}>
-      {label && <label className={styles.label}>{label}</label>}
+      {label && (
+        <label
+          className={`${styles.label} ${error ? styles.errorMessage : ""}`}
+        >
+          {label}
+        </label>
+      )}
       <select
-        className={styles.select}
-        value={value as string}
-        onChange={(e) => onChange(e.target.value)}
+        className={`${styles.select} ${error ? styles.errorState : ""}`}
+        value={value || ""}
+        onChange={(e) => {
+          onChange(e.target.value);
+        }}
       >
         <option value="" disabled hidden>
           {placeholder}
         </option>
+        {type === "time" && !isValueInOptions && value && (
+          <option value={value} disabled>
+            {moment(value, "HH:mm").format("hh:mm A")}
+          </option>
+        )}
         {options.map((option) => (
-          <option key={option.value.toString()} value={option.value as string}>
+          <option
+            key={option.value.toString()}
+            value={option.value}
+            style={{ color: "#333" }}
+          >
             {option.label}
           </option>
         ))}

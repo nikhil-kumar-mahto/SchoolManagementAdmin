@@ -212,39 +212,6 @@ export const FormC = ({ values, removeValidValue, onSubmit, onSubmitError, selec
   };
 
   // handle validation of multiple time slots based on time added
-  // const handleTimeSlots = (values) => {
-  //   const error = {
-  //     date: values.date ? '' : 'Please select date',
-  //     school: values.school ? '' : 'Please select school',
-  //     class: values.class ? '' : 'Please select class',
-  //     schedule: []
-  //   };
-
-  //   let hasError = !!(error.date || error.school || error.class);
-
-  //   const requiredFields = {
-  //     start_time: "Please select start time",
-  //     end_time: "Please select end time",
-  //     teacher: "Please select teacher",
-  //     subject: "Please select subject"
-  //   };
-
-  //   values.schedule?.forEach((slot) => {
-  //     const slotError = {};
-
-  //     Object.entries(requiredFields).forEach(([field, message]) => {
-  //       if (!slot[field]) {
-  //         slotError[field] = message;
-  //         hasError = true;
-  //       }
-  //     });
-
-  //     error.schedule.push(slotError);
-  //   });
-
-  //   hasError ? setErr(error) : setErr({});
-  // };
-
   const handleTimeSlots = (values) => {
     const error = {
       date: values.date ? '' : 'Please select date',
@@ -256,7 +223,7 @@ export const FormC = ({ values, removeValidValue, onSubmit, onSubmitError, selec
     let hasError = !!(error.date || error.school || error.class);
 
     const requiredFields = {
-      start_time: "Please select start time",
+      start_time: "Please select start time", 
       end_time: "Please select end time",
       teacher: "Please select teacher",
       subject: "Please select subject"
@@ -269,7 +236,7 @@ export const FormC = ({ values, removeValidValue, onSubmit, onSubmitError, selec
       const start = moment(slot.start_time, 'HH:mm');
       const end = moment(slot.end_time, 'HH:mm');
 
-      // Empty field validation
+      // Required field validation
       Object.entries(requiredFields).forEach(([field, message]) => {
         if (!slot[field]) {
           slotError[field] = message;
@@ -277,8 +244,7 @@ export const FormC = ({ values, removeValidValue, onSubmit, onSubmitError, selec
         }
       });
 
-      // Check if start time is before end time
-      if (slot.start_time && slot.end_time && start.isValid() && end.isValid()) {
+      if (start.isValid() && end.isValid()) {
         if (!start.isBefore(end)) {
           slotError.start_time = "Start time must be before end time";
           hasError = true;
@@ -290,17 +256,27 @@ export const FormC = ({ values, removeValidValue, onSubmit, onSubmitError, selec
       error.schedule.push(slotError);
     });
 
-    // Now check for overlapping time ranges only among valid slots
+    // Time overlap validation
     for (let i = 0; i < slotTimes.length; i++) {
-      const { start: startA, end: endA, index: indexA } = slotTimes[i];
+      const { index: iA, start: startA, end: endA } = slotTimes[i];
 
       for (let j = i + 1; j < slotTimes.length; j++) {
-        const { start: startB, end: endB, index: indexB } = slotTimes[j];
+        const { index: iB, start: startB, end: endB } = slotTimes[j];
 
-        // Check overlap
         if (startA.isBefore(endB) && startB.isBefore(endA)) {
-          error.schedule[indexA].start_time = error.schedule[indexA].start_time || "Time slot overlaps with another entry";
-          error.schedule[indexB].start_time = error.schedule[indexB].start_time || "Time slot overlaps with another entry";
+          const overlapMsg = "Time slot overlaps with another entry";
+
+          // Decide where to show the error:
+          if (startB.isBefore(endA)) {
+            // Slot B starts during Slot A
+            error.schedule[iA].end_time = error.schedule[iA].end_time || overlapMsg;
+            error.schedule[iB].start_time = error.schedule[iB].start_time || overlapMsg;
+          } else {
+            // Slot A starts during Slot B
+            error.schedule[iA].start_time = error.schedule[iA].start_time || overlapMsg;
+            error.schedule[iB].end_time = error.schedule[iB].end_time || overlapMsg;
+          }
+
           hasError = true;
         }
       }
