@@ -220,11 +220,17 @@ const ScheduleManagement: React.FC = () => {
     day: Day,
     index: number,
     type: "start_time" | "end_time" | "subject" | "teacher",
-    value: string
+    value: string,
+    deletedId = undefined
   ) => {
+    if (id && deletedId) {
+      setDeletedTimeSlots((prevState) => {
+        return [...prevState, deletedId];
+      });
+    }
     setDayState((prevState) => {
       const updatedDay = [...prevState[day]];
-      const updatedTime = { ...updatedDay[index] };
+      const updatedTime = { ...updatedDay[index], isEdited: id ? true : false };
 
       updatedTime[type] = value;
       updatedDay[index] = updatedTime;
@@ -312,12 +318,23 @@ const ScheduleManagement: React.FC = () => {
     });
   };
 
-  const handleTimeChange = (index: number, type: string, val: string) => {
+  const handleTimeChange = (
+    index: number,
+    type: string,
+    val: string,
+    deletedId = undefined
+  ) => {
+    if (id && deletedId) {
+      setDeletedTimeSlots((prevState) => {
+        return [...prevState, deletedId];
+      });
+    }
     const updatedSchedule = dateState.schedule.map((item, i) => {
       if (i === index) {
         return {
           ...item,
           [type]: val,
+          isEdited: id ? true : false,
         };
       }
       return item;
@@ -330,67 +347,7 @@ const ScheduleManagement: React.FC = () => {
     // delete updatedState.date;
     // handleTimeSlots(updatedState);
     handleTimeSlots({ schedule: updatedState.schedule });
-
-    // setDateState((prevState) => {
-    //   const updatedSchedule = prevState.schedule.map((item, i) => {
-    //     if (i === index) {
-    //       return {
-    //         ...item,
-    //         [type]: val,
-    //       };
-    //     }
-    //     return item;
-    //   });
-
-    //   return {
-    //     ...prevState,
-    //     schedule: updatedSchedule,
-    //   };
-    // });
   };
-
-  // const convertForm = (obj: any) => {
-  //   if (viewMode === "day") {
-  //     let object = {
-  //       school_id: obj.school,
-  //       class_id: obj.class_assigned,
-  //       time_slots: Object.entries(obj.time_slots).reduce(
-  //         (acc, [day, daySlots]) => {
-  //           const slotsForDay = daySlots.map((slot) => ({
-  //             day_of_week: day,
-  //             start_time: slot.start_time,
-  //             end_time: slot.end_time,
-  //             teacher: slot.teacher,
-  //             subject: slot.subject,
-  //           }));
-  //           return [...acc, ...slotsForDay];
-  //         },
-  //         [] as {
-  //           day: string;
-  //           type: string;
-  //           start_time: string;
-  //           end_time: string;
-  //         }[]
-  //       ),
-  //     };
-  //     return object;
-  //   } else {
-  //     let object = {
-  //       school_id: obj.school,
-  //       class_id: obj.class_assigned,
-  //       time_slots: obj.time_slots.map((item) => {
-  //         return {
-  //           date: obj.date,
-  //           start_time: item.start_time,
-  //           end_time: item.end_time,
-  //           teacher: item.teacher,
-  //           subject: item.subject,
-  //         };
-  //       }),
-  //     };
-  //     return object;
-  //   }
-  // };
 
   const convertForm = (obj: any) => {
     if (viewMode === "day") {
@@ -444,8 +401,6 @@ const ScheduleManagement: React.FC = () => {
   };
 
   const onSubmit = () => {
-    console.log('called===');
-    
     if (showModal) {
       setIsLoading("modal");
     } else {
@@ -565,8 +520,6 @@ const ScheduleManagement: React.FC = () => {
     selectFields,
   });
 
-  console.log("errors====", errors);
-
   return (
     <Layout>
       <form action="" onSubmit={handleSubmit}>
@@ -630,8 +583,9 @@ const ScheduleManagement: React.FC = () => {
                   handleChange={(
                     index: number,
                     type: "start_time" | "end_time" | "subject" | "teacher",
-                    value: string
-                  ) => handleChange(key as Day, index, type, value)}
+                    value: string,
+                    id = undefined
+                  ) => handleChange(key as Day, index, type, value, id)}
                   handleDelete={(index: number, id = undefined) =>
                     handleDelete(index, "day", key as Day, id)
                   }
@@ -654,8 +608,9 @@ const ScheduleManagement: React.FC = () => {
               handleTimeChange={(
                 index: number,
                 type: "start_time" | "end_time" | "subject" | "teacher",
-                value: string
-              ) => handleTimeChange(index, type, value)}
+                value: string,
+                id = undefined
+              ) => handleTimeChange(index, type, value, id)}
               teachers={teachers}
               subjects={subjects}
               errors={errors}

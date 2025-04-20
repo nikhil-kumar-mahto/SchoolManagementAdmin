@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import Button from "../../common/Button/Button";
 import TimeEntry from "../TimeEntry/TimeEntry";
 import { PlusCircleIcon } from "../../../assets/svgs";
 
@@ -24,7 +23,8 @@ type Props = {
   handleChange: (
     index: number,
     type: "start_time" | "end_time" | "subject" | "teacher",
-    value: string
+    value: string,
+    id: string | undefined
   ) => void;
   handleDelete: (index: number, id: string | undefined) => void;
   teachers: Array<{ label: string; value: string }>;
@@ -90,7 +90,7 @@ const WeekDay: React.FC<Props> = ({
           handleChange={(
             type: "start_time" | "end_time" | "subject" | "teacher",
             value: string
-          ) => handleChange(index, type, value)}
+          ) => handleChange(index, type, value, item?.id)}
           handleDelete={() => handleDelete(index, item?.id)}
           errors={errors?.[index]}
           teachers={teachers}
