@@ -37,7 +37,7 @@ interface Props {
   Friday: Array<Time>;
 }
 
-const emptyObj = { start_time: "", end_time: "", teacher: "", subject: "" };
+const emptyObj = { start_time: "", end_time: "", teacher: "id", subject: "id" };
 
 // when user selects day
 const initialState = {
@@ -105,12 +105,6 @@ const ScheduleManagement: React.FC = () => {
       }
     });
 
-    // for (const day in result) {
-    //   if (result[day].length === 0) {
-    //     result[day].push({ ...emptyObj });
-    //   }
-    // }
-
     Object.keys(result).forEach((day) => {
       if (result[day].length === 0) {
         delete result[day];
@@ -176,22 +170,6 @@ const ScheduleManagement: React.FC = () => {
     });
   };
 
-  const getClasses = (id: string) => {
-    Fetch(`classes?school_id=${id}`).then((res: any) => {
-      if (res.status) {
-        let classes = res.data?.map(
-          (item: { name: string; id: string; section: string }) => {
-            return {
-              label: item?.name + " " + item?.section,
-              value: item?.id,
-            };
-          }
-        );
-        setClasses(classes || []);
-      }
-    });
-  };
-
   const addItem = (type: "day" | "date", day: Day = "Monday") => {
     if (type === "day") {
       setDayState((prevState) => {
@@ -240,21 +218,6 @@ const ScheduleManagement: React.FC = () => {
         [day]: updatedDay,
       };
     });
-
-    // const updatedDay = [...dayState[day]];
-    // const updatedTime = { ...updatedDay[index] };
-
-    // updatedTime[type] = value;
-    // updatedDay[index] = updatedTime;
-
-    // setDayState((prevState) => {
-    //   return {
-    //     ...prevState,
-    //     [day]: updatedDay,
-    //   };
-    // });
-    // console.log("check===", { ...dayState, [day]: updatedDay });
-    // handleTimeSlots({ schedule: { ...dayState, [day]: updatedDay } });
   };
 
   const handleDelete = (
@@ -344,9 +307,11 @@ const ScheduleManagement: React.FC = () => {
       schedule: updatedSchedule,
     };
     setDateState(updatedState);
-    // delete updatedState.date;
-    // handleTimeSlots(updatedState);
-    handleTimeSlots({ schedule: updatedState.schedule });
+    handleTimeSlots({
+      ...updatedState,
+      school: commonInfo.school,
+      class: commonInfo.class_assigned,
+    });
   };
 
   const convertForm = (obj: any) => {
@@ -401,6 +366,9 @@ const ScheduleManagement: React.FC = () => {
   };
 
   const onSubmit = () => {
+    if (Object.keys(errors).length > 0) {
+      return;
+    }
     if (showModal) {
       setIsLoading("modal");
     } else {
@@ -522,7 +490,19 @@ const ScheduleManagement: React.FC = () => {
 
   return (
     <Layout>
-      <form action="" onSubmit={handleSubmit}>
+      <form
+        action=""
+        onSubmit={() =>
+          handleTimeSlots(
+            {
+              ...dateState,
+              school: commonInfo.school,
+              class: commonInfo.class_assigned,
+            },
+            true
+          )
+        }
+      >
         <div className={styles.container}>
           <h2>{id ? "Update" : "Create"} Schedule</h2>
           <div className={`${styles.selectContainer} mt-4`}>
@@ -636,7 +616,16 @@ const ScheduleManagement: React.FC = () => {
             />
             <Button
               text={id ? "Update" : "Submit"}
-              onClick={handleSubmit}
+              onClick={() =>
+                handleTimeSlots(
+                  {
+                    ...dateState,
+                    school: commonInfo.school,
+                    class: commonInfo.class_assigned,
+                  },
+                  true
+                )
+              }
               className="mt-2"
               isLoading={isLoading === "button"}
               style={{ width: "8rem" }}
