@@ -49,9 +49,9 @@ function Select({
             {moment(value, "HH:mm").format("hh:mm A")}
           </option>
         )}
-        {options.map((option) => (
+        {options.map((option, index) => (
           <option
-            key={option.value.toString()}
+            key={index}
             value={option.value}
             style={{ color: "#333" }}
           >

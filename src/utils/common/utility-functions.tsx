@@ -62,39 +62,7 @@ export function generateTimeArray() {
   return timeArray;
 }
 
-// export function filterTimeArray(start_time) {
-//   if (start_time === "23:00") {
-//     return [{ value: "00:00", label: "12:00 AM" }];
-//   }
-
-//   const timeArray = generateTimeArray();
-//   if (!start_time) {
-//     return timeArray;
-//   }
-
-//   let startHour;
-//   if (typeof start_time === "string") {
-//     const parsedTime = moment(start_time, "HH:mm", true);
-//     if (parsedTime.isValid()) {
-//       startHour = parsedTime.hour();
-//     } else {
-//       throw new Error("Invalid time format. Please use 'HH:mm' format.");
-//     }
-//   } else if (typeof start_time === "number") {
-//     startHour = start_time;
-//   } else {
-//     throw new Error(
-//       "Invalid input type. Please provide a number or a string in 'HH:mm' format."
-//     );
-//   }
-
-//   return timeArray.filter((time) => {
-//     const hour = parseInt(time.value.split(":")[0], 10);
-//     return hour > startHour;
-//   });
-// }
-
-export function filterTimeArray(start_time) {
+export function filterTimeArray(start_time, allowEqual = false) {
   const timeArray = generateTimeArray();
 
   if (!start_time) {
@@ -108,12 +76,12 @@ export function filterTimeArray(start_time) {
   }
 
   if (parsedStartTime.isSameOrAfter(moment({ hour: 23, minute: 0 }))) {
-    return [{ value: "00:00", label: "12:00 AM" }];
+    return [{ value: "24:00", label: "12:00 AM" }];
   }
 
   return timeArray.filter((time) => {
     const currentTime = moment(time.value, "HH:mm");
-    return currentTime.isAfter(parsedStartTime);
+    return allowEqual ? currentTime.isSameOrAfter(parsedStartTime ) : currentTime.isAfter(parsedStartTime);
   });
 }
 

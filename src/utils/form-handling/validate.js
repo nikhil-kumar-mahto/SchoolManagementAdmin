@@ -296,23 +296,23 @@ export const FormC = ({ values, removeValidValue, onSubmit, onSubmitError, selec
   //   }
   // };
 
-  const handleTimeSlots = (values, isSubmit = false) => {
+  const handleDateTimeSlots = (values, isSubmit = false) => {
     let errors = { ...err }
 
     // Initial step -> check for items present outside of array
-    if (!values.school) {
+    if (!values.school && isSubmit) {
       errors.school = "Please select school."
-    } else {
+    } else if (errors?.school && values.school) {
       delete errors.school
     }
-    if (!values.class) {
+    if (!values.class && isSubmit) {
       errors.class = "Please select class."
-    } else {
+    } else if (errors?.class && values.class) {
       delete errors.class
     }
-    if (!values.date) {
+    if (!values.date && isSubmit) {
       errors.date = "Please select date."
-    } else {
+    } else if (errors?.date && values.date) {
       delete errors.date
     }
 
@@ -348,8 +348,28 @@ export const FormC = ({ values, removeValidValue, onSubmit, onSubmitError, selec
       }
     }
 
+    // check for consecutive elements in array, that stores time slots
+    for (let i = 0; i < values.schedule.length; i++) {
+      const slot1Start = moment(values.schedule[i].start_time, "HH:mm")
+      const slot1End = moment(values.schedule[i].end_time, "HH:mm")
 
+      if (slot1End.isBefore(slot1Start) || slot1End.isSame(slot1Start)) {
+        errors["schedule"][i].start_time = "Start time must be before end time."
+      }
 
+      if (i === values.schedule.length - 1) {
+        break;
+      }
+
+      const slot2Start = moment(values.schedule[i + 1].start_time, "HH:mm")
+      const slot2End = moment(values.schedule[i + 1].end_time, "HH:mm")
+
+      if (slot1End.isAfter(slot2Start)) {
+        errors.schedule[i].end_time = "Time slot overlaps with another entry.";
+        errors.schedule[i + 1].start_time = "Time slot overlaps with another entry.";
+      }
+
+    }
 
     // Loop through all schedule object and check if any error is present, if not remove that object.
     let errorPresent = false
@@ -366,6 +386,117 @@ export const FormC = ({ values, removeValidValue, onSubmit, onSubmitError, selec
     }
 
     setErr(errors)
+
+    if (Object.keys(errors).length === 0 && isSubmit) {
+      onSubmit()
+    }
+  }
+
+  const handleWeekTimeSlots = (values, isSubmit = false) => {
+    let errors = { ...err }
+
+    // Initial step -> check for items present outside of array
+    if (!values.school && isSubmit) {
+      errors.school = "Please select school."
+    } else if (errors?.school && values.school) {
+      delete errors.school
+    }
+    if (!values.class && isSubmit) {
+      errors.class = "Please select class."
+    } else if (errors?.class && values.class) {
+      delete errors.class
+    }
+
+    const weekDays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+    errors.schedule = {};
+
+    for (let day of weekDays) {
+      errors.schedule[day] = errors.schedule[day] || [];
+
+      if (!values[day] || !Array.isArray(values[day]) || values[day].length === 0) {
+        if (isSubmit) {
+          // errors.schedule[day] = [{ error: "Please provide schedule data for " + day }];
+        }
+        continue;
+      }
+
+      const schedule = values[day];
+
+      // check for array
+      for (let i = 0; i < schedule.length; i++) {
+        errors.schedule[day].push({});
+        if (!schedule[i].start_time && isSubmit) {
+          errors.schedule[day][i].start_time = "Please select start time.";
+        } else if (errors?.schedule?.[day]?.[i]?.start_time && schedule[i].start_time) {
+          delete errors.schedule[day][i].start_time;
+        }
+
+        if (!schedule[i].end_time && isSubmit) {
+          errors.schedule[day][i].end_time = "Please select end time.";
+        } else if (errors?.schedule?.[day]?.[i]?.end_time && schedule[i].end_time) {
+          delete errors.schedule[day][i].end_time;
+        }
+
+        if (!schedule[i].teacher && isSubmit) {
+          errors.schedule[day][i].teacher = "Please select teacher.";
+        } else if (errors?.schedule?.[day]?.[i]?.teacher && schedule[i].teacher) {
+          delete errors.schedule[day][i].teacher;
+        }
+
+        if (!schedule[i].subject && isSubmit) {
+          errors.schedule[day][i].subject = "Please select subject.";
+        } else if (errors?.schedule?.[day]?.[i]?.subject && schedule[i].subject) {
+          delete errors.schedule[day][i].subject;
+        }
+      }
+
+      // check for consecutive elements in array, that stores time slots
+      for (let i = 0; i < schedule.length; i++) {
+        const slot1Start = moment(schedule[i].start_time, "HH:mm");
+        const slot1End = moment(schedule[i].end_time, "HH:mm");
+
+        if (slot1End.isBefore(slot1Start) || slot1End.isSame(slot1Start)) {
+          errors.schedule[day][i].start_time = "Start time must be before end time.";
+        }
+
+        if (i === schedule.length - 1) {
+          break;
+        }
+
+        const slot2Start = moment(schedule[i + 1].start_time, "HH:mm");
+        const slot2End = moment(schedule[i + 1].end_time, "HH:mm");
+
+        if (slot1End.isAfter(slot2Start)) {
+          errors.schedule[day][i].end_time = "Time slot overlaps with another entry.";
+          errors.schedule[day][i + 1].start_time = "Time slot overlaps with another entry.";
+        }
+      }
+
+      // Loop through all schedule object and check if any error is present, if not remove that object.
+      let errorPresent = false;
+      for (let i = 0; i < errors.schedule[day].length; i++) {
+        if (Object.keys(errors.schedule[day][i]).length > 0) {
+          errorPresent = true;
+          break;
+        }
+      }
+
+      // remove schedule key when no object present for the day
+      if (!errorPresent) {
+        delete errors.schedule[day];
+      }
+    }
+
+    // remove schedule key when no errors are present for any day
+    if (Object.keys(errors.schedule).length === 0) {
+      delete errors.schedule;
+    }
+
+    setErr(errors);
+
+    if (Object.values(errors.schedule).every(item => item.length === 0) && isSubmit && !errors.school && !errors.class) {
+      onSubmit();
+    }
   }
 
   const obj = {
@@ -376,7 +507,8 @@ export const FormC = ({ values, removeValidValue, onSubmit, onSubmitError, selec
     handleNewError,
     handleArrayChange,
     removeAllError,
-    handleTimeSlots,
+    handleDateTimeSlots,
+    handleWeekTimeSlots,
     errors: err,
   };
   return obj;

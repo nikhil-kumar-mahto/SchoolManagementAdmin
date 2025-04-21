@@ -48,6 +48,10 @@ const WeekDay: React.FC<Props> = ({
     !schedule[schedule.length - 1]?.teacher ||
     !schedule[schedule.length - 1]?.subject;
 
+  if (schedule.length === 0) {
+    disableAddingMore = false;
+  }
+
   const [showModal, setShowModal] = useState(false);
 
   const handleAddMore = () => {

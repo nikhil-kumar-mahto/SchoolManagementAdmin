@@ -37,7 +37,7 @@ interface Props {
   Friday: Array<Time>;
 }
 
-const emptyObj = { start_time: "", end_time: "", teacher: "id", subject: "id" };
+const emptyObj = { start_time: "", end_time: "", teacher: "", subject: "" };
 
 // when user selects day
 const initialState = {
@@ -206,17 +206,36 @@ const ScheduleManagement: React.FC = () => {
         return [...prevState, deletedId];
       });
     }
-    setDayState((prevState) => {
-      const updatedDay = [...prevState[day]];
-      const updatedTime = { ...updatedDay[index], isEdited: id ? true : false };
+    // setDayState((prevState) => {
+    //   const updatedDay = [...prevState[day]];
+    //   const updatedTime = { ...updatedDay[index], isEdited: id ? true : false };
 
-      updatedTime[type] = value;
-      updatedDay[index] = updatedTime;
+    //   updatedTime[type] = value;
+    //   updatedDay[index] = updatedTime;
 
-      return {
-        ...prevState,
-        [day]: updatedDay,
-      };
+    //   return {
+    //     ...prevState,
+    //     [day]: updatedDay,
+    //   };
+    // });
+
+    const updatedDay = [...dayState[day]];
+    const updatedTime = { ...updatedDay[index], isEdited: id ? true : false };
+
+    updatedTime[type] = value;
+    updatedDay[index] = updatedTime;
+
+    const newState = {
+      ...dayState,
+      [day]: updatedDay,
+    };
+
+    setDayState(newState);
+
+    handleWeekTimeSlots({
+      ...newState,
+      school: commonInfo.school,
+      class: commonInfo.class_assigned,
     });
   };
 
@@ -279,6 +298,14 @@ const ScheduleManagement: React.FC = () => {
         [type]: value,
       };
     });
+
+    const key = type === "class_assigned" ? "class" : type;
+
+    if (viewMode === "date") {
+      handleDateTimeSlots({ ...dateState, ...commonInfo, [key]: value });
+    } else {
+      handleWeekTimeSlots({ ...dayState, ...commonInfo, [key]: value });
+    }
   };
 
   const handleTimeChange = (
@@ -307,7 +334,7 @@ const ScheduleManagement: React.FC = () => {
       schedule: updatedSchedule,
     };
     setDateState(updatedState);
-    handleTimeSlots({
+    handleDateTimeSlots({
       ...updatedState,
       school: commonInfo.school,
       class: commonInfo.class_assigned,
@@ -366,9 +393,9 @@ const ScheduleManagement: React.FC = () => {
   };
 
   const onSubmit = () => {
-    if (Object.keys(errors).length > 0) {
-      return;
-    }
+    // if (Object.keys(errors).length > 0) {
+    //   return;
+    // }
     if (showModal) {
       setIsLoading("modal");
     } else {
@@ -478,7 +505,8 @@ const ScheduleManagement: React.FC = () => {
     handleSubmit,
     handleNewError,
     removeAllError,
-    handleTimeSlots,
+    handleDateTimeSlots,
+    handleWeekTimeSlots,
   } = FormC({
     values:
       viewMode === "day"
@@ -488,20 +516,30 @@ const ScheduleManagement: React.FC = () => {
     selectFields,
   });
 
+  console.log("err===", errors);
+
   return (
     <Layout>
       <form
         action=""
-        onSubmit={() =>
-          handleTimeSlots(
-            {
-              ...dateState,
+        onSubmit={() => {
+          if (viewMode === "date") {
+            handleDateTimeSlots(
+              {
+                ...dateState,
+                school: commonInfo.school,
+                class: commonInfo.class_assigned,
+              },
+              true
+            );
+          } else {
+            handleWeekTimeSlots({
+              ...dayState,
               school: commonInfo.school,
               class: commonInfo.class_assigned,
-            },
-            true
-          )
-        }
+            });
+          }
+        }}
       >
         <div className={styles.container}>
           <h2>{id ? "Update" : "Create"} Schedule</h2>
@@ -569,7 +607,8 @@ const ScheduleManagement: React.FC = () => {
                   handleDelete={(index: number, id = undefined) =>
                     handleDelete(index, "day", key as Day, id)
                   }
-                  errors={errors?.[key]}
+                  // errors={errors?.[key]}
+                  errors={errors?.schedule?.[key]}
                   teachers={teachers}
                 />
               ))}
@@ -577,14 +616,19 @@ const ScheduleManagement: React.FC = () => {
           ) : (
             <DateSchedule
               dateState={dateState}
-              handleChange={(value: string, type: string) =>
+              handleChange={(value: string, type: string) => {
                 setDateState((prevState) => {
                   return {
                     ...prevState,
                     [type]: value,
                   };
-                })
-              }
+                });
+                handleDateTimeSlots({
+                  ...commonInfo,
+                  ...dateState,
+                  [type]: value,
+                });
+              }}
               handleTimeChange={(
                 index: number,
                 type: "start_time" | "end_time" | "subject" | "teacher",
@@ -616,16 +660,27 @@ const ScheduleManagement: React.FC = () => {
             />
             <Button
               text={id ? "Update" : "Submit"}
-              onClick={() =>
-                handleTimeSlots(
-                  {
-                    ...dateState,
-                    school: commonInfo.school,
-                    class: commonInfo.class_assigned,
-                  },
-                  true
-                )
-              }
+              onClick={() => {
+                if (viewMode === "date") {
+                  handleDateTimeSlots(
+                    {
+                      ...dateState,
+                      school: commonInfo.school,
+                      class: commonInfo.class_assigned,
+                    },
+                    true
+                  );
+                } else {
+                  handleWeekTimeSlots(
+                    {
+                      ...dayState,
+                      school: commonInfo.school,
+                      class: commonInfo.class_assigned,
+                    },
+                    true
+                  );
+                }
+              }}
               className="mt-2"
               isLoading={isLoading === "button"}
               style={{ width: "8rem" }}

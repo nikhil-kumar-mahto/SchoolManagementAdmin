@@ -49,7 +49,7 @@ const TimeEntry: React.FC<Time> = ({
       <Select
         label="Select start time*"
         options={
-          minStartTime ? filterTimeArray(minStartTime) : generateTimeArray()
+          minStartTime ? filterTimeArray(minStartTime, true) : generateTimeArray()
         }
         value={start_time}
         onChange={(value: string) => handleChange("start_time", value)}
