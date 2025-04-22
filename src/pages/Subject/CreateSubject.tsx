@@ -1,7 +1,6 @@
 import React, { ChangeEvent, useEffect, useState } from "react";
 import Input from "../../components/common/Input/Input";
 import Button from "../../components/common/Button/Button";
-// import styles from "./CreateSubjects.module.css";
 import styles from "../../styles/Forms.module.css";
 import Layout from "../../components/common/Layout/Layout";
 import { useNavigate, useParams } from "react-router-dom";
@@ -9,6 +8,7 @@ import { FormC } from "../../utils/form-handling/validate";
 import Fetch from "../../utils/form-handling/fetch";
 import { arrayString } from "../../utils/form-handling/arrayString";
 import { useToast } from "../../contexts/Toast";
+import { useAppContext } from "../../contexts/AppContext";
 
 interface Props {}
 
@@ -21,6 +21,8 @@ const CreateSchool: React.FC<Props> = () => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const toast = useToast();
+
+  const { getSubjects } = useAppContext();
 
   const showToast = (message: string) => {
     toast.show(message, 2000, "#4CAF50");
@@ -62,12 +64,13 @@ const CreateSchool: React.FC<Props> = () => {
     } else {
       url = "subjects/";
     }
-    Fetch(url, data, { method: id ? "patch" : "post" }).then((res: any) => {
+    Fetch(url, data, { method: id ? "put" : "post" }).then((res: any) => {
       if (res.status) {
         showToast(
           id ? "Subject updated successfully" : "Subject added successfully"
         );
         navigate("/subjects");
+        getSubjects();
       } else {
         let resErr = arrayString(res);
         handleNewError(resErr);

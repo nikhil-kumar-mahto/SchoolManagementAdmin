@@ -135,12 +135,14 @@ const ScheduleManagement: React.FC = () => {
       if (res.status) {
         // getClasses(res?.data?.school?.id);
         let classes = schools
-          .find((item) => item?.value === res?.data?.school?.id)
+          .find((item) => item?.value === res?.data?.school)
           ?.classes?.map((item) => ({ label: item?.name, value: item?.id }));
+
+        console.log("schools===", schools);
 
         setClasses(classes || []);
         setCommonInfo({
-          school: res?.data?.school?.id,
+          school: res?.data?.school,
           class_assigned: res?.data?.id,
         });
         if (res?.data?.time_slots[0]?.day_of_week) {
@@ -155,6 +157,10 @@ const ScheduleManagement: React.FC = () => {
       }
     });
   };
+
+  console.log("class assifned===", commonInfo.class_assigned);
+
+  console.log("classes===", classes);
 
   const getTeachers = () => {
     Fetch("teachers/").then((res: any) => {
@@ -274,10 +280,10 @@ const ScheduleManagement: React.FC = () => {
 
   useEffect(() => {
     getTeachers();
-    if (id) {
+    if (id && schools.length > 0) {
       getScheduleInfo();
     }
-  }, []);
+  }, [schools]);
 
   const navigateBack = () => {
     navigate("/schedule");

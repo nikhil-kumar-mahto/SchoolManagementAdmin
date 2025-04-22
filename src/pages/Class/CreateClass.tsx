@@ -67,7 +67,11 @@ const CreateClass: React.FC<Props> = () => {
     } else {
       url = "classes/";
     }
-    Fetch(url, data, { method: id ? "patch" : "post" }).then((res: any) => {
+    Fetch(
+      url,
+      data,
+      { method: id ? "put" : "post" }
+    ).then((res: any) => {
       if (res.status) {
         showToast(
           id ? "Class updated successfully" : "Class added successfully"

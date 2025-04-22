@@ -169,20 +169,21 @@ const CreateTeacher: React.FC<Props> = () => {
 
     delete params.school_id;
 
-    Fetch(url, params, { method: id ? "put" : "post", inFormData: true }).then(
-      (res: any) => {
-        if (res.status) {
-          showToast(
-            id ? "Teacher updated successfully" : "Teacher added successfully"
-          );
-          navigate("/teachers");
-        } else {
-          let resErr = arrayString(res);
-          handleNewError(resErr);
-        }
-        setIsLoading(false);
+    Fetch(url, id ? { ...params, school: data?.school.id } : params, {
+      method: id ? "put" : "post",
+      inFormData: true,
+    }).then((res: any) => {
+      if (res.status) {
+        showToast(
+          id ? "Teacher updated successfully" : "Teacher added successfully"
+        );
+        navigate("/teachers");
+      } else {
+        let resErr = arrayString(res);
+        handleNewError(resErr);
       }
-    );
+      setIsLoading(false);
+    });
   };
 
   let params = {

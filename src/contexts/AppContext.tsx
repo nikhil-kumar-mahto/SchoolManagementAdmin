@@ -12,6 +12,8 @@ type AppContextType = {
   }[];
   toggleIsLoggedIn: () => void;
   isLoggedIn: boolean | null;
+  getSchools: () => void;
+  getSubjects: () => void;
 };
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -89,6 +91,8 @@ const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
         schools,
         toggleIsLoggedIn,
         isLoggedIn,
+        getSchools,
+        getSubjects,
       }}
     >
       {children}

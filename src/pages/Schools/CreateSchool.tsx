@@ -10,6 +10,7 @@ import { onKeyPress } from "../../utils/form-handling/validate";
 import Fetch from "../../utils/form-handling/fetch";
 import { arrayString } from "../../utils/form-handling/arrayString";
 import { useToast } from "../../contexts/Toast";
+import { useAppContext } from "../../contexts/AppContext";
 
 interface Props {}
 
@@ -28,6 +29,8 @@ const CreateSchool: React.FC<Props> = () => {
   const [isLogoChanged, setIsLogoChanged] = useState(false);
   const navigate = useNavigate();
   const toast = useToast();
+
+  const { getSchools } = useAppContext();
 
   const showToast = (message: string) => {
     toast.show(message, 2000, "#4CAF50");
@@ -84,7 +87,7 @@ const CreateSchool: React.FC<Props> = () => {
       delete params.logo;
     }
     Fetch(url, params, {
-      method: id ? "patch" : "post",
+      method: id ? "put" : "post",
       inFormData: true,
     }).then((res: any) => {
       if (res.status) {
@@ -92,6 +95,7 @@ const CreateSchool: React.FC<Props> = () => {
           id ? "School updated successfully" : "School added successfully"
         );
         navigate("/schools");
+        getSchools();
       } else {
         let resErr = arrayString(res);
         handleNewError(resErr);
@@ -105,6 +109,7 @@ const CreateSchool: React.FC<Props> = () => {
     logo: id && !isLogoChanged ? data.logo : data.logo?.name,
   };
   delete params.website;
+  delete params.classes; // not taken on state, but is received from backend API during edit mode
 
   const { errors, handleSubmit, handleNewError } = FormC({
     values: params,
@@ -121,6 +126,8 @@ const CreateSchool: React.FC<Props> = () => {
     }
     return null;
   };
+
+  console.log("err===", errors);
 
   return (
     <Layout>
