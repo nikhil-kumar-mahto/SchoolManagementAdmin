@@ -378,6 +378,7 @@ const CreateTeacher: React.FC<Props> = () => {
             onChange={(value) => handleSelectChange(value, "school")}
             error={errors?.school && "Please select school."}
             className="w-25"
+            tabIndex={tabIndex++}
           />
 
           <div className={formStyles["form-grid"]}>
