@@ -223,89 +223,6 @@ export const FormC = ({ values, removeValidValue, onSubmit, onSubmitError, selec
     return d;
   };
 
-  // handle validation of multiple time slots based on time added
-  // const handleTimeSlots = (values, isSubmit = false) => { // when type is submit check for empty values as well
-  //   console.log("hello===");
-  //   const error = {
-  //     date: isSubmit ? values.date ? '' : 'Please select date' : "",
-  //     school: isSubmit ? values.school ? '' : 'Please select school' : "",
-  //     class: isSubmit ? values.class ? '' : 'Please select class' : "",
-  //     schedule: []
-  //   };
-
-  //   let hasError = !!(error.date || error.school || error.class);
-
-  //   const requiredFields = {
-  //     start_time: "Please select start time.",
-  //     end_time: "Please select end time.",
-  //     teacher: "Please select teacher.",
-  //     subject: "Please select subject."
-  //   };
-
-  //   const slotTimes = [];
-
-  //   values.schedule?.forEach((slot, index) => {
-  //     const slotError = {};
-  //     const start = moment(slot.start_time, 'HH:mm');
-  //     const end = moment(slot.end_time, 'HH:mm');
-
-  //     // Required field validation
-  //     if (isSubmit) {
-  //       Object.entries(requiredFields).forEach(([field, message]) => {
-  //         if (!slot[field]) {
-  //           slotError[field] = message;
-  //           hasError = true;
-  //         }
-  //       });
-  //     }
-
-
-  //     if (start.isValid() && end.isValid()) {
-  //       if (!start.isBefore(end)) {
-  //         slotError.start_time = "Start time must be before end time.";
-  //         hasError = true;
-  //       } else {
-  //         slotTimes.push({ index, start, end });
-  //       }
-  //     }
-
-  //     error.schedule.push(slotError);
-  //   });
-
-  //   // Time overlap validation
-  //   for (let i = 0; i < slotTimes.length; i++) {
-  //     const { index: iA, start: startA, end: endA } = slotTimes[i];
-
-  //     for (let j = i + 1; j < slotTimes.length; j++) {
-  //       const { index: iB, start: startB, end: endB } = slotTimes[j];
-
-  //       if (startA.isBefore(endB) && startB.isBefore(endA)) {
-  //         const overlapMsg = "Time slot overlaps with another entry.";
-
-  //         // Decide where to show the error:
-  //         if (startB.isBefore(endA)) {
-  //           // Slot B starts during Slot A
-  //           error.schedule[iA].end_time = error.schedule[iA].end_time || overlapMsg;
-  //           error.schedule[iB].start_time = error.schedule[iB].start_time || overlapMsg;
-  //         } else {
-  //           // Slot A starts during Slot B
-  //           error.schedule[iA].start_time = error.schedule[iA].start_time || overlapMsg;
-  //           error.schedule[iB].end_time = error.schedule[iB].end_time || overlapMsg;
-  //         }
-
-  //         hasError = true;
-  //       }
-  //     }
-  //   }
-
-  //   if (hasError) {
-  //     setErr(error)
-  //   } else {
-  //     setErr({})
-  //     onSubmit()
-  //   }
-  // };
-
   const handleDateTimeSlots = (values, isSubmit = false) => {
     let errors = { ...err }
 
@@ -328,7 +245,6 @@ export const FormC = ({ values, removeValidValue, onSubmit, onSubmitError, selec
 
     const schedule = values.schedule
     errors.schedule = errors?.schedule || []
-
 
     // check for array
     for (let i = 0; i < schedule.length; i++) {

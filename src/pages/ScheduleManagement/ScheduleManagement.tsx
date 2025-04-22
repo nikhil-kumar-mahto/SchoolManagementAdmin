@@ -70,6 +70,7 @@ const ScheduleManagement: React.FC = () => {
   const [deletedTimeSlots, setDeletedTimeSlots] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [message, setMessage] = useState("");
+  const [showEmptyStateModal, setShowEmptyStateModal] = useState(false);
 
   const { id } = useParams();
 
@@ -137,8 +138,6 @@ const ScheduleManagement: React.FC = () => {
     return convertedFormat;
   };
 
-  console.log("router===", day_of_week, !!day_of_week);
-
   const getScheduleInfo = () => {
     Fetch(
       `schedule/${id}?${day_of_week ? "day_of_week" : "date"}=${
@@ -148,14 +147,15 @@ const ScheduleManagement: React.FC = () => {
       if (res.status) {
         // getClasses(res?.data?.school?.id);
         let classes = schools
-          .find((item) => item?.value === res?.data?.school)
-          ?.classes?.map((item) => ({ label: item?.name + " " + item?.section, value: item?.id }));
-
-        console.log("schools===", schools);
+          .find((item) => item?.value === res?.data?.school?.id)
+          ?.classes?.map((item) => ({
+            label: item?.name + " " + item?.section,
+            value: item?.id,
+          }));
 
         setClasses(classes || []);
         setCommonInfo({
-          school: res?.data?.school,
+          school: res?.data?.school?.id,
           class_assigned: res?.data?.id,
         });
         if (res?.data?.time_slots[0]?.day_of_week) {
@@ -170,10 +170,6 @@ const ScheduleManagement: React.FC = () => {
       }
     });
   };
-
-  console.log("class assifned===", commonInfo.class_assigned);
-
-  console.log("classes===", classes);
 
   const getTeachers = () => {
     Fetch("teachers/").then((res: any) => {
@@ -225,18 +221,6 @@ const ScheduleManagement: React.FC = () => {
         return [...prevState, deletedId];
       });
     }
-    // setDayState((prevState) => {
-    //   const updatedDay = [...prevState[day]];
-    //   const updatedTime = { ...updatedDay[index], isEdited: id ? true : false };
-
-    //   updatedTime[type] = value;
-    //   updatedDay[index] = updatedTime;
-
-    //   return {
-    //     ...prevState,
-    //     [day]: updatedDay,
-    //   };
-    // });
 
     const updatedDay = [...dayState[day]];
     const updatedTime = { ...updatedDay[index], isEdited: id ? true : false };
@@ -307,7 +291,10 @@ const ScheduleManagement: React.FC = () => {
       // getClasses(value);
       let classes = schools
         .find((item) => item?.value === value)
-        ?.classes?.map((item) => ({ label: item?.name + " " + item?.section, value: item?.id }));
+        ?.classes?.map((item) => ({
+          label: item?.name + " " + item?.section,
+          value: item?.id,
+        }));
 
       setClasses(classes || []);
     }
@@ -411,8 +398,29 @@ const ScheduleManagement: React.FC = () => {
     }
   };
 
+  const checkDataPresent = () => {
+    if (id) {
+      // allow empty slots in update mode so that user can delete slots
+      return false;
+    }
+    if (viewMode === "date") {
+      if (dateState.schedule.length === 0) {
+        return true;
+      }
+    } else {
+      let isEmpty = true;
+      Object.entries(dayState).forEach(([key, value]) => {
+        if (value.length > 0) {
+          isEmpty = false;
+        }
+      });
+      return isEmpty;
+    }
+  };
+
   const onSubmit = () => {
-    // if (Object.keys(errors).length > 0) {
+    // if (checkDataPresent()) {
+    //   setShowEmptyStateModal(true);
     //   return;
     // }
     if (showModal) {
@@ -518,6 +526,8 @@ const ScheduleManagement: React.FC = () => {
       delete dayParams[day];
     }
   });
+
+  console.log("date state===", dateState);
 
   const {
     errors,
@@ -722,6 +732,13 @@ const ScheduleManagement: React.FC = () => {
         onCancel={() => setShowModal(false)}
         visible={showModal}
         isLoading={isLoading === "modal"}
+      />
+      <Modal
+        title="Alert!"
+        message={"Please ensure at least one slot has been added."}
+        onConfirm={() => setShowEmptyStateModal(false)}
+        confirmText="OK"
+        visible={showEmptyStateModal}
       />
     </Layout>
   );

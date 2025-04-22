@@ -38,7 +38,10 @@ function Class() {
 
     let classes = schools
       .find((item) => item?.value === id)
-      ?.classes?.map((item) => ({ label: item?.name, value: item?.id }));
+      ?.classes?.map((item) => ({
+        label: item?.name + " " + item?.section,
+        value: item?.id,
+      }));
 
     setClasses(classes);
     setSelectedSchool(id);
