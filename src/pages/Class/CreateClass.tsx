@@ -34,7 +34,7 @@ const CreateClass: React.FC<Props> = () => {
   const getClassInfo = () => {
     Fetch(`classes/${id}/`).then((res: any) => {
       if (res.status) {
-        setData(res.data);
+        setData({...res.data, school: res?.data?.school?.id});
       }
     });
   };
@@ -67,11 +67,7 @@ const CreateClass: React.FC<Props> = () => {
     } else {
       url = "classes/";
     }
-    Fetch(
-      url,
-      data,
-      { method: id ? "put" : "post" }
-    ).then((res: any) => {
+    Fetch(url, data, { method: id ? "put" : "post" }).then((res: any) => {
       if (res.status) {
         showToast(
           id ? "Class updated successfully" : "Class added successfully"

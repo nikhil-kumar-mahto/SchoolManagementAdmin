@@ -41,6 +41,16 @@ export const validation = (data, selectFields = []) => {
 };
 
 export const onKeyPress = (evt, reg) => {
+  if (
+    evt.key === "Backspace" ||
+    evt.key === "Tab" ||
+    evt.key === "ArrowLeft" ||
+    evt.key === "ArrowRight" ||
+    evt.key === "Delete"
+  ) {
+    return;
+  }
+
   var theEvent = evt || window.event;
   var key = theEvent.keyCode || theEvent.which;
   key = String.fromCharCode(key);

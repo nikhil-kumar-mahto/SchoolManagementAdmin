@@ -649,6 +649,7 @@ const ScheduleManagement: React.FC = () => {
               handleDelete={(index: number, id = undefined) =>
                 handleDelete(index, "date", "", id)
               }
+              isEditMode={!!id}
             />
           )}
 

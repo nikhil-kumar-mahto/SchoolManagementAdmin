@@ -60,18 +60,18 @@ function Schools() {
 
   const columns = [
     { key: "name", header: "Name" },
-    { key: "address", header: "Address" },
-    { key: "phone", header: "Phone" },
+    {
+      key: "email",
+      header: "Email",
+      render: (item: any) => <a href={`mailto:${item.email}`}>{item.email}</a>,
+    },
     {
       key: "logo",
       header: "Logo",
-      render: (item: any) => <img width={40} height={40} src={item.logo} />,
+      render: (item: any) => <img width={50} height={50} src={item.logo} />,
     },
-    {
-      key: "email",
-      header: "Email Link",
-      render: (item: any) => <a href={`mailto:${item.email}`}>{item.email}</a>,
-    },
+    { key: "phone", header: "Phone" },
+    { key: "address", header: "Address" },
     {
       key: "actions",
       header: "Actions",

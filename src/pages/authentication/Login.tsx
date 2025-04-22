@@ -60,13 +60,13 @@ const LoginScreen: React.FC = () => {
         <div className="login-box shadow">
           <form action="" onSubmit={handleSubmit}>
             <h2 className="mb-3 title text-center">School Management System</h2>
-            <h2 className="login-title mb-1">Sign In</h2>
+            <h2 className="login-title mb-2">Sign In</h2>
             <p className="login-desc mb-4">
-              Enter your email and password to sign in
+              Enter your email to sign in
             </p>
 
             <Input
-              label="Email / Phone"
+              label="Email*"
               name="username"
               value={data.username}
               onChange={handleChange}
@@ -75,7 +75,7 @@ const LoginScreen: React.FC = () => {
             />
 
             <Input
-              label="Password"
+              label="Password*"
               name="password"
               value={data.password}
               onChange={handleChange}

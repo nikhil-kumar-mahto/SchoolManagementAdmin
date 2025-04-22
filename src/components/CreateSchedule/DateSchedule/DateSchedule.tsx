@@ -35,6 +35,7 @@ interface Props {
   ) => void;
   addItem: () => void;
   handleDelete: (index: number, id: string | undefined) => void;
+  isEditMode?: boolean;
 }
 
 const DateSchedule: React.FC<Props> = ({
@@ -46,6 +47,7 @@ const DateSchedule: React.FC<Props> = ({
   schedule,
   addItem,
   handleDelete,
+  isEditMode,
 }) => {
   let disableAddingMore =
     !!errors?.schedule?.length ||
@@ -95,6 +97,7 @@ const DateSchedule: React.FC<Props> = ({
             handleChange(e.target.value, "date")
           }
           error={errors?.date}
+          disabled={isEditMode}
         />
         {schedule.map((item, index) => (
           <TimeEntry

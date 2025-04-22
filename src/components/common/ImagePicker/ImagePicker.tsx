@@ -8,6 +8,7 @@ interface ImagePickerProps {
   className?: string;
   error?: string;
   componentKey?: string;
+  tabIndex?: number | undefined;
 }
 
 const ImagePicker: React.FC<ImagePickerProps> = ({
@@ -17,6 +18,7 @@ const ImagePicker: React.FC<ImagePickerProps> = ({
   className,
   error,
   componentKey,
+  tabIndex = undefined,
 }) => {
   const [fileName, setFileName] = useState<string | null>(value ? value : null);
 
@@ -46,6 +48,7 @@ const ImagePicker: React.FC<ImagePickerProps> = ({
       )}
       <div
         className={`${styles.inputWrapper} ${error ? styles.errorState : ""}`}
+        tabIndex={tabIndex}
       >
         <input
           type="file"
@@ -56,7 +59,9 @@ const ImagePicker: React.FC<ImagePickerProps> = ({
         />
         <label
           htmlFor={`imageInput-${componentKey}`}
-          className={`${styles.fileLabel} mb-0 ${error ? styles.errorLabel : ""}`}
+          className={`${styles.fileLabel} mb-0 ${
+            error ? styles.errorLabel : ""
+          }`}
         >
           {fileName ? fileName : "Choose File"}
         </label>

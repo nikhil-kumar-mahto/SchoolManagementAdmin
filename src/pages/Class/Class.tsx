@@ -59,9 +59,9 @@ function Class() {
   };
 
   const columns = [
+    { key: "school_name", header: "School", render: (item: any) => item?.school?.name },
     { key: "name", header: "Name" },
     { key: "section", header: "Section" },
-    { key: "school_name", header: "School" },
     {
       key: "actions",
       header: "Actions",

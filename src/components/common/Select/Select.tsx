@@ -11,6 +11,7 @@ interface SelectProps {
   error?: string;
   type?: string;
   disabled?: boolean;
+  tabIndex?: number | undefined;
 }
 
 function Select({
@@ -23,6 +24,7 @@ function Select({
   error,
   type = "",
   disabled = false,
+  tabIndex = undefined,
 }: SelectProps) {
   const isValueInOptions =
     options.some((option) => option.value === value) ?? false;
@@ -40,6 +42,7 @@ function Select({
         onChange={(e) => {
           onChange(e.target.value);
         }}
+        tabIndex={tabIndex}
       >
         <option value="" disabled hidden>
           {placeholder}
@@ -50,11 +53,7 @@ function Select({
           </option>
         )}
         {options.map((option, index) => (
-          <option
-            key={index}
-            value={option.value}
-            style={{ color: "#333" }}
-          >
+          <option key={index} value={option.value} style={{ color: "#333" }}>
             {option.label}
           </option>
         ))}

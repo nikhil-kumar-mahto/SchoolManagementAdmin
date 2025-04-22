@@ -24,6 +24,7 @@ const initialState = {
 };
 
 const CreateSchool: React.FC<Props> = () => {
+  let tabIndex = 1;
   const [data, setData] = useState(initialState);
   const [isLoading, setIsLoading] = useState(false);
   const [isLogoChanged, setIsLogoChanged] = useState(false);
@@ -141,8 +142,9 @@ const CreateSchool: React.FC<Props> = () => {
                 name="name"
                 value={data.name}
                 onChange={handleChange}
-                placeholder="Enter teacher's name"
+                placeholder="Enter school's name"
                 error={errors?.name}
+                tabIndex={tabIndex++}
               />
             </div>
             <div className={styles.column}>
@@ -151,9 +153,10 @@ const CreateSchool: React.FC<Props> = () => {
                 name="email"
                 value={data.email}
                 onChange={handleChange}
-                placeholder="Enter teacher's email"
+                placeholder="Enter school's email"
                 type="email"
                 error={errors?.email}
+                tabIndex={tabIndex++}
               />
             </div>
           </div>
@@ -164,10 +167,11 @@ const CreateSchool: React.FC<Props> = () => {
                 name="phone"
                 value={data.phone}
                 onChange={handleChange}
-                placeholder="Enter teacher's phone number"
+                placeholder="Enter school's phone number"
                 error={errors?.phone}
                 onKeyPress={onKeyPress}
                 maxLength={12}
+                tabIndex={tabIndex++}
               />
             </div>
             <div className={styles.column}>
@@ -176,8 +180,9 @@ const CreateSchool: React.FC<Props> = () => {
                 name="address"
                 value={data.address}
                 onChange={handleChange}
-                placeholder="Enter teacher's address"
+                placeholder="Enter school's address"
                 error={errors?.address}
+                tabIndex={tabIndex++}
               />
             </div>
           </div>
@@ -190,6 +195,7 @@ const CreateSchool: React.FC<Props> = () => {
                 onChange={handleLogoChange}
                 error={errors?.logo}
                 componentKey="logo"
+                tabIndex={tabIndex++}
               />
             </div>
             <div className={styles.column}>
@@ -199,6 +205,7 @@ const CreateSchool: React.FC<Props> = () => {
                 value={data.website}
                 onChange={handleChange}
                 placeholder="Enter website's URL"
+                tabIndex={tabIndex++}
               />
             </div>
           </div>

@@ -9,6 +9,9 @@ interface DatePickerProps {
   className?: string;
   type?: string;
   min?: string | number | undefined;
+  max?: string | number | undefined;
+  tabIndex?: number | undefined;
+  disabled?: boolean;
 }
 
 const DatePicker: React.FC<DatePickerProps> = ({
@@ -19,6 +22,9 @@ const DatePicker: React.FC<DatePickerProps> = ({
   className,
   type = "date",
   min = undefined,
+  max = undefined,
+  tabIndex = undefined,
+  disabled = false,
   ...props
 }) => {
   return (
@@ -40,6 +46,9 @@ const DatePicker: React.FC<DatePickerProps> = ({
           error ? styles.errorState : ""
         }`}
         min={min}
+        max={max}
+        tabIndex={tabIndex}
+        disabled={disabled}
         {...props}
       />
       {error && <p className={styles.errorMessage}>{error}</p>}

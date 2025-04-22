@@ -10,6 +10,7 @@ interface InputProps {
   [key: string]: any;
   onKeyPress?: () => void;
   maxLength?: undefined | number;
+  tabIndex?: undefined | number;
 }
 
 const Input: React.FC<InputProps> = ({
@@ -21,13 +22,14 @@ const Input: React.FC<InputProps> = ({
   type = "text",
   onKeyPress = () => {},
   maxLength = undefined,
+  tabIndex = undefined,
   ...props
 }) => {
   return (
     <div className={styles.inputContainer}>
       {label && (
         <label className={`${styles.label} ${error ? styles.errorLabel : ""}`}>
-          {label} 
+          {label}
         </label>
       )}
       <div
@@ -38,8 +40,9 @@ const Input: React.FC<InputProps> = ({
           value={value}
           onChange={onChange}
           className={`${styles.input}`}
-          onKeyDown={onKeyPress}
-          maxLength={maxLength} 
+          onKeyDown={onKeyPress}  
+          maxLength={maxLength}
+          tabIndex={tabIndex}
           {...props}
         />
       </div>

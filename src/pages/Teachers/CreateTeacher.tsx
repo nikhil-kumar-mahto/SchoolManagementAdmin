@@ -22,20 +22,25 @@ import formStyles from "./Teachers.module.css";
 import DatePicker from "../../components/DatePicker/DatePicker";
 import ImagePicker from "../../components/common/ImagePicker/ImagePicker";
 import { useAppContext } from "../../contexts/AppContext";
+import moment from "moment";
 
 interface Props {}
 
 const initialState = {
+  // mandatory mandatory fields
   email: "",
   phone: "",
-  school_id: "",
-  branch_id: "",
   teacher_code: "",
-  teacher_adt_reg_no: "",
-  card_number: "",
   first_name: "",
   last_name: "",
   gender: "",
+  department_code: "",
+
+  // non mandatory fields
+  school_id: "",
+  branch_id: "",
+  teacher_adt_reg_no: "",
+  card_number: "",
   emergency_number: "",
   emergency_name: "",
   marital_status: "",
@@ -46,7 +51,6 @@ const initialState = {
   location_category: "",
   organizational_classification: "",
   organizational_category: "",
-  department_code: "",
   department_head: "",
   immediate_reporting: "",
   teacher_SRA: "",
@@ -99,6 +103,7 @@ const initialState = {
 };
 
 const CreateTeacher: React.FC<Props> = () => {
+  let tabIndex = 1;
   const [data, setData] = useState(initialState);
   const [isLoading, setIsLoading] = useState(false);
   const [isFilesModified, setIsFilesModified] = useState({
@@ -106,6 +111,9 @@ const CreateTeacher: React.FC<Props> = () => {
     file_adhaar: false,
     file_pancard: false,
     form_11: false,
+  });
+  const [minDates, setMinDates] = useState({
+    date_of_joining: undefined,
   });
 
   const excludedKeys: string[] = ["school_id", "id", "school", "user"];
@@ -120,10 +128,63 @@ const CreateTeacher: React.FC<Props> = () => {
     toast.show(message, 2000, "#4CAF50");
   };
 
+  // const getTeacherInfo = () => {
+  //   Fetch(`teachers/${id}/`).then((res: any) => {
+  //     if (res.status) {
+  //       setData({ ...res.data, school_id: res?.data?.school });
+  //       if (data?.date_of_birth) {
+  //         setMinDates((prevState) => {
+  //           return {
+  //             ...prevState,
+  //             date_of_joining: data?.date_of_birth,
+  //           };
+  //         });
+  //       }
+  //     }
+  //   });
+  // };
+
   const getTeacherInfo = () => {
     Fetch(`teachers/${id}/`).then((res: any) => {
       if (res.status) {
-        setData({ ...res.data, school_id: res?.data?.school });
+        const orderedData: any = {};
+
+        // Reorder keys to match initialState
+        Object.keys(initialState).forEach((key) => {
+          orderedData[key] = res.data.hasOwnProperty(key)
+            ? res.data[key]
+            : initialState[key];
+        });
+
+        // Handle any additional transformations
+        orderedData.school_id = res?.data?.school;
+        orderedData.date_of_birth = res?.data?.date_of_birth
+          ? res?.data?.date_of_birth
+          : "";
+        orderedData.date_joining = res?.data?.date_joining
+          ? res?.data?.date_joining
+          : "";
+        orderedData.date_of_leaving = res?.data?.date_of_leaving
+          ? res?.data?.date_of_leaving
+          : "";
+        orderedData.date_of_retirement = res?.data?.date_of_retirement
+          ? res?.data?.date_of_retirement
+          : "";
+        orderedData.pension_amount = res?.data?.pension_amount
+          ? res?.data?.pension_amount
+          : "";
+        orderedData.gov_provident_fund = res?.data?.gov_provident_fund
+          ? res?.data?.gov_provident_fund
+          : "";
+
+        setData(orderedData);
+
+        if (orderedData?.date_of_birth) {
+          setMinDates((prevState) => ({
+            ...prevState,
+            date_of_joining: orderedData.date_of_birth,
+          }));
+        }
       }
     });
   };
@@ -186,33 +247,48 @@ const CreateTeacher: React.FC<Props> = () => {
     });
   };
 
-  let params = {
-    ...data,
-    file_passbook:
-      id && !isFilesModified.file_passbook
-        ? data.file_passbook
-        : data.file_passbook?.name,
-    file_adhaar:
-      id && !isFilesModified.file_adhaar
-        ? data.file_adhaar
-        : data.file_adhaar?.name,
-    file_pancard:
-      id && !isFilesModified.file_pancard
-        ? data.file_pancard
-        : data.file_pancard?.name,
-    form_11: id && !isFilesModified.form_11 ? data.form_11 : data.form_11?.name,
-  };
+  // let params = {
+  //   ...data,
+  //   file_passbook:
+  //     id && !isFilesModified.file_passbook
+  //       ? data.file_passbook
+  //       : data.file_passbook?.name,
+  //   file_adhaar:
+  //     id && !isFilesModified.file_adhaar
+  //       ? data.file_adhaar
+  //       : data.file_adhaar?.name,
+  //   file_pancard:
+  //     id && !isFilesModified.file_pancard
+  //       ? data.file_pancard
+  //       : data.file_pancard?.name,
+  //   form_11: id && !isFilesModified.form_11 ? data.form_11 : data.form_11?.name,
+  // };
 
-  delete params.school_id;
+  // delete params.school_id;
 
   const { errors, handleSubmit, handleNewError } = FormC({
     values: {
-      ...params,
+      school: data?.school,
+      email: data?.email,
+      phone: data?.phone,
+      teacher_code: data?.teacher_code,
+      first_name: data?.first_name,
+      last_name: data?.last_name,
+      gender: data?.gender,
+      department_code: data?.department_code,
     },
     onSubmit,
   });
 
   const handleSelectChange = (value: string, type: string) => {
+    if (type === "date_of_birth") {
+      setMinDates((prevState) => {
+        return {
+          ...prevState,
+          date_of_joining: value,
+        };
+      });
+    }
     setData((prevData) => ({
       ...prevData,
       [type]: value,
@@ -262,6 +338,34 @@ const CreateTeacher: React.FC<Props> = () => {
     }));
   };
 
+  const getMin = (key: string) => {
+    console.log("checkk===", data?.date_of_birth);
+
+    switch (key) {
+      case "date_of_retirement":
+        return moment().format("YYYY-MM-DD");
+      case "date_of_leaving":
+        return moment().format("YYYY-MM-DD");
+      case "date_of_joining":
+        return data?.date_joining
+          ? moment(data?.date_of_birth).format("YYYY-MM-DD")
+          : undefined;
+      default:
+        return undefined;
+    }
+  };
+
+  const getMax = (key: string) => {
+    switch (key) {
+      case "date_of_birth":
+        return moment().subtract(1, "days").format("YYYY-MM-DD");
+      case "last_date_of_leaving":
+        return moment().subtract(1, "days").format("YYYY-MM-DD");
+      default:
+        return undefined;
+    }
+  };
+
   return (
     <Layout>
       <form action="" onSubmit={handleSubmit}>
@@ -289,6 +393,7 @@ const CreateTeacher: React.FC<Props> = () => {
                       value={data?.gender}
                       onChange={(value) => handleSelectChange(value, "gender")}
                       error={errors?.gender && "Please select gender."}
+                      tabIndex={tabIndex++}
                     />
                   );
                 } else if (key === "marital_status") {
@@ -305,6 +410,7 @@ const CreateTeacher: React.FC<Props> = () => {
                         errors?.marital_status &&
                         "Please select marital status."
                       }
+                      tabIndex={tabIndex++}
                     />
                   );
                 } else if (key === "blood_group") {
@@ -320,6 +426,7 @@ const CreateTeacher: React.FC<Props> = () => {
                       error={
                         errors?.blood_group && "Please select blood group."
                       }
+                      tabIndex={tabIndex++}
                     />
                   );
                 } else if (key === "category_type") {
@@ -333,6 +440,7 @@ const CreateTeacher: React.FC<Props> = () => {
                         handleSelectChange(value, "category_type")
                       }
                       error={errors?.category_type && "Please select category."}
+                      tabIndex={tabIndex++}
                     />
                   );
                 } else if (key === "status") {
@@ -344,6 +452,7 @@ const CreateTeacher: React.FC<Props> = () => {
                       value={data?.status}
                       onChange={(value) => handleSelectChange(value, "status")}
                       error={errors?.status && "Please select status."}
+                      tabIndex={tabIndex++}
                     />
                   );
                 } else if (
@@ -367,6 +476,13 @@ const CreateTeacher: React.FC<Props> = () => {
                         ).toLocaleLowerCase()}.`
                       }
                       className="w-100"
+                      min={
+                        key === "date_joining"
+                          ? minDates.date_of_joining
+                          : getMin(key)
+                      }
+                      max={getMax(key)}
+                      tabIndex={tabIndex++}
                     />
                   );
                 } else if (
@@ -387,6 +503,7 @@ const CreateTeacher: React.FC<Props> = () => {
                       error={
                         errors?.[key] && `Please upload ${mapKeyToLabel(key)}`
                       }
+                      tabIndex={tabIndex++}
                     />
                   );
                 }
@@ -418,6 +535,7 @@ const CreateTeacher: React.FC<Props> = () => {
                           : () => {}
                       }
                       maxLength={getMaxLength(key)}
+                      tabIndex={tabIndex++}
                     />
                   </div>
                 );
