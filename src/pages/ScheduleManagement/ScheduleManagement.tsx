@@ -149,7 +149,7 @@ const ScheduleManagement: React.FC = () => {
         // getClasses(res?.data?.school?.id);
         let classes = schools
           .find((item) => item?.value === res?.data?.school)
-          ?.classes?.map((item) => ({ label: item?.name, value: item?.id }));
+          ?.classes?.map((item) => ({ label: item?.name + " " + item?.section, value: item?.id }));
 
         console.log("schools===", schools);
 
@@ -307,7 +307,7 @@ const ScheduleManagement: React.FC = () => {
       // getClasses(value);
       let classes = schools
         .find((item) => item?.value === value)
-        ?.classes?.map((item) => ({ label: item?.name, value: item?.id }));
+        ?.classes?.map((item) => ({ label: item?.name + " " + item?.section, value: item?.id }));
 
       setClasses(classes || []);
     }
