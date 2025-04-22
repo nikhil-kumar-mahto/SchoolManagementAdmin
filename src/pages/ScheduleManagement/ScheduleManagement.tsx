@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import styles from "./ScheduleManagement.module.css";
 import Layout from "../../components/common/Layout/Layout";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import WeekDay from "../../components/CreateSchedule/WeeklyCalendar/WeekDay";
 import DateSchedule from "../../components/CreateSchedule/DateSchedule/DateSchedule";
 import Fetch from "../../utils/form-handling/fetch";
@@ -72,6 +72,13 @@ const ScheduleManagement: React.FC = () => {
   const [message, setMessage] = useState("");
 
   const { id } = useParams();
+
+  const location = useLocation();
+
+  const searchParams = new URLSearchParams(location.search);
+  const day_of_week = searchParams.get("day_of_week");
+  const date = searchParams.get("date");
+
   const toast = useToast();
   const { schools, subjects } = useAppContext();
 
@@ -130,8 +137,14 @@ const ScheduleManagement: React.FC = () => {
     return convertedFormat;
   };
 
+  console.log("router===", day_of_week, !!day_of_week);
+
   const getScheduleInfo = () => {
-    Fetch(`schedule/${id}/`).then((res: any) => {
+    Fetch(
+      `schedule/${id}?${day_of_week ? "day_of_week" : "date"}=${
+        day_of_week ? day_of_week : date
+      }`
+    ).then((res: any) => {
       if (res.status) {
         // getClasses(res?.data?.school?.id);
         let classes = schools
@@ -436,7 +449,7 @@ const ScheduleManagement: React.FC = () => {
 
     if (id) {
       params = {
-        school_id: params?.school_id,
+        school_id: params?.school_id?.id,
         deleted_time_slots: deletedTimeSlots,
         time_slots: params?.time_slots,
       };

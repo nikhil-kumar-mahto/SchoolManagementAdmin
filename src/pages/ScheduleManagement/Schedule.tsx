@@ -71,8 +71,8 @@ function Class() {
     );
   };
 
-  const handleEdit = (id: string) => {
-    navigate(`/schedule/create/${id}`);
+  const handleEdit = (id: string, query: string, queryType: string) => {
+    navigate(`/schedule/create/${id}?${queryType}=${query}`);
   };
 
   useEffect(() => {
@@ -123,7 +123,15 @@ function Class() {
           </button> */}
           <button
             style={{ border: "none", background: "none", cursor: "pointer" }}
-            onClick={() => handleEdit(item?.id)}
+            onClick={() =>
+              handleEdit(
+                item?.id,
+                item?.time_slots?.[0]?.day_of_week
+                  ? item?.time_slots?.[0]?.day_of_week
+                  : item?.time_slots?.[0]?.date,
+                item?.time_slots?.[0]?.day_of_week ? "day_of_week" : "date"
+              )
+            }
           >
             <EditIcon size={20} color="#1976d2" />
           </button>
