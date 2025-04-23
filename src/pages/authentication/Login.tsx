@@ -70,7 +70,7 @@ const LoginScreen: React.FC = () => {
               name="username"
               value={data.username}
               onChange={handleChange}
-              placeholder="Please enter your email or phone number"
+              placeholder="Please enter your email"
               error={errors?.email_or_phone}
             />
 

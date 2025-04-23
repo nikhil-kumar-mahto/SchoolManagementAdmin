@@ -419,10 +419,6 @@ const ScheduleManagement: React.FC = () => {
   };
 
   const onSubmit = () => {
-    // if (checkDataPresent()) {
-    //   setShowEmptyStateModal(true);
-    //   return;
-    // }
     if (showModal) {
       setIsLoading("modal");
     } else {
