@@ -196,6 +196,7 @@ const CreateSchool: React.FC<Props> = () => {
                 error={errors?.logo}
                 componentKey="logo"
                 tabIndex={tabIndex++}
+                showPreview={true}
               />
             </div>
             <div className={styles.column}>

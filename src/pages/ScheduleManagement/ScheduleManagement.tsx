@@ -163,7 +163,7 @@ const ScheduleManagement: React.FC = () => {
 
   const getTeachers = (id: string) => {
     setTeachers([]);
-    Fetch(`teachers?school_id={${id}}`).then((res: any) => {
+    Fetch(`list-teachers/?school_id=${id}`).then((res: any) => {
       if (res.status) {
         let teachers = res.data?.map((item: { name: string; id: string }) => {
           return {

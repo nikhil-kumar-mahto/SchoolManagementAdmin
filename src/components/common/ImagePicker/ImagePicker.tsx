@@ -9,6 +9,7 @@ interface ImagePickerProps {
   error?: string;
   componentKey?: string;
   tabIndex?: number | undefined;
+  showPreview?: boolean;
 }
 
 const ImagePicker: React.FC<ImagePickerProps> = ({
@@ -19,6 +20,7 @@ const ImagePicker: React.FC<ImagePickerProps> = ({
   error,
   componentKey,
   tabIndex = undefined,
+  showPreview = true,
 }) => {
   const [fileName, setFileName] = useState<string | null>(value ? value : null);
   const [file, setFile] = useState<File | null | string>(null);
@@ -73,7 +75,7 @@ const ImagePicker: React.FC<ImagePickerProps> = ({
       </div>
       {error && <p className={styles.errorMessage}>{error}</p>}
 
-      {file && typeof file !== "string" && (
+      {showPreview && file && typeof file !== "string" && (
         <div className={styles.previewContainer}>
           <img
             src={URL.createObjectURL(file)}
@@ -82,7 +84,7 @@ const ImagePicker: React.FC<ImagePickerProps> = ({
           />
         </div>
       )}
-      {file && typeof file === "string" && (
+      {showPreview && file && typeof file === "string" && (
         <div className={styles.previewContainer}>
           <img src={file} alt="Preview" className={styles.previewImage} />
         </div>
