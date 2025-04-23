@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import styles from "./ScheduleManagement.module.css";
 import Layout from "../../components/common/Layout/Layout";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import WeekDay from "../../components/CreateSchedule/WeeklyCalendar/WeekDay";
 import DateSchedule from "../../components/CreateSchedule/DateSchedule/DateSchedule";
 import Fetch from "../../utils/form-handling/fetch";
@@ -57,10 +57,6 @@ const initialState2 = {
 };
 
 const ScheduleManagement: React.FC = () => {
-  const [commonInfo, setCommonInfo] = useState({
-    school: "",
-    class_assigned: "",
-  });
   const [dayState, setDayState] = useState<Props>(initialState); // when user selects day
   const [dateState, setDateState] = useState(initialState2); // when user selects date
   const [viewMode, setViewMode] = useState<"date" | "day">("date");
@@ -72,6 +68,11 @@ const ScheduleManagement: React.FC = () => {
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [isValidated, setIsValidated] = useState(false);
   const [parameters, setParamaters] = useState({});
+  const [searchParams, setSearchParams] = useSearchParams({});
+  const [commonInfo, setCommonInfo] = useState({
+    school: searchParams.get("school") || "",
+    class_assigned: searchParams.get("class") || "",
+  });
 
   const { id } = useParams();
 
@@ -142,6 +143,8 @@ const ScheduleManagement: React.FC = () => {
             label: item?.name + " " + item?.section,
             value: item?.id,
           }));
+
+        console.log("classes===", classes);
 
         setClasses(classes || []);
         setCommonInfo({
@@ -253,6 +256,16 @@ const ScheduleManagement: React.FC = () => {
     if (id && schools.length > 0) {
       getScheduleInfo();
     }
+    if (searchParams.get("class")) {
+      let classes = schools
+        .find((item) => item?.value === searchParams.get("school"))
+        ?.classes?.map((item) => ({
+          label: item?.name + " " + item?.section,
+          value: item?.id,
+        }));
+
+      setClasses(classes || []);
+    }
   }, [schools]);
 
   const navigateBack = () => {
@@ -277,6 +290,13 @@ const ScheduleManagement: React.FC = () => {
         [type]: value,
       };
     });
+
+    const updatedParams = {
+      school: type === "school" ? value : commonInfo.school,
+      class: type === "class" ? value : commonInfo.class_assigned,
+    };
+
+    setSearchParams(updatedParams);
 
     const key = type === "class_assigned" ? "class" : type;
 

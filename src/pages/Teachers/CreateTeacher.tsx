@@ -454,7 +454,11 @@ const CreateTeacher: React.FC<Props> = () => {
                         handleSelectChange(value, "blood_group")
                       }
                       error={
-                        errors?.blood_group && "Please select blood group."
+                        errors?.blood_group
+                          ? data?.blood_group
+                            ? errors?.blood_group
+                            : "Please select blood group."
+                          : ""
                       }
                       tabIndex={tabIndex++}
                     />
@@ -471,7 +475,13 @@ const CreateTeacher: React.FC<Props> = () => {
                       onChange={(value) =>
                         handleSelectChange(value, "category_type")
                       }
-                      error={errors?.category_type && "Please select category."}
+                      error={
+                        errors?.category_type
+                          ? data?.category_type
+                            ? errors?.category_type
+                            : "Please select category."
+                          : ""
+                      }
                       tabIndex={tabIndex++}
                     />
                   );
@@ -483,7 +493,13 @@ const CreateTeacher: React.FC<Props> = () => {
                       options={getStatuses()}
                       value={data?.status}
                       onChange={(value) => handleSelectChange(value, "status")}
-                      error={errors?.status && "Please select status."}
+                      error={
+                        errors?.status
+                          ? data?.status
+                            ? errors?.status
+                            : "Please select status."
+                          : ""
+                      }
                       tabIndex={tabIndex++}
                     />
                   );
@@ -504,10 +520,13 @@ const CreateTeacher: React.FC<Props> = () => {
                         handleSelectChange(e.target.value, key)
                       }
                       error={
-                        errors[key] &&
-                        `Please select ${mapKeyToLabel(
-                          key
-                        ).toLocaleLowerCase()}.`
+                        errors[key]
+                          ? data[key]
+                            ? errors[key]
+                            : `Please select ${mapKeyToLabel(
+                                key
+                              ).toLocaleLowerCase()}.`
+                          : ""
                       }
                       className="w-100"
                       min={
@@ -553,11 +572,20 @@ const CreateTeacher: React.FC<Props> = () => {
                       defaultValue={data[key]}
                       onBlur={handleChange}
                       placeholder={`Enter ${mapKeyToLabel(key).toLowerCase()}`}
+                      // error={
+                      //   errors[key] &&
+                      //   `Please enter ${mapKeyToLabel(
+                      //     key
+                      //   ).toLocaleLowerCase()}.`
+                      // }
                       error={
-                        errors[key] &&
-                        `Please enter ${mapKeyToLabel(
-                          key
-                        ).toLocaleLowerCase()}.`
+                        errors[key]
+                          ? data[key]
+                            ? errors[key]
+                            : `Please enter ${mapKeyToLabel(
+                                key
+                              ).toLocaleLowerCase()}.`
+                          : ""
                       }
                       onKeyPress={
                         key === "phone" ||

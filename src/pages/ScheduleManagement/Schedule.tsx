@@ -2,7 +2,7 @@ import Layout from "../../components/common/Layout/Layout";
 import DataTable from "../../components/common/DataTable/DataTable";
 import styles from "../../styles/Listing.module.css";
 import Button from "../../components/common/Button/Button";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { DeleteIcon, EditIcon } from "../../assets/svgs";
 import { useEffect, useState } from "react";
 import Fetch from "../../utils/form-handling/fetch";
@@ -20,8 +20,14 @@ function Class() {
   const navigate = useNavigate();
   const toast = useToast();
   const [classes, setClasses] = useState([]);
-  const [selectedSchool, setSelectedSchool] = useState("");
-  const [selectedClass, setSelectedClass] = useState("");
+
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [selectedSchool, setSelectedSchool] = useState(
+    searchParams.get("school") || ""
+  );
+  const [selectedClass, setSelectedClass] = useState(
+    searchParams.get("class") || ""
+  );
 
   const { schools } = useAppContext();
 
@@ -31,6 +37,11 @@ function Class() {
 
   const selectClass = (id: string) => {
     setSelectedClass(id);
+    const updatedParams: any = {
+      school: selectedSchool,
+      class: id,
+    };
+    setSearchParams(updatedParams);
     getData(selectedSchool, id);
   };
 
@@ -46,6 +57,10 @@ function Class() {
 
     setClasses(classes);
     setSelectedSchool(id);
+
+    const updatedParams: any = { school: id };
+    setSearchParams(updatedParams);
+
     getData(id, selectedClass);
   };
 
@@ -80,8 +95,23 @@ function Class() {
   };
 
   useEffect(() => {
-    getData();
-  }, []);
+    const school = searchParams.get("school") || "";
+    const classId = searchParams.get("class") || "";
+
+    setSelectedSchool(school);
+    setSelectedClass(classId);
+
+    const schoolClasses =
+      schools
+        .find((item) => item?.value === school)
+        ?.classes?.map((item) => ({
+          label: item?.name + " " + item?.section,
+          value: item?.id,
+        })) || [];
+
+    setClasses(schoolClasses);
+    getData(school, classId);
+  }, [schools]);
 
   const handleDeleteRequest = (id: string) => {
     setItemToDelete(id);
@@ -137,7 +167,9 @@ function Class() {
   ];
 
   const handleNavigate = () => {
-    navigate("/schedule/create");
+    navigate(
+      `/schedule/create?school=${selectedSchool}&class=${selectedClass}`
+    );
   };
 
   const handleCancel = () => {
