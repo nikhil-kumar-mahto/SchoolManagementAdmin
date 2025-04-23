@@ -1,0 +1,14 @@
+.textButton {
+    margin-top: 0.5rem;
+    color: #007bff;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    font-size: 1rem;
+    text-decoration: none;
+  }
+  
+  .textButton:hover {
+    text-decoration: underline;
+  }

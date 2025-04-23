@@ -71,6 +71,7 @@ const ScheduleManagement: React.FC = () => {
   const [showModal, setShowModal] = useState(false);
   const [message, setMessage] = useState("");
   const [showEmptyStateModal, setShowEmptyStateModal] = useState(false);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
 
   const { id } = useParams();
 
@@ -83,8 +84,8 @@ const ScheduleManagement: React.FC = () => {
   const toast = useToast();
   const { schools, subjects } = useAppContext();
 
-  const showToast = (message: string) => {
-    toast.show(message, 2000, "#4CAF50");
+  const showToast = (message: string, status: "success" | "danger") => {
+    toast.show(message, 2000, status === "success" ? "#4CAF50" : "#dc3545");
   };
 
   const navigate = useNavigate();
@@ -364,6 +365,7 @@ const ScheduleManagement: React.FC = () => {
               end_time: slot.end_time,
               teacher: slot.teacher,
               subject: slot.subject,
+              id: slot.id,
             }));
             return [...acc, ...slotsForDay];
           },
@@ -391,6 +393,7 @@ const ScheduleManagement: React.FC = () => {
             end_time: item.end_time,
             teacher: item.teacher,
             subject: item.subject,
+            id: item.id,
           };
         }),
       };
@@ -467,7 +470,8 @@ const ScheduleManagement: React.FC = () => {
       setIsLoading("");
       if (res.status) {
         showToast(
-          id ? "Schedule updated successfully" : "Schedule added successfully"
+          id ? "Schedule updated successfully" : "Schedule added successfully",
+          "success"
         );
         navigate("/schedule");
       } else {
@@ -523,7 +527,25 @@ const ScheduleManagement: React.FC = () => {
     }
   });
 
-  console.log("date state===", dateState);
+  const replicateDay = (replicateTo: string, replicateFrom: string) => {
+    setDayState((prevState) => {
+      return {
+        ...prevState,
+        [replicateTo]: prevState[replicateFrom].map((item) => {
+          return { ...item, isEdited: id ? true : false };
+        }),
+      };
+    });
+
+    handleWeekTimeSlots({
+      ...dayState,
+      school: commonInfo.school,
+      class: commonInfo.class_assigned,
+      [replicateTo]: dayState[replicateFrom].map((item) => {
+        return { ...item, isEdited: id ? true : false };
+      }),
+    });
+  };
 
   const {
     errors,
@@ -540,6 +562,36 @@ const ScheduleManagement: React.FC = () => {
     onSubmit,
     selectFields,
   });
+
+  const deleteItem = () => {
+    setIsLoading("delete-modal");
+    Fetch(
+      `schedule/${deleteId}/soft-delete-slots`,
+      {},
+      { method: "delete" }
+    ).then((res: any) => {
+      if (res.status) {
+        showToast("Slot deleted successfully", "danger");
+        if (viewMode === "day") {
+          setDayState((prevState) => {
+            const updatedDay = { ...prevState };
+            Object.entries(updatedDay).forEach(([key, value]) => {
+              updatedDay[key] = value.filter((item) => item.id !== id);
+            });
+            return updatedDay;
+          });
+        } else {
+          setDateState((prevState) => {
+            const updatedSchedule = prevState.schedule.filter(
+              (item) => item.id !== id
+            );
+            return { ...prevState, schedule: updatedSchedule };
+          });
+        }
+      }
+      setIsLoading("");
+    });
+  };
 
   console.log("err===", errors);
 
@@ -629,12 +681,17 @@ const ScheduleManagement: React.FC = () => {
                     value: string,
                     id = undefined
                   ) => handleChange(key as Day, index, type, value, id)}
-                  handleDelete={(index: number, id = undefined) =>
-                    handleDelete(index, "day", key as Day, id)
-                  }
-                  // errors={errors?.[key]}
+                  handleDelete={(index: number, id = undefined) => {
+                    if (id) {
+                      setDeleteId(id);
+                    } else {
+                      handleDelete(index, "day", key as Day, id);
+                    }
+                  }}
                   errors={errors?.schedule?.[key]}
                   teachers={teachers}
+                  replicateDay={replicateDay}
+                  isEditMode={!!id}
                 />
               ))}
             </>
@@ -665,16 +722,16 @@ const ScheduleManagement: React.FC = () => {
               errors={errors}
               schedule={dateState.schedule}
               addItem={() => addItem("date")}
-              handleDelete={(index: number, id = undefined) =>
-                handleDelete(index, "date", "", id)
-              }
+              handleDelete={(index: number, id = undefined) => {
+                if (id) {
+                  setDeleteId(id);
+                } else {
+                  handleDelete(index, "date", "", id);
+                }
+              }}
               isEditMode={!!id}
             />
           )}
-
-          {/* {errors?.non_field_errors && (
-            <p className="error">{errors?.non_field_errors}</p>
-          )} */}
 
           <div className={styles.buttonContainer}>
             <Button
@@ -714,13 +771,13 @@ const ScheduleManagement: React.FC = () => {
           </div>
         </div>
       </form>
-      <Modal
+      {/* <Modal
         title="Confirm!"
         message={errors?.non_field_errors}
         onConfirm={() => setShowModal(false)}
         visible={showModal}
         confirmText="OK"
-      />
+      /> */}
       <Modal
         title="Confirm!"
         message={message}
@@ -735,6 +792,14 @@ const ScheduleManagement: React.FC = () => {
         onConfirm={() => setShowEmptyStateModal(false)}
         confirmText="OK"
         visible={showEmptyStateModal}
+      />
+      <Modal
+        title="Confirm!"
+        message={"Are you sure you want to delete this time slot?"}
+        onConfirm={deleteItem}
+        onCancel={() => setDeleteId(null)}
+        visible={!!deleteId}
+        isLoading={isLoading === "delete-modal"}
       />
     </Layout>
   );

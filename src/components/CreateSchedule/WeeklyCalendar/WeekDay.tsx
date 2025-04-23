@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import TimeEntry from "../TimeEntry/TimeEntry";
 import { PlusCircleIcon } from "../../../assets/svgs";
 import Modal from "../../common/Modal/Modal";
+import TextButton from "../../common/TextButton/TextButton";
 
 interface Time {
   start_time: string;
@@ -17,6 +18,26 @@ interface Time {
   errors: any;
 }
 
+const previousDay = (day: string) => {
+  switch (day) {
+    case "Tuesday":
+      return "Monday";
+    case "Wednesday":
+      return "Tuesday";
+    case "Thursday":
+      return "Wednesday";
+    case "Friday":
+      return "Thursday";
+    case "Saturday":
+      return "Friday";
+    case "Sunday":
+      return "Saturday";
+
+    default:
+      return "";
+  }
+};
+
 type Props = {
   day: string;
   schedule: Array<Time>;
@@ -30,6 +51,8 @@ type Props = {
   handleDelete: (index: number, id: string | undefined) => void;
   teachers: Array<{ label: string; value: string }>;
   errors: any;
+  replicateDay: (replicateTo: string, replicateFrom: string) => void;
+  isEditMode: boolean;
 };
 
 const WeekDay: React.FC<Props> = ({
@@ -40,6 +63,8 @@ const WeekDay: React.FC<Props> = ({
   handleDelete,
   errors = {},
   teachers,
+  replicateDay,
+  isEditMode,
 }) => {
   let disableAddingMore =
     !!errors?.length ||
@@ -85,6 +110,13 @@ const WeekDay: React.FC<Props> = ({
             <PlusCircleIcon />
           </button>
         </div>
+
+        {day !== "Monday" && !isEditMode && (
+          <TextButton onClick={() => replicateDay(day, previousDay(day))}>
+            Same as {previousDay(day)}
+          </TextButton>
+        )}
+
         <p className="mt-2">Enter schedule for {day}</p>
 
         {schedule.map((item, index) => (

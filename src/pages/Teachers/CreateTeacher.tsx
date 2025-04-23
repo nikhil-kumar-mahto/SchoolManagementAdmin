@@ -26,6 +26,14 @@ import moment from "moment";
 
 interface Props {}
 
+const mandatoryFields = [
+  "email",
+  "phone",
+  "teacher_code",
+  "first_name",
+  "last_name",
+];
+
 const initialState = {
   // mandatory mandatory fields
   email: "",
@@ -339,8 +347,6 @@ const CreateTeacher: React.FC<Props> = () => {
   };
 
   const getMin = (key: string) => {
-    console.log("checkk===", data?.date_of_birth);
-
     switch (key) {
       case "date_of_retirement":
         return moment().format("YYYY-MM-DD");
@@ -389,7 +395,9 @@ const CreateTeacher: React.FC<Props> = () => {
                   return (
                     <Select
                       key={key}
-                      label="Select gender*"
+                      label={`${mapKeyToLabel(key)}${
+                        mandatoryFields.includes(key) ? "*" : ""
+                      }`}
                       options={getGender()}
                       value={data?.gender}
                       onChange={(value) => handleSelectChange(value, "gender")}
@@ -401,7 +409,9 @@ const CreateTeacher: React.FC<Props> = () => {
                   return (
                     <Select
                       key={key}
-                      label="Select marital status*"
+                      label={`${mapKeyToLabel(key)}${
+                        mandatoryFields.includes(key) ? "*" : ""
+                      }`}
                       options={getMaritalStatus()}
                       value={data?.marital_status}
                       onChange={(value) =>
@@ -418,7 +428,9 @@ const CreateTeacher: React.FC<Props> = () => {
                   return (
                     <Select
                       key={key}
-                      label="Select blood group*"
+                      label={`${mapKeyToLabel(key)}${
+                        mandatoryFields.includes(key) ? "*" : ""
+                      }`}
                       options={getBloodGroups()}
                       value={data?.blood_group}
                       onChange={(value) =>
@@ -434,7 +446,9 @@ const CreateTeacher: React.FC<Props> = () => {
                   return (
                     <Select
                       key={key}
-                      label="Select category*"
+                      label={`${mapKeyToLabel(key)}${
+                        mandatoryFields.includes(key) ? "*" : ""
+                      }`}
                       options={getCategory()}
                       value={data?.category_type}
                       onChange={(value) =>
@@ -465,7 +479,9 @@ const CreateTeacher: React.FC<Props> = () => {
                 ) {
                   return (
                     <DatePicker
-                      label={`${mapKeyToLabel(key)}*`}
+                      label={`${mapKeyToLabel(key)}${
+                        mandatoryFields.includes(key) ? "*" : ""
+                      }`}
                       selectedDate={data[key]}
                       onDateChange={(e: ChangeEvent<HTMLInputElement>) =>
                         handleSelectChange(e.target.value, key)
@@ -496,7 +512,9 @@ const CreateTeacher: React.FC<Props> = () => {
                     <ImagePicker
                       key={key}
                       componentKey={key}
-                      label={`${mapKeyToLabel(key)}*`}
+                      label={`${mapKeyToLabel(key)}${
+                        mandatoryFields.includes(key) ? "*" : ""
+                      }`}
                       value={getValue(key)}
                       onChange={(file: File | null) => {
                         handleFileChange(file, key);
@@ -511,7 +529,9 @@ const CreateTeacher: React.FC<Props> = () => {
                 return (
                   <div className={formStyles["form-column"]} key={key}>
                     <Input
-                      label={`${mapKeyToLabel(key)}*`}
+                      label={`${mapKeyToLabel(key)}${
+                        mandatoryFields.includes(key) ? "*" : ""
+                      }`}
                       name={key}
                       defaultValue={data[key]}
                       onBlur={handleChange}

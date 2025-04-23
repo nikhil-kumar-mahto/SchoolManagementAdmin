@@ -109,6 +109,9 @@ const CreateSchool: React.FC<Props> = () => {
     ...data,
     logo: id && !isLogoChanged ? data.logo : data.logo?.name,
   };
+  // if (!params.website) {
+  //   delete params.website;
+  // }
   delete params.website;
   delete params.classes; // not taken on state, but is received from backend API during edit mode
 
@@ -127,8 +130,6 @@ const CreateSchool: React.FC<Props> = () => {
     }
     return null;
   };
-
-  console.log("err===", errors);
 
   return (
     <Layout>

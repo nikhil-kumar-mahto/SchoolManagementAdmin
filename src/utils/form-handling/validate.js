@@ -70,6 +70,10 @@ const inputValidation = (data, property, selectFields = []) => {
       }`;
   }
 
+  if (property.includes("website") && data[property]?.length) {
+    
+  }
+
   if (property.includes("email") && data[property]?.length) {
     if (ValidateEmailAddress(data[property])) {
       errors[property] = ValidateEmailAddress(data[property]);
@@ -224,6 +228,11 @@ export const FormC = ({ values, removeValidValue, onSubmit, onSubmitError, selec
   };
 
   const handleDateTimeSlots = (values, isSubmit = false) => {
+    if (isSubmit) {
+      removeAllError()
+    }
+    console.log("values==>", values);
+
     let errors = { ...err }
 
     // Initial step -> check for items present outside of array
@@ -319,6 +328,9 @@ export const FormC = ({ values, removeValidValue, onSubmit, onSubmitError, selec
   }
 
   const handleWeekTimeSlots = (values, isSubmit = false) => {
+    if (isSubmit) {
+      removeAllError()
+    }
     let errors = { ...err }
 
     // Initial step -> check for items present outside of array

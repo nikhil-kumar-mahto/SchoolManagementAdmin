@@ -113,18 +113,8 @@ function Class() {
       header: "Actions",
       render: (item: any) => (
         <div>
-          {/* <button
-            style={{
-              border: "none",
-              background: "none",
-              cursor: "pointer",
-            }}
-            className="mr-3"
-            onClick={() => handleDeleteRequest(item?.id)}
-          >
-            <DeleteIcon size={20} color="#d32f2f" />
-          </button> */}
           <button
+            className="mr-3"
             style={{ border: "none", background: "none", cursor: "pointer" }}
             onClick={() =>
               handleEdit(
@@ -137,6 +127,16 @@ function Class() {
             }
           >
             <EditIcon size={20} color="#1976d2" />
+          </button>
+          <button
+            style={{
+              border: "none",
+              background: "none",
+              cursor: "pointer",
+            }}
+            onClick={() => handleDeleteRequest(item?.id)}
+          >
+            <DeleteIcon size={20} color="#d32f2f" />
           </button>
         </div>
       ),
@@ -191,7 +191,7 @@ function Class() {
       </div>
       <Modal
         title="Confirm!"
-        message="Are you sure you want to delete this item?"
+        message="Are you sure you want to delete this schedule?"
         onConfirm={handleDelete}
         onCancel={handleCancel}
         visible={showModal}

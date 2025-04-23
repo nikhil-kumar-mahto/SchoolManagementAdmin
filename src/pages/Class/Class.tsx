@@ -59,7 +59,11 @@ function Class() {
   };
 
   const columns = [
-    { key: "school_name", header: "School", render: (item: any) => item?.school?.name },
+    {
+      key: "school_name",
+      header: "School",
+      render: (item: any) => item?.school?.name,
+    },
     { key: "name", header: "Name" },
     { key: "section", header: "Section" },
     {
@@ -68,21 +72,21 @@ function Class() {
       render: (item: any) => (
         <div>
           <button
+            style={{ border: "none", background: "none", cursor: "pointer" }}
+            onClick={() => handleEdit(item?.id)}
+            className="mr-3"
+          >
+            <EditIcon size={20} color="#1976d2" />
+          </button>
+          <button
             style={{
               border: "none",
               background: "none",
               cursor: "pointer",
             }}
-            className="mr-3"
             onClick={() => handleDeleteRequest(item?.id)}
           >
             <DeleteIcon size={20} color="#d32f2f" />
-          </button>
-          <button
-            style={{ border: "none", background: "none", cursor: "pointer" }}
-            onClick={() => handleEdit(item?.id)}
-          >
-            <EditIcon size={20} color="#1976d2" />
           </button>
         </div>
       ),
