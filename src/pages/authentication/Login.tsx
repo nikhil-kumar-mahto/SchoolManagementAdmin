@@ -50,7 +50,7 @@ const LoginScreen: React.FC = () => {
   };
 
   const { errors, handleSubmit, handleNewError } = FormC({
-    values: { email_or_phone: data.username, password: data.password },
+    values: { email: data.username, password: data.password },
     onSubmit,
   });
 
@@ -71,7 +71,7 @@ const LoginScreen: React.FC = () => {
               value={data.username}
               onChange={handleChange}
               placeholder="Please enter your email"
-              error={errors?.email_or_phone}
+              error={errors?.email}
             />
 
             <Input
