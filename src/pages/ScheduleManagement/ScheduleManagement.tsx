@@ -68,9 +68,10 @@ const ScheduleManagement: React.FC = () => {
   const [teachers, setTeachers] = useState([]);
   const [isLoading, setIsLoading] = useState("");
   const [showModal, setShowModal] = useState(false);
-  const [message, setMessage] = useState("");
   const [showEmptyStateModal, setShowEmptyStateModal] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [isValidated, setIsValidated] = useState(false);
+  const [parameters, setParamaters] = useState({});
 
   const { id } = useParams();
 
@@ -198,8 +199,7 @@ const ScheduleManagement: React.FC = () => {
     day: Day,
     index: number,
     type: "start_time" | "end_time" | "subject" | "teacher",
-    value: string,
-    deletedId = undefined
+    value: string
   ) => {
     const updatedDay = [...dayState[day]];
     const updatedTime = { ...updatedDay[index], isEdited: id ? true : false };
@@ -315,6 +315,54 @@ const ScheduleManagement: React.FC = () => {
     });
   };
 
+  const handleCheckValidation = (params) => {
+    setIsLoading("button");
+    Fetch(
+      `schedule/${commonInfo.class_assigned}/validate-slots/`,
+      { ...params },
+      { method: "post" }
+    ).then((res: any) => {
+      setIsValidated(true);
+      setIsLoading("button");
+      if (res.status) {
+        handleApiCall(params);
+      } else {
+        let resErr = arrayString(res);
+        handleNewError(resErr);
+        setShowModal(true);
+      }
+      setIsLoading("");
+    });
+  };
+
+  const handleApiCall = (params: any) => {
+    setIsLoading("modal");
+    let url = "";
+    if (id) {
+      url = `schedule/${id}/`;
+    } else {
+      url = "schedule/";
+    }
+    Fetch(url, { ...params }, { method: id ? "put" : "post" }).then(
+      (res: any) => {
+        if (res.status) {
+          showToast(
+            id
+              ? "Schedule updated successfully"
+              : "Schedule added successfully",
+            "success"
+          );
+          navigate("/schedule");
+        } else {
+          let resErr = arrayString(res);
+          handleNewError(resErr);
+        }
+        setIsLoading("");
+        setShowModal(false);
+      }
+    );
+  };
+
   const convertForm = (obj: any) => {
     if (viewMode === "day") {
       let object = {
@@ -389,18 +437,6 @@ const ScheduleManagement: React.FC = () => {
   };
 
   const onSubmit = () => {
-    if (showModal) {
-      setIsLoading("modal");
-    } else {
-      setIsLoading("button");
-    }
-    let url = "";
-    if (id) {
-      url = `schedule/${id}/`;
-    } else {
-      url = "schedule/";
-    }
-
     let params = {};
 
     if (viewMode === "date") {
@@ -421,38 +457,13 @@ const ScheduleManagement: React.FC = () => {
 
     params = convertForm(params);
 
-    // if (id) {
-    //   params = {
-    //     school_id: params?.school_id?.id,
-    //     deleted_time_slots: deletedTimeSlots,
-    //     time_slots: params?.time_slots,
-    //   };
-    // }
+    setParamaters(params);
 
-    Fetch(url, { ...params }, { method: id ? "put" : "post" }).then(
-      (res: any) => {
-        setIsLoading("");
-        if (res.status) {
-          showToast(
-            id
-              ? "Schedule updated successfully"
-              : "Schedule added successfully",
-            "success"
-          );
-          navigate("/schedule");
-        } else {
-          let resErr = arrayString(res);
-          handleNewError(resErr);
-          if (resErr?.non_field_errors) {
-            setMessage(resErr?.non_field_errors);
-            setShowModal(true);
-            return;
-          }
-        }
-        // setIsLoading("");
-        setShowModal(false);
-      }
-    );
+    if (!isValidated) {
+      handleCheckValidation(params);
+    } else {
+      handleApiCall(params);
+    }
   };
 
   const changeViewMode = (type: "date" | "day") => {
@@ -766,8 +777,10 @@ const ScheduleManagement: React.FC = () => {
       /> */}
       <Modal
         title="Confirm!"
-        message={message}
-        onConfirm={handleSubmit}
+        message={
+          "Are you sure you want to override your previously added slots?"
+        }
+        onConfirm={() => handleApiCall(parameters)}
         onCancel={() => setShowModal(false)}
         visible={showModal}
         isLoading={isLoading === "modal"}

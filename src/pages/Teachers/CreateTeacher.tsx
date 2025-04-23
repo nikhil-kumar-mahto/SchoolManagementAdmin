@@ -32,6 +32,8 @@ const mandatoryFields = [
   "teacher_code",
   "first_name",
   "last_name",
+  "gender",
+  "department_code",
 ];
 
 const initialState = {
@@ -382,7 +384,13 @@ const CreateTeacher: React.FC<Props> = () => {
             options={schools}
             value={data?.school}
             onChange={(value) => handleSelectChange(value, "school")}
-            error={errors?.school && "Please select school."}
+            error={
+              errors?.school
+                ? data?.school
+                  ? errors?.school
+                  : "Please select school."
+                : ""
+            }
             className="w-25"
             tabIndex={tabIndex++}
           />
@@ -401,7 +409,13 @@ const CreateTeacher: React.FC<Props> = () => {
                       options={getGender()}
                       value={data?.gender}
                       onChange={(value) => handleSelectChange(value, "gender")}
-                      error={errors?.gender && "Please select gender."}
+                      error={
+                        errors?.gender
+                          ? data?.gender
+                            ? errors?.gender
+                            : "Please select gender."
+                          : ""
+                      }
                       tabIndex={tabIndex++}
                     />
                   );
@@ -418,8 +432,11 @@ const CreateTeacher: React.FC<Props> = () => {
                         handleSelectChange(value, "marital_status")
                       }
                       error={
-                        errors?.marital_status &&
-                        "Please select marital status."
+                        errors?.marital_status
+                          ? data?.marital_status
+                            ? errors?.marital_status
+                            : "Please select marital status."
+                          : ""
                       }
                       tabIndex={tabIndex++}
                     />
