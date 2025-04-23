@@ -75,7 +75,7 @@ const DataTable = <T extends {}>({
         </tbody>
       </table>
 
-      {!isLoading && (
+      {!isLoading && data?.length > itemsPerPage && (
         <div className={`${styles.pagination} mt-4`}>
           {Array.from({ length: totalPages }, (_, i) => i + 1).map((number) => (
             <button

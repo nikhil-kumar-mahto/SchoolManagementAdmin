@@ -3,6 +3,7 @@ import styles from "./Sidebar.module.css";
 import { SchoolIcon } from "../../../assets/svgs";
 import { sidebarItems } from "./SideBarList";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import Tooltip from "../ToolTip/ToolTip";
 
 interface SidebarProps {
   isMinimized: boolean;
@@ -61,24 +62,26 @@ const Sidebar: React.FC<SidebarProps> = ({ isMinimized }) => {
               onMouseLeave={() => setHoveredItem(null)}
               onClick={() => handleClick(item.name, item.href)}
             >
-              <div
-                className={`${styles.labelIcon} ${
-                  isMinimized && styles.labelIconMinimized
-                }`}
-              >
-                <item.Icon
-                  fill={
-                    hoveredItem === item.name || selectedItem === item.name
-                      ? "#fff"
-                      : item.fill
-                  }
-                  stroke={
-                    hoveredItem === item.name || selectedItem === item.name
-                      ? "#fff"
-                      : item.stroke
-                  }
-                />
-              </div>
+              <Tooltip text={item.name} showToolTip={false}>
+                <div
+                  className={`${styles.labelIcon} ${
+                    isMinimized && styles.labelIconMinimized
+                  }`}
+                >
+                  <item.Icon
+                    fill={
+                      hoveredItem === item.name || selectedItem === item.name
+                        ? "#fff"
+                        : item.fill
+                    }
+                    stroke={
+                      hoveredItem === item.name || selectedItem === item.name
+                        ? "#fff"
+                        : item.stroke
+                    }
+                  />
+                </div>
+              </Tooltip>
 
               <Link
                 className={

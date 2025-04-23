@@ -55,3 +55,21 @@
     border-color: #007bff;
     box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
 }
+
+.previewContainer {
+    margin-top: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+  }
+  
+  .previewImage {
+    width: 20rem;
+    height: 10rem;
+    object-fit: contain;
+    border: 1px solid #ccc;
+    padding: 4px;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+  }
+  

@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import Fetch from "../../utils/form-handling/fetch";
 import { useToast } from "../../contexts/Toast";
 import Modal from "../../components/common/Modal/Modal";
+import Tooltip from "../../components/common/ToolTip/ToolTip";
 
 function Teachers() {
   const [data, setData] = useState([]);
@@ -78,23 +79,28 @@ function Teachers() {
       header: "Actions",
       render: (item: any) => (
         <div>
-          <button
-            style={{ border: "none", background: "none", cursor: "pointer" }}
-            onClick={() => handleEdit(item?.id)}
-            className="mr-3"
-          >
-            <EditIcon size={20} color="#1976d2" />
-          </button>
-          <button
-            style={{
-              border: "none",
-              background: "none",
-              cursor: "pointer",
-            }}
-            onClick={() => handleDeleteRequest(item?.id)}
-          >
-            <DeleteIcon size={20} color="#d32f2f" />
-          </button>
+          <Tooltip text="Edit">
+            <button
+              style={{ border: "none", background: "none", cursor: "pointer" }}
+              onClick={() => handleEdit(item?.id)}
+              className="mr-3"
+            >
+              <EditIcon size={20} color="#1976d2" />
+            </button>
+          </Tooltip>
+
+          <Tooltip text="Delete">
+            <button
+              style={{
+                border: "none",
+                background: "none",
+                cursor: "pointer",
+              }}
+              onClick={() => handleDeleteRequest(item?.id)}
+            >
+              <DeleteIcon size={20} color="#d32f2f" />
+            </button>
+          </Tooltip>
         </div>
       ),
     },
@@ -115,7 +121,7 @@ function Teachers() {
           backgroundColor: "#f8f9fa",
           padding: "20px",
           marginTop: "20px",
-          maxWidth: "calc(100vw - 21rem)",
+          height: "calc(100vh - 10rem)",
         }}
       >
         <div className={styles.titleContainer}>

@@ -10,6 +10,7 @@ interface ButtonProps {
   isLoading?: boolean;
   style?: any;
   color?: string;
+  buttonType?: "button" | "submit" | "reset";
 }
 
 const Button: React.FC<ButtonProps> = ({
@@ -20,6 +21,7 @@ const Button: React.FC<ButtonProps> = ({
   isLoading = false,
   style,
   color,
+  buttonType = "button",
 }) => {
   return (
     <button
@@ -29,7 +31,7 @@ const Button: React.FC<ButtonProps> = ({
       } ${className || ""} ${isLoading ? styles.loading : ""}`}
       disabled={isLoading}
       style={style}
-      type="button"
+      type={buttonType}
     >
       {isLoading ? <Loader size="small" color="white" /> : <span>{text}</span>}
     </button>

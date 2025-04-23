@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import styles from "./ScheduleManagement.module.css";
 import Layout from "../../components/common/Layout/Layout";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import WeekDay from "../../components/CreateSchedule/WeeklyCalendar/WeekDay";
 import DateSchedule from "../../components/CreateSchedule/DateSchedule/DateSchedule";
 import Fetch from "../../utils/form-handling/fetch";
@@ -67,19 +67,12 @@ const ScheduleManagement: React.FC = () => {
   const [classes, setClasses] = useState([]);
   const [teachers, setTeachers] = useState([]);
   const [isLoading, setIsLoading] = useState("");
-  const [deletedTimeSlots, setDeletedTimeSlots] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [message, setMessage] = useState("");
   const [showEmptyStateModal, setShowEmptyStateModal] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
   const { id } = useParams();
-
-  const location = useLocation();
-
-  const searchParams = new URLSearchParams(location.search);
-  const day_of_week = searchParams.get("day_of_week");
-  const date = searchParams.get("date");
 
   const toast = useToast();
   const { schools, subjects } = useAppContext();
@@ -140,15 +133,10 @@ const ScheduleManagement: React.FC = () => {
   };
 
   const getScheduleInfo = () => {
-    Fetch(
-      `schedule/${id}?${day_of_week ? "day_of_week" : "date"}=${
-        day_of_week ? day_of_week : date
-      }`
-    ).then((res: any) => {
+    Fetch(`schedule/${id}`).then((res: any) => {
       if (res.status) {
-        // getClasses(res?.data?.school?.id);
         let classes = schools
-          .find((item) => item?.value === res?.data?.school?.id)
+          .find((item) => item?.value === res?.data?.school)
           ?.classes?.map((item) => ({
             label: item?.name + " " + item?.section,
             value: item?.id,
@@ -156,9 +144,10 @@ const ScheduleManagement: React.FC = () => {
 
         setClasses(classes || []);
         setCommonInfo({
-          school: res?.data?.school?.id,
-          class_assigned: res?.data?.id,
+          school: res?.data?.school,
+          class_assigned: res?.data?.sch_class,
         });
+        getTeachers(res?.data?.school);
         if (res?.data?.time_slots[0]?.day_of_week) {
           // set state for week
           setViewMode("day");
@@ -172,8 +161,9 @@ const ScheduleManagement: React.FC = () => {
     });
   };
 
-  const getTeachers = () => {
-    Fetch("teachers/").then((res: any) => {
+  const getTeachers = (id: string) => {
+    setTeachers([]);
+    Fetch(`teachers?school_id={${id}}`).then((res: any) => {
       if (res.status) {
         let teachers = res.data?.map((item: { name: string; id: string }) => {
           return {
@@ -191,20 +181,14 @@ const ScheduleManagement: React.FC = () => {
       setDayState((prevState) => {
         return {
           ...prevState,
-          [day]: [
-            ...prevState[day],
-            { ...emptyObj, isEdited: id ? true : false }, // isEdited is added to keep track of all those items that have been added during update mode
-          ],
+          [day]: [...prevState[day], { ...emptyObj }],
         };
       });
     } else {
       setDateState((prevState) => {
         return {
           ...prevState,
-          schedule: [
-            ...prevState.schedule,
-            { ...emptyObj, isEdited: id ? true : false }, // isEdited is added to keep track of all those items that have been added during update mode
-          ],
+          schedule: [...prevState.schedule, { ...emptyObj }],
         };
       });
     }
@@ -217,12 +201,6 @@ const ScheduleManagement: React.FC = () => {
     value: string,
     deletedId = undefined
   ) => {
-    if (id && deletedId) {
-      setDeletedTimeSlots((prevState) => {
-        return [...prevState, deletedId];
-      });
-    }
-
     const updatedDay = [...dayState[day]];
     const updatedTime = { ...updatedDay[index], isEdited: id ? true : false };
 
@@ -249,11 +227,6 @@ const ScheduleManagement: React.FC = () => {
     day: Day = "Monday",
     deletedId = undefined
   ) => {
-    if (id && deletedId) {
-      setDeletedTimeSlots((prevState) => {
-        return [...prevState, deletedId];
-      });
-    }
     if (type === "day") {
       setDayState((prevState) => {
         const updatedDay = [...prevState[day]];
@@ -277,7 +250,6 @@ const ScheduleManagement: React.FC = () => {
   };
 
   useEffect(() => {
-    getTeachers();
     if (id && schools.length > 0) {
       getScheduleInfo();
     }
@@ -289,7 +261,6 @@ const ScheduleManagement: React.FC = () => {
 
   const handlecommonInfoChange = (value: string, type: string) => {
     if (type === "school") {
-      // getClasses(value);
       let classes = schools
         .find((item) => item?.value === value)
         ?.classes?.map((item) => ({
@@ -298,6 +269,7 @@ const ScheduleManagement: React.FC = () => {
         }));
 
       setClasses(classes || []);
+      getTeachers(value);
     }
     setCommonInfo((prevState) => {
       return {
@@ -321,11 +293,6 @@ const ScheduleManagement: React.FC = () => {
     val: string,
     deletedId = undefined
   ) => {
-    if (id && deletedId) {
-      setDeletedTimeSlots((prevState) => {
-        return [...prevState, deletedId];
-      });
-    }
     const updatedSchedule = dateState.schedule.map((item, i) => {
       if (i === index) {
         return {
@@ -351,14 +318,14 @@ const ScheduleManagement: React.FC = () => {
   const convertForm = (obj: any) => {
     if (viewMode === "day") {
       let object = {
-        school_id: obj.school,
-        class_id: obj.class_assigned,
+        school: obj.school,
+        sch_class: obj.class_assigned,
         time_slots: Object.entries(obj.time_slots).reduce(
           (acc, [day, daySlots]) => {
             let slots = [...daySlots];
-            if (id) {
-              slots = slots.filter((item) => item.isEdited === true);
-            }
+            // if (id) {
+            //   slots = slots.filter((item) => item.isEdited === true);
+            // }
             const slotsForDay = slots.map((slot) => ({
               day_of_week: day,
               start_time: slot.start_time,
@@ -380,12 +347,12 @@ const ScheduleManagement: React.FC = () => {
       return object;
     } else {
       let slots = [...obj?.time_slots];
-      if (id) {
-        slots = slots.filter((item) => item?.isEdited === true);
-      }
+      // if (id) {
+      //   slots = slots.filter((item) => item?.isEdited === true);
+      // }
       let object = {
-        school_id: obj.school,
-        class_id: obj.class_assigned,
+        school: obj.school,
+        sch_class: obj.class_assigned,
         time_slots: slots.map((item) => {
           return {
             date: obj.date,
@@ -454,38 +421,38 @@ const ScheduleManagement: React.FC = () => {
 
     params = convertForm(params);
 
-    if (id) {
-      params = {
-        school_id: params?.school_id?.id,
-        deleted_time_slots: deletedTimeSlots,
-        time_slots: params?.time_slots,
-      };
-    }
+    // if (id) {
+    //   params = {
+    //     school_id: params?.school_id?.id,
+    //     deleted_time_slots: deletedTimeSlots,
+    //     time_slots: params?.time_slots,
+    //   };
+    // }
 
-    Fetch(
-      url,
-      { ...params, is_override: showModal },
-      { method: id ? "put" : "post" }
-    ).then((res: any) => {
-      setIsLoading("");
-      if (res.status) {
-        showToast(
-          id ? "Schedule updated successfully" : "Schedule added successfully",
-          "success"
-        );
-        navigate("/schedule");
-      } else {
-        let resErr = arrayString(res);
-        handleNewError(resErr);
-        if (resErr?.non_field_errors) {
-          setMessage(resErr?.non_field_errors);
-          setShowModal(true);
-          return;
+    Fetch(url, { ...params }, { method: id ? "put" : "post" }).then(
+      (res: any) => {
+        setIsLoading("");
+        if (res.status) {
+          showToast(
+            id
+              ? "Schedule updated successfully"
+              : "Schedule added successfully",
+            "success"
+          );
+          navigate("/schedule");
+        } else {
+          let resErr = arrayString(res);
+          handleNewError(resErr);
+          if (resErr?.non_field_errors) {
+            setMessage(resErr?.non_field_errors);
+            setShowModal(true);
+            return;
+          }
         }
+        // setIsLoading("");
+        setShowModal(false);
       }
-      // setIsLoading("");
-      setShowModal(false);
-    });
+    );
   };
 
   const changeViewMode = (type: "date" | "day") => {
@@ -511,6 +478,8 @@ const ScheduleManagement: React.FC = () => {
     school: commonInfo.school,
     class: commonInfo.class_assigned,
   };
+
+  console.log("common info====", commonInfo);
 
   let dayParams = { ...dayState };
   [
@@ -565,32 +534,49 @@ const ScheduleManagement: React.FC = () => {
 
   const deleteItem = () => {
     setIsLoading("delete-modal");
-    Fetch(
-      `schedule/${deleteId}/soft-delete-slots`,
-      {},
-      { method: "delete" }
-    ).then((res: any) => {
-      if (res.status) {
-        showToast("Slot deleted successfully", "danger");
-        if (viewMode === "day") {
-          setDayState((prevState) => {
-            const updatedDay = { ...prevState };
-            Object.entries(updatedDay).forEach(([key, value]) => {
-              updatedDay[key] = value.filter((item) => item.id !== id);
+    Fetch(`time-slot/${deleteId}/`, {}, { method: "delete" }).then(
+      (res: any) => {
+        if (res.status) {
+          showToast("Slot deleted successfully", "danger");
+          setDeleteId(null);
+
+          if (viewMode === "day") {
+            let slotsPresent = 0;
+            Object.values(dayState).forEach((item) => {
+              if (!!item?.length) {
+                slotsPresent++;
+              }
             });
-            return updatedDay;
-          });
-        } else {
-          setDateState((prevState) => {
-            const updatedSchedule = prevState.schedule.filter(
-              (item) => item.id !== id
-            );
-            return { ...prevState, schedule: updatedSchedule };
-          });
+
+            if (slotsPresent === 1) {
+              navigate("/schedule");
+              return;
+            }
+
+            setDayState((prevState) => {
+              const updatedDay = { ...prevState };
+              Object.entries(updatedDay).forEach(([key, value]) => {
+                updatedDay[key] = value.filter((item) => item.id !== deleteId);
+              });
+
+              return updatedDay;
+            });
+          } else {
+            if (dateState.schedule.length === 1) {
+              navigate("/schedule");
+              return;
+            }
+            setDateState((prevState) => {
+              const updatedSchedule = prevState.schedule.filter(
+                (item) => item.id !== deleteId
+              );
+              return { ...prevState, schedule: updatedSchedule };
+            });
+          }
         }
+        setIsLoading("");
       }
-      setIsLoading("");
-    });
+    );
   };
 
   console.log("err===", errors);

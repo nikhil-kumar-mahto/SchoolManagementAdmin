@@ -577,6 +577,7 @@ const CreateTeacher: React.FC<Props> = () => {
               className="mt-2"
               isLoading={isLoading}
               style={{ width: "8rem" }}
+              buttonType="submit"
             />
           </div>
         </div>

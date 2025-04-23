@@ -10,6 +10,7 @@ import { useToast } from "../../contexts/Toast";
 import Modal from "../../components/common/Modal/Modal";
 import { useAppContext } from "../../contexts/AppContext";
 import Select from "../../components/common/Select/Select";
+import Tooltip from "../../components/common/ToolTip/ToolTip";
 
 function Class() {
   const [data, setData] = useState([]);
@@ -74,8 +75,8 @@ function Class() {
     );
   };
 
-  const handleEdit = (id: string, query: string, queryType: string) => {
-    navigate(`/schedule/create/${id}?${queryType}=${query}`);
+  const handleEdit = (id: string) => {
+    navigate(`/schedule/create/${id}`);
   };
 
   useEffect(() => {
@@ -89,55 +90,47 @@ function Class() {
 
   const columns = [
     {
-      key: "school",
+      key: "school_name",
       header: "School",
-      render: (item: any) => item?.school?.name,
     },
     {
-      key: "class",
+      key: "class_name",
       header: "Class",
-      render: (item: any) => item?.name + " " + item?.section,
+      render: (item: any) => item?.class_name + " " + item?.section,
     },
     {
-      key: "schedules",
+      key: "slots",
       header: "Schedules",
       render: (item: any) =>
-        [
-          ...new Set(
-            item.time_slots.map((item) => item?.day_of_week ?? item?.date)
-          ),
-        ].join(", "),
+        !!item?.slots?.date ? item?.slots?.date : item?.slots?.day_of_week,
     },
     {
       key: "actions",
       header: "Actions",
       render: (item: any) => (
         <div>
-          <button
-            className="mr-3"
-            style={{ border: "none", background: "none", cursor: "pointer" }}
-            onClick={() =>
-              handleEdit(
-                item?.id,
-                item?.time_slots?.[0]?.day_of_week
-                  ? item?.time_slots?.[0]?.day_of_week
-                  : item?.time_slots?.[0]?.date,
-                item?.time_slots?.[0]?.day_of_week ? "day_of_week" : "date"
-              )
-            }
-          >
-            <EditIcon size={20} color="#1976d2" />
-          </button>
-          <button
-            style={{
-              border: "none",
-              background: "none",
-              cursor: "pointer",
-            }}
-            onClick={() => handleDeleteRequest(item?.id)}
-          >
-            <DeleteIcon size={20} color="#d32f2f" />
-          </button>
+          <Tooltip text="Edit">
+            <button
+              className="mr-3"
+              style={{ border: "none", background: "none", cursor: "pointer" }}
+              onClick={() => handleEdit(item?.id)}
+            >
+              <EditIcon size={20} color="#1976d2" />
+            </button>
+          </Tooltip>
+
+          <Tooltip text="Delete">
+            <button
+              style={{
+                border: "none",
+                background: "none",
+                cursor: "pointer",
+              }}
+              onClick={() => handleDeleteRequest(item?.id)}
+            >
+              <DeleteIcon size={20} color="#d32f2f" />
+            </button>
+          </Tooltip>
         </div>
       ),
     },
@@ -159,6 +152,7 @@ function Class() {
           backgroundColor: "#f8f9fa",
           padding: "20px",
           marginTop: "20px",
+          height: "calc(100vh - 10rem)",
         }}
       >
         <div className={styles.titleContainer}>

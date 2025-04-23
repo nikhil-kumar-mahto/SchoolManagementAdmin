@@ -58,12 +58,10 @@ const LoginScreen: React.FC = () => {
     <div className="login-container">
       <div className="login-form-container flex-center">
         <div className="login-box shadow">
-          <form action="" onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit}>
             <h2 className="mb-3 title text-center">School Management System</h2>
             <h2 className="login-title mb-2">Sign In</h2>
-            <p className="login-desc mb-4">
-              Enter your email to sign in
-            </p>
+            <p className="login-desc mb-4">Enter your email to sign in</p>
 
             <Input
               label="Email*"
@@ -93,6 +91,7 @@ const LoginScreen: React.FC = () => {
               onClick={handleSubmit}
               className="mt-2 w-100"
               isLoading={isLoading}
+              buttonType="submit"
             />
           </form>
         </div>

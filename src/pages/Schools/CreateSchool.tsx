@@ -109,10 +109,9 @@ const CreateSchool: React.FC<Props> = () => {
     ...data,
     logo: id && !isLogoChanged ? data.logo : data.logo?.name,
   };
-  // if (!params.website) {
-  //   delete params.website;
-  // }
-  delete params.website;
+  if (!params.website) {
+    delete params.website;
+  }
   delete params.classes; // not taken on state, but is received from backend API during edit mode
 
   const { errors, handleSubmit, handleNewError } = FormC({
@@ -207,6 +206,7 @@ const CreateSchool: React.FC<Props> = () => {
                 onChange={handleChange}
                 placeholder="Enter website's URL"
                 tabIndex={tabIndex++}
+                error={errors?.website}
               />
             </div>
           </div>
@@ -229,6 +229,7 @@ const CreateSchool: React.FC<Props> = () => {
               className="mt-2"
               isLoading={isLoading}
               style={{ width: "8rem" }}
+              buttonType="submit"
             />
           </div>
         </div>

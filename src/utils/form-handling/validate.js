@@ -71,7 +71,10 @@ const inputValidation = (data, property, selectFields = []) => {
   }
 
   if (property.includes("website") && data[property]?.length) {
-    
+    const regex = /^(http|https):\/\/[^ "]+$/;
+    if (!regex.test(data[property])) {
+      errors[property] = "Please enter valid website URL.";
+    }
   }
 
   if (property.includes("email") && data[property]?.length) {

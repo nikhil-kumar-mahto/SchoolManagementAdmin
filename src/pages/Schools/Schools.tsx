@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import Fetch from "../../utils/form-handling/fetch";
 import Modal from "../../components/common/Modal/Modal";
 import { useToast } from "../../contexts/Toast";
+import Tooltip from "../../components/common/ToolTip/ToolTip";
 
 function Schools() {
   const [data, setData] = useState([]);
@@ -65,11 +66,11 @@ function Schools() {
       header: "Email",
       render: (item: any) => <a href={`mailto:${item.email}`}>{item.email}</a>,
     },
-    {
-      key: "logo",
-      header: "Logo",
-      render: (item: any) => <img width={50} height={50} src={item.logo} />,
-    },
+    // {
+    //   key: "logo",
+    //   header: "Logo",
+    //   render: (item: any) => <img width={150} height={50} src={item.logo} />,
+    // },
     { key: "phone", header: "Phone" },
     { key: "address", header: "Address" },
     {
@@ -77,23 +78,28 @@ function Schools() {
       header: "Actions",
       render: (item: any) => (
         <div>
-          <button
-            style={{ border: "none", background: "none", cursor: "pointer" }}
-            onClick={() => handleEdit(item?.id)}
-            className="mr-3"I
-          >
-            <EditIcon size={20} color="#1976d2" />
-          </button>
-          <button
-            style={{
-              border: "none",
-              background: "none",
-              cursor: "pointer",
-            }}
-            onClick={() => handleDeleteRequest(item?.id)}
-          >
-            <DeleteIcon size={20} color="#d32f2f" />
-          </button>
+          <Tooltip text="Edit">
+            <button
+              style={{ border: "none", background: "none", cursor: "pointer" }}
+              onClick={() => handleEdit(item?.id)}
+              className="mr-3"
+            >
+              <EditIcon size={20} color="#1976d2" />
+            </button>
+          </Tooltip>
+
+          <Tooltip text="Delete">
+            <button
+              style={{
+                border: "none",
+                background: "none",
+                cursor: "pointer",
+              }}
+              onClick={() => handleDeleteRequest(item?.id)}
+            >
+              <DeleteIcon size={20} color="#d32f2f" />
+            </button>
+          </Tooltip>
         </div>
       ),
     },
@@ -112,7 +118,7 @@ function Schools() {
     <Layout>
       <div
         style={{
-          // height: "calc(100vh - 9rem)",
+          height: "calc(100vh - 10rem)",
           backgroundColor: "#f8f9fa",
           padding: "20px",
           marginTop: "20px",
