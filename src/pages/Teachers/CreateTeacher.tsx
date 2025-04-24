@@ -23,6 +23,7 @@ import DatePicker from "../../components/DatePicker/DatePicker";
 import ImagePicker from "../../components/common/ImagePicker/ImagePicker";
 import { useAppContext } from "../../contexts/AppContext";
 import moment from "moment";
+import { IconEye, IconViewOff } from "../../assets/svgs";
 
 interface Props {}
 
@@ -93,7 +94,8 @@ const initialState = {
   gov_provident_fund: "",
   gov_provided_fund_number: "",
   file_passbook: "",
-  file_adhaar: "",
+  file_adhaar_front: "",
+  file_adhaar_back: "",
   file_pancard: "",
   form_11: "",
   academic_qualification: "",
@@ -110,6 +112,8 @@ const initialState = {
   family_adhaar1: "",
   status: "",
   school: "",
+  password: "",
+  confirm_password: "",
 };
 
 const CreateTeacher: React.FC<Props> = () => {
@@ -125,6 +129,10 @@ const CreateTeacher: React.FC<Props> = () => {
   const [minDates, setMinDates] = useState({
     date_of_joining: undefined,
   });
+  const [passwordVisible, setPasswordVisible] = useState({
+    password: false,
+    confirm_password: false,
+  });
 
   const excludedKeys: string[] = ["school_id", "id", "school", "user"];
 
@@ -137,22 +145,6 @@ const CreateTeacher: React.FC<Props> = () => {
   const showToast = (message: string) => {
     toast.show(message, 2000, "#4CAF50");
   };
-
-  // const getTeacherInfo = () => {
-  //   Fetch(`teachers/${id}/`).then((res: any) => {
-  //     if (res.status) {
-  //       setData({ ...res.data, school_id: res?.data?.school });
-  //       if (data?.date_of_birth) {
-  //         setMinDates((prevState) => {
-  //           return {
-  //             ...prevState,
-  //             date_of_joining: data?.date_of_birth,
-  //           };
-  //         });
-  //       }
-  //     }
-  //   });
-  // };
 
   const getTeacherInfo = () => {
     Fetch(`teachers/${id}/`).then((res: any) => {
@@ -257,25 +249,6 @@ const CreateTeacher: React.FC<Props> = () => {
     });
   };
 
-  // let params = {
-  //   ...data,
-  //   file_passbook:
-  //     id && !isFilesModified.file_passbook
-  //       ? data.file_passbook
-  //       : data.file_passbook?.name,
-  //   file_adhaar:
-  //     id && !isFilesModified.file_adhaar
-  //       ? data.file_adhaar
-  //       : data.file_adhaar?.name,
-  //   file_pancard:
-  //     id && !isFilesModified.file_pancard
-  //       ? data.file_pancard
-  //       : data.file_pancard?.name,
-  //   form_11: id && !isFilesModified.form_11 ? data.form_11 : data.form_11?.name,
-  // };
-
-  // delete params.school_id;
-
   const { errors, handleSubmit, handleNewError } = FormC({
     values: {
       school: data?.school,
@@ -317,6 +290,8 @@ const CreateTeacher: React.FC<Props> = () => {
         return 12;
       case "family_age1":
         return 3;
+      case "card_number":
+        return 16;
       default:
         return undefined;
     }
@@ -366,7 +341,7 @@ const CreateTeacher: React.FC<Props> = () => {
   const getMax = (key: string) => {
     switch (key) {
       case "date_of_birth":
-        return moment().subtract(1, "days").format("YYYY-MM-DD");
+        return moment().subtract(18, "years").format("YYYY-MM-DD");
       case "last_date_of_leaving":
         return moment().subtract(1, "days").format("YYYY-MM-DD");
       default:
@@ -393,6 +368,7 @@ const CreateTeacher: React.FC<Props> = () => {
             }
             className="w-25"
             tabIndex={tabIndex++}
+            name="school"
           />
 
           <div className={formStyles["form-grid"]}>
@@ -540,9 +516,10 @@ const CreateTeacher: React.FC<Props> = () => {
                   );
                 } else if (
                   key === "file_passbook" ||
-                  key === "file_adhaar" ||
+                  key === "file_adhaar_front" ||
                   key === "file_pancard" ||
-                  key === "form_11"
+                  key === "form_11" ||
+                  key === "file_adhaar_back"
                 ) {
                   return (
                     <ImagePicker
@@ -561,6 +538,43 @@ const CreateTeacher: React.FC<Props> = () => {
                       tabIndex={tabIndex++}
                     />
                   );
+                } else if (key === "password" || key === "confirm_password") {
+                  return (
+                    <div className={formStyles["form-column"]} key={key}>
+                      <Input
+                        label={`${mapKeyToLabel(key)}${
+                          mandatoryFields.includes(key) ? "*" : ""
+                        }`}
+                        name={key}
+                        defaultValue={data[key]}
+                        onBlur={handleChange}
+                        placeholder={`Enter ${mapKeyToLabel(
+                          key
+                        ).toLowerCase()}`}
+                        error={
+                          errors[key]
+                            ? data[key]
+                              ? errors[key]
+                              : `Please enter ${mapKeyToLabel(
+                                  key
+                                ).toLocaleLowerCase()}.`
+                            : ""
+                        }
+                        maxLength={getMaxLength(key)}
+                        tabIndex={tabIndex++}
+                        type={!passwordVisible[key] ? "password" : "text"}
+                        iconRight={
+                          !passwordVisible[key] ? <IconEye /> : <IconViewOff />
+                        }
+                        handleIconButtonClick={() =>
+                          setPasswordVisible((prevState) => ({
+                            ...prevState,
+                            [key]: !prevState[key],
+                          }))
+                        }
+                      />
+                    </div>
+                  );
                 }
                 return (
                   <div className={formStyles["form-column"]} key={key}>
@@ -572,12 +586,6 @@ const CreateTeacher: React.FC<Props> = () => {
                       defaultValue={data[key]}
                       onBlur={handleChange}
                       placeholder={`Enter ${mapKeyToLabel(key).toLowerCase()}`}
-                      // error={
-                      //   errors[key] &&
-                      //   `Please enter ${mapKeyToLabel(
-                      //     key
-                      //   ).toLocaleLowerCase()}.`
-                      // }
                       error={
                         errors[key]
                           ? data[key]

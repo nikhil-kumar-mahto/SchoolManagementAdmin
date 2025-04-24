@@ -12,6 +12,7 @@ interface SelectProps {
   type?: string;
   disabled?: boolean;
   tabIndex?: number | undefined;
+  name?: string | undefined;
 }
 
 function Select({
@@ -25,6 +26,7 @@ function Select({
   type = "",
   disabled = false,
   tabIndex = undefined,
+  name = undefined,
 }: SelectProps) {
   const isValueInOptions =
     options.some((option) => option.value === value) ?? false;
@@ -43,10 +45,9 @@ function Select({
           onChange(e.target.value);
         }}
         tabIndex={tabIndex}
+        name={name}
       >
-        <option value="" disabled hidden>
-          {placeholder}
-        </option>
+        <option value="">{placeholder}</option>
         {type === "time" && !isValueInOptions && value && (
           <option value={value} disabled>
             {moment(value, "HH:mm").format("hh:mm A")}

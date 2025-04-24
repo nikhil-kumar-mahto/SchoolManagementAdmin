@@ -19,7 +19,7 @@ function Schools() {
   const toast = useToast();
 
   const showToast = () => {
-    toast.show("School deleted successfully", 2000, "#dc3545");
+    toast.show("School deleted successfully", 2000, "#4CAF50");
   };
 
   const getData = () => {
@@ -143,6 +143,7 @@ function Schools() {
         onCancel={handleCancel}
         visible={showModal}
         isLoading={isLoading === "delete"}
+        primaryButtonVariant="danger"
       />
     </Layout>
   );

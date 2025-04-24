@@ -8,6 +8,7 @@ import Fetch from "../../utils/form-handling/fetch";
 import { arrayString } from "../../utils/form-handling/arrayString";
 
 import { useAppContext } from "../../contexts/AppContext";
+import { IconEye, IconViewOff } from "../../assets/svgs";
 
 const initialState = {
   username: "",
@@ -18,6 +19,7 @@ const LoginScreen: React.FC = () => {
   const [data, setData] = useState(initialState);
   const [isLoading, setIsLoading] = useState(false);
   const { toggleIsLoggedIn } = useAppContext();
+  const [passwordVisible, setIsPasswordVisible] = useState(false);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -78,8 +80,12 @@ const LoginScreen: React.FC = () => {
               value={data.password}
               onChange={handleChange}
               placeholder="Please enter your password"
-              type="password"
+              type={!passwordVisible ? "password" : "text"}
               error={errors?.password}
+              iconRight={!passwordVisible ? <IconEye /> : <IconViewOff />}
+              handleIconButtonClick={() =>
+                setIsPasswordVisible((prevState) => !prevState)
+              }
             />
 
             {errors?.non_field_errors && (

@@ -11,6 +11,7 @@ interface ButtonProps {
   style?: any;
   color?: string;
   buttonType?: "button" | "submit" | "reset";
+  variant?: "primary" | "danger";
 }
 
 const Button: React.FC<ButtonProps> = ({
@@ -20,15 +21,17 @@ const Button: React.FC<ButtonProps> = ({
   className,
   isLoading = false,
   style,
-  color,
   buttonType = "button",
+  variant = "primary",
 }) => {
   return (
     <button
       onClick={onClick}
       className={`${styles.button} ${
         type === "outline" ? styles.outline : styles.filled
-      } ${className || ""} ${isLoading ? styles.loading : ""}`}
+      } ${className || ""} ${isLoading ? styles.loading : ""} ${
+        variant === "danger" ? styles.danger : ""
+      }`}
       disabled={isLoading}
       style={style}
       type={buttonType}

@@ -1,10 +1,7 @@
 .button {
     display: flex;
-    /* Use flexbox for alignment */
     align-items: center;
-    /* Vertically center content */
     justify-content: center;
-    /* Horizontally center content */
     padding-left: 1rem;
     padding-right: 1rem;
     border: none;
@@ -16,7 +13,6 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     height: 3.2rem;
     position: relative;
-    /* Ensure consistent alignment */
 }
 
 .filled {
@@ -42,16 +38,20 @@
 
 .loading {
     pointer-events: none;
-    /* Prevent interaction when loading */
 }
 
-/* Ensure the loader does not affect button alignment */
 .button>* {
     display: flex;
     align-items: center;
     justify-content: center;
     min-height: 1rem;
-    /* Match text height */
     min-width: 1rem;
-    /* Match text width */
+}
+
+.danger {
+    background-color: var(--danger-color);
+}
+
+.danger:hover {
+    background-color: var(--danger-hover-color);
 }

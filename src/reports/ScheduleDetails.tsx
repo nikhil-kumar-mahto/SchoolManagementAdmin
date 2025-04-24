@@ -29,7 +29,7 @@ const ScheduleList: React.FC<ScheduleListProps> = () => {
   const { schools } = useAppContext();
 
   const showToast = () => {
-    toast.show("Schedule deleted successfully", 2000, "#dc3545");
+    toast.show("Schedule deleted successfully", 2000, "#4CAF50");
   };
 
   const convertResponse = (data: any) => {

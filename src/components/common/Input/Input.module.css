@@ -73,3 +73,18 @@
 .errorState .input::placeholder {
     color: var(--danger-color);
 }
+
+.iconRight {
+    position: absolute;
+    right: 1rem;
+    color: #888;
+    width: 1.3rem;
+    height: 1.3rem;
+    border: none;
+    background: none;
+    cursor: pointer;
+}
+
+.input.withIconRight {
+    padding-right: 3.5rem;
+}

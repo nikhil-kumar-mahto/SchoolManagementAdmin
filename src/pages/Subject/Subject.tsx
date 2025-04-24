@@ -19,7 +19,7 @@ function Subject() {
   const toast = useToast();
 
   const showToast = () => {
-    toast.show("Subject deleted successfully", 2000, "#dc3545");
+    toast.show("Subject deleted successfully", 2000, "#4CAF50");
   };
 
   const getData = () => {
@@ -132,6 +132,7 @@ function Subject() {
         onCancel={handleCancel}
         visible={showModal}
         isLoading={isLoading === "delete"}
+        primaryButtonVariant="danger" 
       />
     </Layout>
   );

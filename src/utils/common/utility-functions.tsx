@@ -81,7 +81,9 @@ export function filterTimeArray(start_time, allowEqual = false) {
 
   return timeArray.filter((time) => {
     const currentTime = moment(time.value, "HH:mm");
-    return allowEqual ? currentTime.isSameOrAfter(parsedStartTime ) : currentTime.isAfter(parsedStartTime);
+    return allowEqual
+      ? currentTime.isSameOrAfter(parsedStartTime)
+      : currentTime.isAfter(parsedStartTime);
   });
 }
 
@@ -116,7 +118,7 @@ export const mapKeyToLabel = (key: string) => {
     case "blood_group":
       return "Blood Group";
     case "nominee":
-      return "Nominee";
+      return "Nominee Name";
     case "nominee_relation":
       return "Nominee Relation";
     case "location":
@@ -193,8 +195,10 @@ export const mapKeyToLabel = (key: string) => {
       return "Government Provident Fund Number";
     case "file_passbook":
       return "Passbook File";
-    case "file_adhaar":
-      return "Adhaar File";
+    case "file_adhaar_front":
+      return "Aadhar front photo";
+    case "file_adhaar_back":
+      return "Aadhar back photo";
     case "file_pancard":
       return "Pancard File";
     case "form_11":
@@ -225,6 +229,10 @@ export const mapKeyToLabel = (key: string) => {
       return "Family Member Adhaar";
     case "status":
       return "Status";
+    case "password":
+      return "Password";
+    case "confirm_password":
+      return "Confirm Password";
     default:
       return key.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
   }

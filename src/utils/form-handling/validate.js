@@ -46,7 +46,8 @@ export const onKeyPress = (evt, reg) => {
     evt.key === "Tab" ||
     evt.key === "ArrowLeft" ||
     evt.key === "ArrowRight" ||
-    evt.key === "Delete"
+    evt.key === "Delete" ||
+    evt.ctrlKey || evt.metaKey
   ) {
     return;
   }
@@ -152,7 +153,8 @@ export const FormC = ({ values, removeValidValue, onSubmit, onSubmitError, selec
       onSubmitError && onSubmitError(error);
       const err = Object.keys(error);
       if (err.length) {
-        const input = document.querySelector(`input[name=${err[0]}]`);
+        const input = document.querySelector(`input[name=${err[0]}]`) || document.querySelector(`select[name=${err[0]}]`);
+
         input?.scrollIntoView({
           behavior: "smooth",
           block: "center",

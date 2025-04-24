@@ -7,10 +7,12 @@ interface InputProps {
   onChange?: (event: ChangeEvent<HTMLInputElement>) => void;
   error?: string;
   type?: "text" | "password" | "email" | "number" | "tel" | "url";
+  iconRight?: React.ReactNode;
   [key: string]: any;
   onKeyPress?: () => void;
   maxLength?: undefined | number;
   tabIndex?: undefined | number;
+  handleIconButtonClick?: () => void;
 }
 
 const Input: React.FC<InputProps> = ({
@@ -18,11 +20,12 @@ const Input: React.FC<InputProps> = ({
   value,
   onChange,
   error,
-  icon,
+  iconRight,
   type = "text",
   onKeyPress = () => {},
   maxLength = undefined,
   tabIndex = undefined,
+  handleIconButtonClick = () => {},
   ...props
 }) => {
   return (
@@ -39,12 +42,21 @@ const Input: React.FC<InputProps> = ({
           type={type}
           value={value}
           onChange={onChange}
-          className={`${styles.input}`}
-          onKeyDown={onKeyPress}  
+          className={`${styles.input} ${iconRight ? styles.withIconRight : ""}`}
+          onKeyDown={onKeyPress}
           maxLength={maxLength}
           tabIndex={tabIndex}
           {...props}
         />
+        {iconRight && (
+          <button
+            type="button"
+            className={styles.iconRight}
+            onClick={handleIconButtonClick}
+          >
+            {iconRight}
+          </button>
+        )}
       </div>
       {error && <p className={styles.errorMessage}>{error}</p>}
     </div>

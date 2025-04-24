@@ -19,7 +19,7 @@ function Class() {
   const toast = useToast();
 
   const showToast = () => {
-    toast.show("School deleted successfully", 2000, "#dc3545");
+    toast.show("Class deleted successfully", 2000, "##4CAF50");
   };
 
   const getData = () => {
@@ -137,6 +137,7 @@ function Class() {
         onCancel={handleCancel}
         visible={showModal}
         isLoading={isLoading === "delete"}
+        primaryButtonVariant="danger"
       />
     </Layout>
   );

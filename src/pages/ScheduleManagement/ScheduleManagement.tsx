@@ -80,7 +80,7 @@ const ScheduleManagement: React.FC = () => {
   const { schools, subjects } = useAppContext();
 
   const showToast = (message: string, status: "success" | "danger") => {
-    toast.show(message, 2000, status === "success" ? "#4CAF50" : "#dc3545");
+    toast.show(message, 2000, "#4CAF50");
   };
 
   const navigate = useNavigate();
@@ -256,13 +256,15 @@ const ScheduleManagement: React.FC = () => {
     if (id && schools.length > 0) {
       getScheduleInfo();
     }
-    if (searchParams.get("class")) {
+    if (searchParams.get("school")) {
       let classes = schools
         .find((item) => item?.value === searchParams.get("school"))
         ?.classes?.map((item) => ({
           label: item?.name + " " + item?.section,
           value: item?.id,
         }));
+
+      getTeachers(searchParams.get("school") || "");
 
       setClasses(classes || []);
     }
@@ -515,8 +517,6 @@ const ScheduleManagement: React.FC = () => {
     class: commonInfo.class_assigned,
   };
 
-  console.log("common info====", commonInfo);
-
   let dayParams = { ...dayState };
   [
     "Monday",
@@ -614,8 +614,6 @@ const ScheduleManagement: React.FC = () => {
       }
     );
   };
-
-  console.log("err===", errors);
 
   return (
     <Layout>
@@ -793,13 +791,6 @@ const ScheduleManagement: React.FC = () => {
           </div>
         </div>
       </form>
-      {/* <Modal
-        title="Confirm!"
-        message={errors?.non_field_errors}
-        onConfirm={() => setShowModal(false)}
-        visible={showModal}
-        confirmText="OK"
-      /> */}
       <Modal
         title="Confirm!"
         message={

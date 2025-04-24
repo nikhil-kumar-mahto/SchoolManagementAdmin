@@ -60,7 +60,7 @@ const ImagePicker: React.FC<ImagePickerProps> = ({
         <input
           type="file"
           id={`imageInput-${componentKey}`}
-          accept="image/*"
+          accept="image/jpeg,image/png,image/webp,image/jpg"
           onChange={handleFileChange}
           className={`${styles.input} ${error ? styles.errorState : ""}`}
         />

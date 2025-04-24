@@ -12,6 +12,7 @@ interface ModalProps {
   className?: string;
   visible: boolean;
   isLoading?: boolean;
+  primaryButtonVariant?: "primary" | "danger";
 }
 
 const Modal: React.FC<ModalProps> = ({
@@ -24,6 +25,7 @@ const Modal: React.FC<ModalProps> = ({
   className,
   visible,
   isLoading,
+  primaryButtonVariant = "primary",
 }) => {
   if (!visible) {
     return null;
@@ -51,6 +53,7 @@ const Modal: React.FC<ModalProps> = ({
             className={styles.confirmButton}
             isLoading={isLoading}
             style={{ width: "6rem" }}
+            variant={primaryButtonVariant}
           />
         </div>
       </div>

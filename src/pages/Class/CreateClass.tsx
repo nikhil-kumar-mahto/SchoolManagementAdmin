@@ -34,7 +34,7 @@ const CreateClass: React.FC<Props> = () => {
   const getClassInfo = () => {
     Fetch(`classes/${id}/`).then((res: any) => {
       if (res.status) {
-        setData({...res.data, school: res?.data?.school?.id});
+        setData({ ...res.data, school: res?.data?.school?.id });
       }
     });
   };
@@ -106,7 +106,6 @@ const CreateClass: React.FC<Props> = () => {
             options={schools}
             value={data?.school}
             onChange={handleSchoolChange}
-            className="w-25"
             error={errors?.school}
           />
           <div className={styles.row}>
