@@ -356,7 +356,12 @@ const ScheduleManagement: React.FC = () => {
   };
 
   const handleApiCall = (params: any) => {
-    setIsLoading("modal");
+    if (id) {
+      setIsLoading("button");
+    } else {
+      setIsLoading("modal");
+    }
+
     let url = "";
     if (id) {
       url = `schedule/${id}/`;
@@ -479,7 +484,7 @@ const ScheduleManagement: React.FC = () => {
 
     setParamaters(params);
 
-    if (!isValidated) {
+    if (!isValidated && !id) {
       handleCheckValidation(params);
     } else {
       handleApiCall(params);
