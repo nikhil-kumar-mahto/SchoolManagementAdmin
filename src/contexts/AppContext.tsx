@@ -38,8 +38,8 @@ const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   };
 
   useEffect(() => {
-    // setIsLoggedIn(isAuthenticated());
-    setIsLoggedIn(true)
+    setIsLoggedIn(isAuthenticated());
+    // setIsLoggedIn(true)
   }, []);
 
   const getSchools = () => {

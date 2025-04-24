@@ -6,13 +6,15 @@ import Teachers from "../../assets/Teacher.jpg";
 import { FormC } from "../../utils/form-handling/validate";
 import Fetch from "../../utils/form-handling/fetch";
 import { arrayString } from "../../utils/form-handling/arrayString";
-
 import { useAppContext } from "../../contexts/AppContext";
 import { IconEye, IconViewOff } from "../../assets/svgs";
+import Select from "../../components/common/Select/Select";
+import { countryCodes } from "../../static/data";
 
 const initialState = {
   username: "",
   password: "",
+  country_code: "+91",
 };
 
 const LoginScreen: React.FC = () => {
@@ -31,10 +33,16 @@ const LoginScreen: React.FC = () => {
     });
   };
 
+  const handleSelectChange = (value: string) => {
+    setData((prevState) => {
+      return {
+        ...prevState,
+        country_code: value,
+      };
+    });
+  };
+
   const onSubmit = () => {
-    // localStorage.setItem("token", "access12345");
-    // localStorage.setItem("refresh_token", "refresh12345");
-    // toggleIsLoggedIn();
     localStorage.clear();
     setIsLoading(true);
     Fetch("login/", data, { method: "post" }).then((res: any) => {
@@ -52,7 +60,11 @@ const LoginScreen: React.FC = () => {
   };
 
   const { errors, handleSubmit, handleNewError } = FormC({
-    values: { email: data.username, password: data.password },
+    values: {
+      email: data.username,
+      password: data.password,
+      country_code: data.country_code,
+    },
     onSubmit,
   });
 
@@ -64,6 +76,14 @@ const LoginScreen: React.FC = () => {
             <h2 className="mb-3 title text-center">School Management System</h2>
             <h2 className="login-title mb-2">Sign In</h2>
             <p className="login-desc mb-4">Enter your email to sign in</p>
+
+            <Select
+              options={countryCodes}
+              value={data.country_code}
+              onChange={(value: string) => handleSelectChange(value)}
+              label="Select country code"
+              searchable={true}
+            />
 
             <Input
               label="Email*"
