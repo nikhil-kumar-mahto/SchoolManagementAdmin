@@ -15,6 +15,7 @@ interface SelectProps {
   tabIndex?: number | undefined;
   name?: string | undefined;
   searchable?: boolean;
+  allowEmpty?: boolean;
 }
 
 function Select({
@@ -30,6 +31,7 @@ function Select({
   tabIndex = undefined,
   name = undefined,
   searchable = false,
+  allowEmpty = true,
 }: SelectProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -159,7 +161,10 @@ function Select({
           tabIndex={tabIndex}
           name={name}
         >
-          <option value="">{placeholder}</option>
+          {/* {allowEmpty && <option value="">{placeholder}</option>} */}
+          <option value="" disabled={!allowEmpty}>
+            {placeholder}
+          </option>
           {type === "time" && !isValueInOptions && value && (
             <option value={value} disabled>
               {moment(value, "HH:mm").format("hh:mm A")}

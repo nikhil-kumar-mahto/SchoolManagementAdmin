@@ -29,7 +29,7 @@ interface Props {}
 
 const mandatoryFields = [
   "email",
-  "phone",
+  "phone_number",
   "teacher_code",
   "first_name",
   "last_name",
@@ -39,16 +39,17 @@ const mandatoryFields = [
 
 const initialState = {
   // mandatory mandatory fields
+  school: "",
   email: "",
-  phone: "",
+  phone_number: "",
   teacher_code: "",
   first_name: "",
   last_name: "",
   gender: "",
   department_code: "",
+  phone_number_prefix: "+91",
 
   // non mandatory fields
-  school_id: "",
   branch_id: "",
   teacher_adt_reg_no: "",
   card_number: "",
@@ -111,7 +112,6 @@ const initialState = {
   family_age1: "",
   family_adhaar1: "",
   status: "",
-  school: "",
   password: "",
   confirm_password: "",
 };
@@ -125,6 +125,8 @@ const CreateTeacher: React.FC<Props> = () => {
     file_adhaar: false,
     file_pancard: false,
     form_11: false,
+    file_adhaar_front: false,
+    file_adhaar_back: false,
   });
   const [minDates, setMinDates] = useState({
     date_of_joining: undefined,
@@ -134,10 +136,15 @@ const CreateTeacher: React.FC<Props> = () => {
     confirm_password: false,
   });
 
-  const excludedKeys: string[] = ["school_id", "id", "school", "user"];
+  const excludedKeys: string[] = ["id", "user", "phone_number_prefix"];
 
   const { id } = useParams();
-  const { schools } = useAppContext();
+
+  if (id) {
+    excludedKeys.push("password", "confirm_password");
+  }
+
+  const { schools, getSchools } = useAppContext();
 
   const navigate = useNavigate();
   const toast = useToast();
@@ -159,7 +166,7 @@ const CreateTeacher: React.FC<Props> = () => {
         });
 
         // Handle any additional transformations
-        orderedData.school_id = res?.data?.school;
+        orderedData.school = res?.data?.school?.id;
         orderedData.date_of_birth = res?.data?.date_of_birth
           ? res?.data?.date_of_birth
           : "";
@@ -178,6 +185,12 @@ const CreateTeacher: React.FC<Props> = () => {
         orderedData.gov_provident_fund = res?.data?.gov_provident_fund
           ? res?.data?.gov_provident_fund
           : "";
+        // orderedData.file_adhaar_front = res?.data?.file_adhaar_front
+        //   ? res?.data?.file_adhaar_front
+        //   : "";
+        // orderedData.file_adhaar_back = res?.data?.file_adhaar_back
+        //   ? res?.data?.file_adhaar_back
+        //   : "";
 
         setData(orderedData);
 
@@ -217,7 +230,8 @@ const CreateTeacher: React.FC<Props> = () => {
     // dont include these fields if they have not been changed in edit mode
     if (id) {
       const fieldsToDelete = [
-        "file_adhaar",
+        "file_adhaar_front",
+        "file_adhaar_back",
         "file_pancard",
         "file_passbook",
         "form_11",
@@ -230,9 +244,7 @@ const CreateTeacher: React.FC<Props> = () => {
       });
     }
 
-    delete params.school_id;
-
-    Fetch(url, id ? { ...params, school: data?.school.id } : params, {
+    Fetch(url, params, {
       method: id ? "put" : "post",
       inFormData: true,
     }).then((res: any) => {
@@ -241,6 +253,7 @@ const CreateTeacher: React.FC<Props> = () => {
           id ? "Teacher updated successfully" : "Teacher added successfully"
         );
         navigate("/teachers");
+        getSchools();
       } else {
         let resErr = arrayString(res);
         handleNewError(resErr);
@@ -253,12 +266,15 @@ const CreateTeacher: React.FC<Props> = () => {
     values: {
       school: data?.school,
       email: data?.email,
-      phone: data?.phone,
+      phone_number: data?.phone_number,
       teacher_code: data?.teacher_code,
       first_name: data?.first_name,
       last_name: data?.last_name,
       gender: data?.gender,
       department_code: data?.department_code,
+      ...(data?.password
+        ? { password: data?.password, confirm_password: data?.confirm_password }
+        : {}),
     },
     onSubmit,
   });
@@ -286,11 +302,21 @@ const CreateTeacher: React.FC<Props> = () => {
 
   const getMaxLength = (type: string) => {
     switch (type) {
-      case "phone":
-        return 12;
+      case "phone_number":
+        return 10;
       case "family_age1":
         return 3;
       case "card_number":
+        return 16;
+      case "emergency_number":
+        return 12;
+      case "adhaar":
+        return 16;
+      case "pension_amount":
+        return 8;
+      case "passing_year":
+        return 4;
+      case "family_adhaar1":
         return 16;
       default:
         return undefined;
@@ -354,28 +380,31 @@ const CreateTeacher: React.FC<Props> = () => {
       <form action="" onSubmit={handleSubmit}>
         <div className={styles.container}>
           <h2>{id ? "Update" : "Create"} Teacher</h2>
-          <Select
-            label="Select school*"
-            options={schools}
-            value={data?.school}
-            onChange={(value) => handleSelectChange(value, "school")}
-            error={
-              errors?.school
-                ? data?.school
-                  ? errors?.school
-                  : "Please select school."
-                : ""
-            }
-            className="w-25"
-            tabIndex={tabIndex++}
-            name="school"
-          />
 
           <div className={formStyles["form-grid"]}>
             {Object.keys(data)
               .filter((key) => !excludedKeys.includes(key))
               .map((key) => {
-                if (key === "gender") {
+                if (key === "school") {
+                  return (
+                    <Select
+                      label="Select school*"
+                      options={schools}
+                      value={data?.school}
+                      onChange={(value) => handleSelectChange(value, "school")}
+                      error={
+                        errors?.school
+                          ? data?.school
+                            ? errors?.school
+                            : "Please select school."
+                          : ""
+                      }
+                      tabIndex={tabIndex++}
+                      name="school"
+                      key={key}
+                    />
+                  );
+                } else if (key === "gender") {
                   return (
                     <Select
                       key={key}
@@ -547,7 +576,7 @@ const CreateTeacher: React.FC<Props> = () => {
                         }`}
                         name={key}
                         defaultValue={data[key]}
-                        onBlur={handleChange}
+                        onChange={handleChange}
                         placeholder={`Enter ${mapKeyToLabel(
                           key
                         ).toLowerCase()}`}
@@ -560,7 +589,6 @@ const CreateTeacher: React.FC<Props> = () => {
                                 ).toLocaleLowerCase()}.`
                             : ""
                         }
-                        maxLength={getMaxLength(key)}
                         tabIndex={tabIndex++}
                         type={!passwordVisible[key] ? "password" : "text"}
                         iconRight={
@@ -584,7 +612,7 @@ const CreateTeacher: React.FC<Props> = () => {
                       }`}
                       name={key}
                       defaultValue={data[key]}
-                      onBlur={handleChange}
+                      onChange={handleChange}
                       placeholder={`Enter ${mapKeyToLabel(key).toLowerCase()}`}
                       error={
                         errors[key]
@@ -596,7 +624,7 @@ const CreateTeacher: React.FC<Props> = () => {
                           : ""
                       }
                       onKeyPress={
-                        key === "phone" ||
+                        key === "phone_number" ||
                         key === "card_number" ||
                         key === "emergency_number" ||
                         key === "adhaar" ||
@@ -615,6 +643,18 @@ const CreateTeacher: React.FC<Props> = () => {
                 );
               })}
           </div>
+
+          {errors?.non_field_errors && (
+            <p className="error">{errors?.non_field_errors}</p>
+          )}
+
+          {errors?.unauthorized && (
+            <p className="error">{errors?.unauthorized}</p>
+          )}
+
+          {errors?.internalServerError && (
+            <p className="error">{errors?.internalServerError}</p>
+          )}
 
           <div className={styles.buttonContainer}>
             <Button

@@ -20,6 +20,7 @@ interface Time {
   teachers: Array<{ label: string; value: string }>;
   errors: any;
   minStartTime?: undefined | number | string;
+  dateArray: any[];
 }
 
 const TimeEntry: React.FC<Time> = ({
@@ -31,7 +32,7 @@ const TimeEntry: React.FC<Time> = ({
   handleDelete,
   teachers,
   minStartTime = undefined,
-
+  dateArray,
   errors = {},
 }) => {
   const { subjects } = useAppContext();
@@ -49,21 +50,26 @@ const TimeEntry: React.FC<Time> = ({
       <Select
         label="Select start time*"
         options={
-          minStartTime ? filterTimeArray(minStartTime, true) : generateTimeArray()
+          minStartTime
+            ? filterTimeArray(minStartTime, dateArray, "start_time", true)
+            : generateTimeArray()
         }
         value={start_time}
         onChange={(value: string) => handleChange("start_time", value)}
         error={errors?.start_time}
         type="time"
+        allowEmpty={false}
       />
 
       <Select
         label="Select end time*"
-        options={filterTimeArray(start_time)}
+        options={filterTimeArray(start_time, dateArray, "end_time", false)}
         value={end_time}
         onChange={(value: string) => handleChange("end_time", value)}
         error={errors?.end_time}
         type="time"
+        disabled={!start_time}
+        allowEmpty={false}
       />
 
       <Select

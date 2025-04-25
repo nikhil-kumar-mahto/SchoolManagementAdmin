@@ -33,8 +33,6 @@ const ImagePicker: React.FC<ImagePickerProps> = ({
     }
   }, [value]);
 
-  console.log();
-
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -43,14 +41,14 @@ const ImagePicker: React.FC<ImagePickerProps> = ({
       onChange(file);
     } else {
       setFileName(null);
-      onChange(null);
+      onChange("");
     }
   };
 
   const handleDeleteImage = () => {
     setFile(null);
     setFileName(null);
-    onChange(null);
+    onChange("");
   };
 
   return (

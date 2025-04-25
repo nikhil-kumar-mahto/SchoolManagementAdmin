@@ -26,7 +26,7 @@ function Class() {
     setIsLoading("listing");
     Fetch("classes/").then((res: any) => {
       if (res.status) {
-        setData(res.data);
+        setData(res.data?.results);
       }
       setIsLoading("");
     });

@@ -50,7 +50,11 @@ const Modal: React.FC<ModalProps> = ({
           <Button
             text={confirmText}
             onClick={onConfirm}
-            className={styles.confirmButton}
+            className={
+              primaryButtonVariant === "primary"
+                ? styles.confirmButton
+                : styles.errorButton
+            }
             isLoading={isLoading}
             style={{ width: "6rem" }}
             variant={primaryButtonVariant}

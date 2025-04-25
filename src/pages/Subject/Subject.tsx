@@ -26,7 +26,7 @@ function Subject() {
     setIsLoading("listing");
     Fetch("subjects/").then((res: any) => {
       if (res.status) {
-        setData(res.data);
+        setData(res.data?.results);
       }
       setIsLoading("");
     });
@@ -132,7 +132,7 @@ function Subject() {
         onCancel={handleCancel}
         visible={showModal}
         isLoading={isLoading === "delete"}
-        primaryButtonVariant="danger" 
+        primaryButtonVariant="danger"
       />
     </Layout>
   );

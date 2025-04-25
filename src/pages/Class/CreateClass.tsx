@@ -22,7 +22,7 @@ const initialState = {
 const CreateClass: React.FC<Props> = () => {
   const [data, setData] = useState(initialState);
   const [isLoading, setIsLoading] = useState(false);
-  const { schools } = useAppContext();
+  const { schools, getSchools } = useAppContext();
 
   const navigate = useNavigate();
   const toast = useToast();
@@ -73,6 +73,7 @@ const CreateClass: React.FC<Props> = () => {
           id ? "Class updated successfully" : "Class added successfully"
         );
         navigate("/classes");
+        getSchools();
       } else {
         let resErr = arrayString(res);
         handleNewError(resErr);
@@ -133,6 +134,14 @@ const CreateClass: React.FC<Props> = () => {
 
           {errors?.non_field_errors && (
             <p className="error">{errors?.non_field_errors}</p>
+          )}
+
+          {errors?.unauthorized && (
+            <p className="error">{errors?.unauthorized}</p>
+          )}
+
+          {errors?.internalServerError && (
+            <p className="error">{errors?.internalServerError}</p>
           )}
 
           <div className={styles.buttonContainer}>

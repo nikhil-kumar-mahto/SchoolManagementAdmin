@@ -236,7 +236,6 @@ export const FormC = ({ values, removeValidValue, onSubmit, onSubmitError, selec
     if (isSubmit) {
       removeAllError()
     }
-    console.log("values==>", values);
 
     let errors = { ...err }
 
@@ -289,27 +288,27 @@ export const FormC = ({ values, removeValidValue, onSubmit, onSubmitError, selec
     }
 
     // check for consecutive elements in array, that stores time slots
-    for (let i = 0; i < values.schedule.length; i++) {
-      const slot1Start = moment(values.schedule[i].start_time, "HH:mm")
-      const slot1End = moment(values.schedule[i].end_time, "HH:mm")
+    // for (let i = 0; i < values.schedule.length; i++) {
+    //   const slot1Start = moment(values.schedule[i].start_time, "HH:mm")
+    //   const slot1End = moment(values.schedule[i].end_time, "HH:mm")
 
-      if (slot1End.isBefore(slot1Start) || slot1End.isSame(slot1Start)) {
-        errors["schedule"][i].start_time = "Start time must be before end time."
-      }
+    //   if (slot1End.isBefore(slot1Start) || slot1End.isSame(slot1Start)) {
+    //     errors["schedule"][i].start_time = "Start time must be before end time."
+    //   }
 
-      if (i === values.schedule.length - 1) {
-        break;
-      }
+    //   if (i === values.schedule.length - 1) {
+    //     break;
+    //   }
 
-      const slot2Start = moment(values.schedule[i + 1].start_time, "HH:mm")
-      const slot2End = moment(values.schedule[i + 1].end_time, "HH:mm")
+    //   const slot2Start = moment(values.schedule[i + 1].start_time, "HH:mm")
+    //   const slot2End = moment(values.schedule[i + 1].end_time, "HH:mm")
 
-      if (slot1End.isAfter(slot2Start)) {
-        errors.schedule[i].end_time = "Time slot overlaps with another entry.";
-        errors.schedule[i + 1].start_time = "Time slot overlaps with another entry.";
-      }
+    //   if (slot1End.isAfter(slot2Start)) {
+    //     errors.schedule[i].end_time = "Time slot overlaps with another entry.";
+    //     errors.schedule[i + 1].start_time = "Time slot overlaps with another entry.";
+    //   }
 
-    }
+    // }
 
     // Loop through all schedule object and check if any error is present, if not remove that object.
     let errorPresent = false
@@ -394,26 +393,26 @@ export const FormC = ({ values, removeValidValue, onSubmit, onSubmitError, selec
       }
 
       // check for consecutive elements in array, that stores time slots
-      for (let i = 0; i < schedule.length; i++) {
-        const slot1Start = moment(schedule[i].start_time, "HH:mm");
-        const slot1End = moment(schedule[i].end_time, "HH:mm");
+      // for (let i = 0; i < schedule.length; i++) {
+      //   const slot1Start = moment(schedule[i].start_time, "HH:mm");
+      //   const slot1End = moment(schedule[i].end_time, "HH:mm");
 
-        if (slot1End.isBefore(slot1Start) || slot1End.isSame(slot1Start)) {
-          errors.schedule[day][i].start_time = "Start time must be before end time.";
-        }
+      //   if (slot1End.isBefore(slot1Start) || slot1End.isSame(slot1Start)) {
+      //     errors.schedule[day][i].start_time = "Start time must be before end time.";
+      //   }
 
-        if (i === schedule.length - 1) {
-          break;
-        }
+      //   if (i === schedule.length - 1) {
+      //     break;
+      //   }
 
-        const slot2Start = moment(schedule[i + 1].start_time, "HH:mm");
-        const slot2End = moment(schedule[i + 1].end_time, "HH:mm");
+      //   const slot2Start = moment(schedule[i + 1].start_time, "HH:mm");
+      //   const slot2End = moment(schedule[i + 1].end_time, "HH:mm");
 
-        if (slot1End.isAfter(slot2Start)) {
-          errors.schedule[day][i].end_time = "Time slot overlaps with another entry.";
-          errors.schedule[day][i + 1].start_time = "Time slot overlaps with another entry.";
-        }
-      }
+      //   if (slot1End.isAfter(slot2Start)) {
+      //     errors.schedule[day][i].end_time = "Time slot overlaps with another entry.";
+      //     errors.schedule[day][i + 1].start_time = "Time slot overlaps with another entry.";
+      //   }
+      // }
 
       // Loop through all schedule object and check if any error is present, if not remove that object.
       let errorPresent = false;

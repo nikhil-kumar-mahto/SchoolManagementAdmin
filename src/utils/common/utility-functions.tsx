@@ -31,20 +31,6 @@ export function getIdFromUrl(url: any) {
   return false;
 }
 
-// export function generateTimeArray() {
-//   const timeArray = [];
-
-//   for (let hour = 0; hour < 24; hour++) {
-//     const time = moment({ hour });
-//     timeArray.push({
-//       value: time.format("HH:mm"),
-//       label: time.format("hh:mm A"),
-//     });
-//   }
-
-//   return timeArray;
-// }
-
 export function generateTimeArray() {
   const timeArray = [];
   const interval = 15; // 15 minutes
@@ -62,28 +48,57 @@ export function generateTimeArray() {
   return timeArray;
 }
 
-export function filterTimeArray(start_time, allowEqual = false) {
+export function filterTimeArray(
+  start_time,
+  dateArray,
+  type,
+  allowEqual = false
+) {
   const timeArray = generateTimeArray();
+
+  if (type === "end_time" && !start_time) {
+    return [];
+  }
 
   if (!start_time) {
     return timeArray;
   }
 
   const parsedStartTime = moment(start_time, "HH:mm", true);
-
   if (!parsedStartTime.isValid()) {
     throw new Error("Invalid time format. Please use 'HH:mm' format.");
   }
 
-  if (parsedStartTime.isSameOrAfter(moment({ hour: 23, minute: 0 }))) {
-    return [{ value: "24:00", label: "12:00 AM" }];
-  }
-
   return timeArray.filter((time) => {
     const currentTime = moment(time.value, "HH:mm");
-    return allowEqual
-      ? currentTime.isSameOrAfter(parsedStartTime)
-      : currentTime.isAfter(parsedStartTime);
+
+    if (type === "end_time" && !currentTime.isAfter(parsedStartTime)) {
+      return false;
+    }
+
+    if (dateArray?.schedule) {
+      for (const existing of dateArray.schedule) {
+        const existingStart = moment(existing.start_time, "HH:mm");
+        const existingEnd = moment(existing.end_time, "HH:mm");
+
+        if (type === "start_time") {
+          if (
+            currentTime.isBetween(existingStart, existingEnd, null, "[)") // [start, end)
+          ) {
+            return false;
+          }
+        } else if (type === "end_time") {
+          const overlaps =
+            parsedStartTime.isBefore(existingEnd) &&
+            currentTime.isAfter(existingStart);
+          if (overlaps) {
+            return false;
+          }
+        }
+      }
+    }
+
+    return true;
   });
 }
 
@@ -91,7 +106,7 @@ export const mapKeyToLabel = (key: string) => {
   switch (key) {
     case "email":
       return "Email Address";
-    case "phone":
+    case "phone_number":
       return "Phone Number";
     case "school_id":
       return "School ID";

@@ -24,9 +24,9 @@ function Schools() {
 
   const getData = () => {
     setIsLoading("listing");
-    Fetch("schools/").then((res: any) => {
+    Fetch("schools/?limit=30&offset=0").then((res: any) => {
       if (res.status) {
-        setData(res.data);
+        setData(res.data?.results);
       }
       setIsLoading("");
     });
@@ -66,11 +66,7 @@ function Schools() {
       header: "Email",
       render: (item: any) => <a href={`mailto:${item.email}`}>{item.email}</a>,
     },
-    // {
-    //   key: "logo",
-    //   header: "Logo",
-    //   render: (item: any) => <img width={150} height={50} src={item.logo} />,
-    // },
+
     { key: "phone", header: "Phone" },
     { key: "address", header: "Address" },
     {

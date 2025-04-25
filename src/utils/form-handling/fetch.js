@@ -66,7 +66,7 @@ export default function Fetch(endPoint, params = {}, option = {}, isFile = false
       })
       .catch(async (err) => {
         if (err?.response?.status === 500) {
-          return { err: ["Something Went axiosWrong"], status: false };
+          return { internalServerError: ["Something went wrong."], status: false };
         } else if (err?.response?.status === 401) {
           let errRes = {}
           const newToken = await refreshToken();
@@ -76,7 +76,7 @@ export default function Fetch(endPoint, params = {}, option = {}, isFile = false
           } else if (newToken) {
             errRes = await fetch(newToken);
           } else {
-            errRes = { err: ["Unauthorized"], status: false };
+            errRes = { unauthorized: ["Your session has expired. Please log in again to continue."], status: false };
           }
 
           return errRes
@@ -90,7 +90,6 @@ export default function Fetch(endPoint, params = {}, option = {}, isFile = false
   }
   return Auth.getAsyncToken().then((res) => fetch(res.token));
 }
-
 
 export async function refreshToken() {
   const refresh_token = localStorage.getItem("refresh_token");

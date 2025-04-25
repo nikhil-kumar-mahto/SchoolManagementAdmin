@@ -29,7 +29,7 @@ const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   const [schools, setSchools] = useState([]);
 
   const toggleIsLoggedIn = () => {
-    setIsLoggedIn((prevState) => !prevState); 
+    setIsLoggedIn((prevState) => !prevState);
   };
 
   const isAuthenticated = () => {
@@ -38,14 +38,14 @@ const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   };
 
   useEffect(() => {
-    // setIsLoggedIn(isAuthenticated());
-    setIsLoggedIn(true)
+    setIsLoggedIn(isAuthenticated());
+    // setIsLoggedIn(true)
   }, []);
 
   const getSchools = () => {
-    Fetch("schools/").then((res: any) => {
+    Fetch("schools/?limit=30&offset=0").then((res: any) => {
       if (res.status) {
-        let schools = res.data?.map(
+        let schools = res.data?.results?.map(
           (item: {
             name: string;
             id: string;
@@ -64,9 +64,9 @@ const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   };
 
   const getSubjects = () => {
-    Fetch("subjects/").then((res: any) => {
+    Fetch("subjects/?limit=30&offset=0").then((res: any) => {
       if (res.status) {
-        setSubjects(res.data);
+        setSubjects(res.data?.results);
       }
     });
   };

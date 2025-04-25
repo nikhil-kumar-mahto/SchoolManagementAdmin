@@ -138,20 +138,18 @@ const ScheduleManagement: React.FC = () => {
     Fetch(`schedule/${id}`).then((res: any) => {
       if (res.status) {
         let classes = schools
-          .find((item) => item?.value === res?.data?.school)
+          .find((item) => item?.value === res?.data?.school?.id)
           ?.classes?.map((item) => ({
             label: item?.name + " " + item?.section,
             value: item?.id,
           }));
 
-        console.log("classes===", classes);
-
         setClasses(classes || []);
         setCommonInfo({
-          school: res?.data?.school,
-          class_assigned: res?.data?.sch_class,
+          school: res?.data?.school?.id,
+          class_assigned: res?.data?.sch_class?.id,
         });
-        getTeachers(res?.data?.school);
+        getTeachers(res?.data?.school?.id);
         if (res?.data?.time_slots[0]?.day_of_week) {
           // set state for week
           setViewMode("day");
@@ -167,14 +165,16 @@ const ScheduleManagement: React.FC = () => {
 
   const getTeachers = (id: string) => {
     setTeachers([]);
-    Fetch(`list-teachers/?school_id=${id}`).then((res: any) => {
+    Fetch(`list-teachers/${id}/`).then((res: any) => {
       if (res.status) {
-        let teachers = res.data?.map((item: { name: string; id: string }) => {
-          return {
-            label: item?.first_name + " " + item?.last_name,
-            value: item?.id,
-          };
-        });
+        let teachers = res.data?.results?.map(
+          (item: { name: string; id: string }) => {
+            return {
+              label: item?.name,
+              value: item?.id,
+            };
+          }
+        );
         setTeachers(teachers);
       }
     });
@@ -373,13 +373,13 @@ const ScheduleManagement: React.FC = () => {
     Fetch(url, { ...params }, { method: id ? "put" : "post" }).then(
       (res: any) => {
         if (res.status) {
+          navigate("/schedule");
           showToast(
             id
               ? "Schedule updated successfully"
               : "Schedule added successfully",
             "success"
           );
-          navigate("/schedule");
         } else {
           let resErr = arrayString(res);
           handleNewError(resErr);
@@ -691,6 +691,7 @@ const ScheduleManagement: React.FC = () => {
             <>
               {Object.entries(dayState).map(([key, value]) => (
                 <WeekDay
+                  dateState={dayState[key]}
                   key={key}
                   day={key}
                   schedule={value}
@@ -751,6 +752,18 @@ const ScheduleManagement: React.FC = () => {
               }}
               isEditMode={!!id}
             />
+          )}
+
+          {errors?.non_field_errors && (
+            <p className="error">{errors?.non_field_errors}</p>
+          )}
+
+          {errors?.unauthorized && (
+            <p className="error">{errors?.unauthorized}</p>
+          )}
+
+          {errors?.internalServerError && (
+            <p className="error">{errors?.internalServerError}</p>
           )}
 
           <div className={styles.buttonContainer}>

@@ -1,8 +1,7 @@
-import React, { ChangeEvent, useState } from "react";
+import React, { ChangeEvent } from "react";
 import DatePicker from "../../DatePicker/DatePicker";
 import TimeEntry from "../TimeEntry/TimeEntry";
 import { PlusCircleIcon } from "../../../assets/svgs";
-import Modal from "../../common/Modal/Modal";
 
 type Options = { label: string; value: string };
 
@@ -60,21 +59,13 @@ const DateSchedule: React.FC<Props> = ({
     disableAddingMore = false;
   }
 
-  const [showModal, setShowModal] = useState(false);
-  const handleAddMore = () => {
-    if (disableAddingMore) {
-      setShowModal(true);
-    } else {
-      addItem();
-    }
-  };
   return (
     <>
       <div className="mt-4">
         <div style={{ display: "flex", justifyContent: "space-between" }}>
           <h4>Select Date</h4>
           <button
-            onClick={handleAddMore}
+            onClick={addItem}
             style={{
               width: "1.875rem",
               height: "1.875rem",
@@ -114,16 +105,10 @@ const DateSchedule: React.FC<Props> = ({
             errors={errors?.schedule?.[index]}
             teachers={teachers}
             minStartTime={index > 0 ? schedule[index - 1].end_time : undefined}
+            dateArray={dateState}
           />
         ))}
       </div>
-      <Modal
-        title="Alert!"
-        message="Please ensure all fields are filled out correctly before adding more time slots."
-        onConfirm={() => setShowModal(false)}
-        visible={showModal}
-        confirmText="OK"
-      />
     </>
   );
 };

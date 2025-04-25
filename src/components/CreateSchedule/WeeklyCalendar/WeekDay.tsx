@@ -65,6 +65,7 @@ const WeekDay: React.FC<Props> = ({
   teachers,
   replicateDay,
   isEditMode,
+  dateState = [],
 }) => {
   let disableAddingMore =
     !!errors?.length ||
@@ -96,7 +97,7 @@ const WeekDay: React.FC<Props> = ({
         >
           <h4>{day}</h4>
           <button
-            onClick={handleAddMore}
+            onClick={addItem}
             style={{
               width: "1.875rem",
               height: "1.875rem",
@@ -121,6 +122,7 @@ const WeekDay: React.FC<Props> = ({
 
         {schedule.map((item, index) => (
           <TimeEntry
+            dateArray={{ schedule: dateState }}
             key={index}
             start_time={item.start_time}
             end_time={item.end_time}
