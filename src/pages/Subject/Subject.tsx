@@ -26,7 +26,7 @@ function Subject() {
     setIsLoading("listing");
     Fetch("subjects/").then((res: any) => {
       if (res.status) {
-        setData(res.data);
+        setData(res.data.results);  
       }
       setIsLoading("");
     });

@@ -45,7 +45,9 @@ const LoginScreen: React.FC = () => {
   const onSubmit = () => {
     localStorage.clear();
     setIsLoading(true);
-    Fetch("login/", data, { method: "post" }).then((res: any) => {
+    Fetch("login/", 
+      {phone_number_or_email: data.username, password: data.password, phone_number_prefix: data.country_code}, 
+      { method: "post" }).then((res: any) => {
       if (res.status) {
         const { access, refresh } = res.data;
         localStorage.setItem("token", access);
@@ -82,7 +84,7 @@ const LoginScreen: React.FC = () => {
               value={data.country_code}
               onChange={(value: string) => handleSelectChange(value)}
               label="Select country code"
-              searchable={true}
+              searchable
             />
 
             <Input

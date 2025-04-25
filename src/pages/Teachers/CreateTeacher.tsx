@@ -150,7 +150,7 @@ const CreateTeacher: React.FC<Props> = () => {
     Fetch(`teachers/${id}/`).then((res: any) => {
       if (res.status) {
         const orderedData: any = {};
-
+          console.log(res.data,"000000000000000000000000000000000000000000000000000000000");
         // Reorder keys to match initialState
         Object.keys(initialState).forEach((key) => {
           orderedData[key] = res.data.hasOwnProperty(key)
@@ -232,7 +232,7 @@ const CreateTeacher: React.FC<Props> = () => {
 
     delete params.school_id;
 
-    Fetch(url, id ? { ...params, school: data?.school.id } : params, {
+    Fetch(url, id ? { ...params, school: data?.school.id, phone_number:data?.phone,phone_number_prefix:data?.phone_number_prefix } : params, {
       method: id ? "put" : "post",
       inFormData: true,
     }).then((res: any) => {

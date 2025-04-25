@@ -40,7 +40,11 @@ const CreateSchool: React.FC<Props> = () => {
   const getSchoolInfo = () => {
     Fetch(`schools/${id}/`).then((res: any) => {
       if (res.status) {
-        setData(res.data);
+        setData({
+          ...res.data,
+          phone:res.data.phone_number,
+
+      });
       }
     });
   };
@@ -83,7 +87,12 @@ const CreateSchool: React.FC<Props> = () => {
     } else {
       url = "schools/";
     }
-    let params = { ...data };
+    let params = { 
+      ...data,
+      phone_number: data.phone,
+      phone_number_prefix: "+91",
+      password:`${data.phone  }`
+     };
     if (!isLogoChanged && id) {
       delete params.logo;
     }

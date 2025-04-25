@@ -17,6 +17,8 @@ const initialState = {
   name: "",
   section: "",
   school: "",
+    
+  
 };
 
 const CreateClass: React.FC<Props> = () => {
@@ -34,6 +36,7 @@ const CreateClass: React.FC<Props> = () => {
   const getClassInfo = () => {
     Fetch(`classes/${id}/`).then((res: any) => {
       if (res.status) {
+        console.log(res.data);
         setData({ ...res.data, school: res?.data?.school?.id });
       }
     });

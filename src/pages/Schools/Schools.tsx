@@ -26,7 +26,7 @@ function Schools() {
     setIsLoading("listing");
     Fetch("schools/").then((res: any) => {
       if (res.status) {
-        setData(res.data);
+        setData(res.data.results);
       }
       setIsLoading("");
     });
