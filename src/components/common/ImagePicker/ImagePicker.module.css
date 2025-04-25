@@ -61,9 +61,10 @@
     display: flex;
     align-items: center;
     justify-content: flex-start;
-  }
+    position: relative;
+}
   
-  .previewImage {
+.previewImage {
     width: 20rem;
     height: 10rem;
     object-fit: contain;
@@ -71,5 +72,17 @@
     padding: 4px;
     border-radius: 8px;
     background-color: #f9f9f9;
-  }
+}
+
+.deleteIconContainer {
+    width: 2rem;
+    height: 2rem;
+    position: absolute;
+    top: 1rem;
+    left: 18rem;
+    border: none;
+    padding: none;
+    background: none;
+    cursor: pointer;
+}
   

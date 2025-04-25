@@ -42,6 +42,7 @@
     font-size: 1rem;
 }
 
+/* Searchable select specific styles */
 .searchableSelectWrapper {
     position: relative;
     width: 100%;
@@ -74,6 +75,7 @@
     width: 1rem;
     height: 1rem;
     pointer-events: none;
+    cursor: pointer;
 }
 
 .optionsDropdown {
@@ -102,6 +104,11 @@
 
 .selectedOption {
     background-color: #e6f7ff;
+}
+
+.focusedOption {
+    background-color: #f0f0f0;
+    border-left: 3px solid #007bff;
 }
 
 .noOptions {

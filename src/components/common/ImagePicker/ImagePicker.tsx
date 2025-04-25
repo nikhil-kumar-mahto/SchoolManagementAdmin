@@ -1,5 +1,6 @@
 import React, { useState, ChangeEvent, useEffect } from "react";
 import styles from "./ImagePicker.module.css";
+import { DeleteIcon } from "../../../assets/svgs";
 
 interface ImagePickerProps {
   label?: string;
@@ -46,6 +47,12 @@ const ImagePicker: React.FC<ImagePickerProps> = ({
     }
   };
 
+  const handleDeleteImage = () => {
+    setFile(null);
+    setFileName(null);
+    onChange(null);
+  };
+
   return (
     <div className={`${styles.imagePickerContainer} ${className || ""}`}>
       {label && (
@@ -82,11 +89,26 @@ const ImagePicker: React.FC<ImagePickerProps> = ({
             alt="Preview"
             className={styles.previewImage}
           />
+          <button
+            type="button"
+            className={styles.deleteIconContainer}
+            onClick={handleDeleteImage}
+          >
+            <DeleteIcon />
+          </button>
         </div>
       )}
+
       {showPreview && file && typeof file === "string" && (
         <div className={styles.previewContainer}>
           <img src={file} alt="Preview" className={styles.previewImage} />
+          <button
+            type="button"
+            className={styles.deleteIconContainer}
+            onClick={handleDeleteImage}
+          >
+            <DeleteIcon />
+          </button>
         </div>
       )}
     </div>

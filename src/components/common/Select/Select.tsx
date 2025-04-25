@@ -1,5 +1,5 @@
 import moment from "moment";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, KeyboardEvent } from "react";
 import styles from "./Select.module.css";
 
 interface SelectProps {
@@ -34,12 +34,18 @@ function Select({
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredOptions, setFilteredOptions] = useState(options);
+  const [focusedIndex, setFocusedIndex] = useState(-1);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const optionsRef = useRef<(HTMLDivElement | null)[]>([]);
 
   const isValueInOptions =
     options.some((option) => option.value === value) ?? false;
   const selectedOption = options.find((option) => option.value === value);
+
+  useEffect(() => {
+    optionsRef.current = Array(filteredOptions.length).fill(null);
+  }, [filteredOptions.length]);
 
   useEffect(() => {
     setFilteredOptions(
@@ -47,6 +53,7 @@ function Select({
         option.label.toLowerCase().includes(searchTerm.toLowerCase())
       )
     );
+    setFocusedIndex(-1);
   }, [searchTerm, options]);
 
   useEffect(() => {
@@ -59,6 +66,7 @@ function Select({
         if (value) {
           setSearchTerm("");
         }
+        setFocusedIndex(-1);
       }
     };
 
@@ -67,6 +75,69 @@ function Select({
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [value]);
+
+  useEffect(() => {
+    if (focusedIndex >= 0 && optionsRef.current[focusedIndex]) {
+      optionsRef.current[focusedIndex]?.scrollIntoView({
+        behavior: "smooth",
+        block: "nearest",
+      });
+    }
+  }, [focusedIndex]);
+
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (!isOpen) {
+      if (e.key === "ArrowDown" || e.key === "ArrowUp" || e.key === "Enter") {
+        setIsOpen(true);
+        e.preventDefault();
+      }
+      return;
+    }
+
+    switch (e.key) {
+      case "ArrowDown":
+        e.preventDefault();
+        setFocusedIndex((prevIndex) => {
+          const nextIndex =
+            prevIndex < filteredOptions.length - 1 ? prevIndex + 1 : 0;
+          return nextIndex;
+        });
+        break;
+      case "ArrowUp":
+        e.preventDefault();
+        setFocusedIndex((prevIndex) => {
+          const nextIndex =
+            prevIndex > 0 ? prevIndex - 1 : filteredOptions.length - 1;
+          return nextIndex;
+        });
+        break;
+      case "Enter":
+        e.preventDefault();
+        if (focusedIndex >= 0 && focusedIndex < filteredOptions.length) {
+          selectOption(filteredOptions[focusedIndex].value);
+        }
+        break;
+      case "Escape":
+        e.preventDefault();
+        setIsOpen(false);
+        setFocusedIndex(-1);
+        break;
+      case "Tab":
+        setIsOpen(false);
+        setFocusedIndex(-1);
+        break;
+      default:
+        break;
+    }
+  };
+
+  const selectOption = (optionValue: string) => {
+    onChange(optionValue);
+    setIsOpen(false);
+    setSearchTerm("");
+    setFocusedIndex(-1);
+    inputRef.current?.focus();
+  };
 
   if (!searchable) {
     return (
@@ -134,9 +205,14 @@ function Select({
               setSearchTerm("");
             }
           }}
+          onKeyDown={handleKeyDown}
           disabled={disabled}
           tabIndex={tabIndex}
           name={name}
+          aria-expanded={isOpen}
+          aria-haspopup="listbox"
+          aria-controls="options-listbox"
+          role="combobox"
         />
         <div
           className={styles.dropdownIcon}
@@ -147,21 +223,25 @@ function Select({
           </svg>
         </div>
         {isOpen && (
-          <div className={styles.optionsDropdown}>
+          <div
+            className={styles.optionsDropdown}
+            id="options-listbox"
+            role="listbox"
+          >
             {filteredOptions.length === 0 ? (
               <div className={styles.noOptions}>No options found</div>
             ) : (
               filteredOptions.map((option, index) => (
                 <div
+                  ref={(el) => (optionsRef.current[index] = el)}
                   key={index}
-                  className={`${styles.option} ${
-                    option.value === value ? styles.selectedOption : ""
-                  }`}
-                  onClick={() => {
-                    onChange(option.value);
-                    setIsOpen(false);
-                    setSearchTerm("");
-                  }}
+                  className={`${styles.option} 
+                    ${option.value === value ? styles.selectedOption : ""} 
+                    ${index === focusedIndex ? styles.focusedOption : ""}`}
+                  onClick={() => selectOption(option.value)}
+                  role="option"
+                  aria-selected={option.value === value}
+                  tabIndex={-1}
                 >
                   {option.label}
                 </div>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, {  useState } from "react";
 import styles from "./ScheduleDetails.module.css";
 import Layout from "../../components/common/Layout/Layout";
 import Button from "../../components/common/Button/Button";
