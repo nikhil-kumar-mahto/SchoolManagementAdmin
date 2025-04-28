@@ -332,7 +332,7 @@ const CreateTeacher: React.FC<Props> = () => {
         return 11;
       case "universal_account_number":
         return 12;
-      case "gov_provident_fund":
+      case "gov_provided_fund_number":
         return 22;
 
       default:

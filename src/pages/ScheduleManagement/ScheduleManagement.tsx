@@ -75,15 +75,14 @@ const ScheduleManagement: React.FC = () => {
   });
 
   const { id } = useParams();
-
+  const navigate = useNavigate();
   const toast = useToast();
+
   const { schools, subjects } = useAppContext();
 
   const showToast = (message: string, status: "success" | "danger") => {
     toast.show(message, 2000, "#4CAF50");
   };
-
-  const navigate = useNavigate();
 
   const convertToDayState = (data: any[]) => {
     const result: Record<string, (typeof emptyObj)[]> = {
