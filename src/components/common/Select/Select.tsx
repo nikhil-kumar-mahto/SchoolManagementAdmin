@@ -138,7 +138,18 @@ function Select({
     setIsOpen(false);
     setSearchTerm("");
     setFocusedIndex(-1);
-    inputRef.current?.focus();
+    if (inputRef.current) {
+      const selectedLabel =
+        options.find((opt) => opt.value === optionValue)?.label || "";
+      inputRef.current.value = selectedLabel;
+    }
+  };
+
+  const toggleDropdown = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!disabled) {
+      setIsOpen(!isOpen);
+    }
   };
 
   if (!searchable) {
@@ -219,10 +230,7 @@ function Select({
           aria-controls="options-listbox"
           role="combobox"
         />
-        <div
-          className={styles.dropdownIcon}
-          onClick={() => !disabled && setIsOpen(!isOpen)}
-        >
+        <div className={styles.dropdownIcon} onClick={toggleDropdown}>
           <svg viewBox="0 0 24 24" fill="#333">
             <path d="M7 10l5 5 5-5z" />
           </svg>
@@ -243,7 +251,10 @@ function Select({
                   className={`${styles.option} 
                     ${option.value === value ? styles.selectedOption : ""} 
                     ${index === focusedIndex ? styles.focusedOption : ""}`}
-                  onClick={() => selectOption(option.value)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    selectOption(option.value);
+                  }}
                   role="option"
                   aria-selected={option.value === value}
                   tabIndex={-1}
