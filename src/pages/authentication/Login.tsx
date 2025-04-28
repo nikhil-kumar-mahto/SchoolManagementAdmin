@@ -49,7 +49,7 @@ const LoginScreen: React.FC = () => {
       "login/",
       {
         phone_number_or_email: data.username,
-        phone_number_prefix: "+91",
+        phone_number_prefix: data.country_code,
         password: data.password,
       },
       { method: "post" }
@@ -76,8 +76,6 @@ const LoginScreen: React.FC = () => {
     onSubmit,
   });
 
-  console.log("check===", data);
-
   return (
     <div className="login-container">
       <div className="login-form-container flex-center">
@@ -87,13 +85,13 @@ const LoginScreen: React.FC = () => {
             <h2 className="login-title mb-2">Sign In</h2>
             <p className="login-desc mb-4">Enter your email to sign in</p>
 
-            {/* <Select
+            <Select
               options={countryCodes}
               value={data.country_code}
               onChange={(value: string) => handleSelectChange(value)}
               label="Select country code"
               searchable={true}
-            /> */}
+            />
 
             <Input
               label="Email*"

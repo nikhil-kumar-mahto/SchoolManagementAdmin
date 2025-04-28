@@ -96,8 +96,6 @@ const ScheduleManagement: React.FC = () => {
     };
 
     data.forEach((entry) => {
-      console.log("entry===", entry);
-
       const day = entry.day_of_week;
       if (result[day]) {
         result[day].push({
@@ -118,8 +116,6 @@ const ScheduleManagement: React.FC = () => {
 
     return result;
   };
-
-  console.log("teahcers===", teachers);
 
   const convertToDateState = (data: any[]) => {
     let convertedFormat = {};

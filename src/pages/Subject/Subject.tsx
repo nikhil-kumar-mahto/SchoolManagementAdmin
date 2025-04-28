@@ -15,6 +15,12 @@ function Subject() {
   const [isLoading, setIsLoading] = useState<"listing" | "delete" | "">("");
   const [showModal, setShowModal] = useState(false);
   const [itemToDelete, setItemToDelete] = useState("");
+  const [pagination, setPagination] = useState({
+    total: 0,
+    currentPage: 1,
+    itemsPerPage: 10,
+  });
+
   const navigate = useNavigate();
   const toast = useToast();
 
@@ -22,14 +28,23 @@ function Subject() {
     toast.show("Subject deleted successfully", 2000, "#4CAF50");
   };
 
-  const getData = () => {
+  const getData = (page: number) => {
     setIsLoading("listing");
-    Fetch("subjects/?limit=30&offset=0").then((res: any) => {
-      if (res.status) {
-        setData(res.data?.results);
+    const offset = (page - 1) * pagination.itemsPerPage;
+    Fetch(`subjects/?limit=${pagination.itemsPerPage}&offset=${offset}`).then(
+      (res: any) => {
+        if (res.status) {
+          setData(res.data?.results);
+          setPagination((prev) => {
+            return {
+              ...prev,
+              total: res.data?.count,
+            };
+          });
+        }
+        setIsLoading("");
       }
-      setIsLoading("");
-    });
+    );
   };
 
   const handleDelete = () => {
@@ -37,7 +52,20 @@ function Subject() {
     Fetch(`subjects/${itemToDelete}/`, {}, { method: "delete" }).then(
       (res: any) => {
         if (res.status) {
-          getData();
+          if (pagination.total % pagination.itemsPerPage === 1) {
+            if (pagination.currentPage === 1) {
+              getData(1);
+            } else {
+              setPagination((prevState) => {
+                return {
+                  ...prevState,
+                  currentPage: Math.max(prevState.currentPage - 1, 1),
+                };
+              });
+            }
+          } else {
+            getData(pagination.currentPage);
+          }
           showToast();
         }
         setShowModal(false);
@@ -56,8 +84,8 @@ function Subject() {
   };
 
   useEffect(() => {
-    getData();
-  }, []);
+    getData(pagination.currentPage);
+  }, [pagination.currentPage]);
 
   const columns = [
     { key: "name", header: "Name" },
@@ -102,6 +130,15 @@ function Subject() {
     setShowModal(false);
   };
 
+  const handlePageChange = (page: number) => {
+    setPagination((prev) => {
+      return {
+        ...prev,
+        currentPage: page,
+      };
+    });
+  };
+
   return (
     <Layout>
       <div
@@ -120,7 +157,10 @@ function Subject() {
         <DataTable
           data={data}
           columns={columns}
-          itemsPerPage={10}
+          itemsPerPage={pagination.itemsPerPage}
+          currentPage={pagination.currentPage}
+          totalRecords={pagination.total}
+          onPageChange={handlePageChange}
           isLoading={isLoading === "listing"}
         />
       </div>

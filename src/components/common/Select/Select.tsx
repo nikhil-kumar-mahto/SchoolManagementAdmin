@@ -229,6 +229,7 @@ function Select({
           aria-haspopup="listbox"
           aria-controls="options-listbox"
           role="combobox"
+          autoComplete="off"  
         />
         <div className={styles.dropdownIcon} onClick={toggleDropdown}>
           <svg viewBox="0 0 24 24" fill="#333">

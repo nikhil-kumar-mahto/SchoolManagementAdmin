@@ -17,9 +17,15 @@ function Class() {
   const [isLoading, setIsLoading] = useState<"listing" | "delete" | "">("");
   const [showModal, setShowModal] = useState(false);
   const [itemToDelete, setItemToDelete] = useState("");
+  const [classes, setClasses] = useState([]);
+  const [pagination, setPagination] = useState({
+    total: 0,
+    currentPage: 1,
+    itemsPerPage: 10,
+  });
+
   const navigate = useNavigate();
   const toast = useToast();
-  const [classes, setClasses] = useState([]);
 
   const [searchParams, setSearchParams] = useSearchParams();
   const [selectedSchool, setSelectedSchool] = useState(
@@ -42,7 +48,7 @@ function Class() {
       class: id,
     };
     setSearchParams(updatedParams);
-    getData(selectedSchool, id);
+    getData(1, selectedSchool, id);
   };
 
   const selectSchool = (id: string) => {
@@ -61,32 +67,52 @@ function Class() {
     const updatedParams: any = { school: id };
     setSearchParams(updatedParams);
 
-    getData(id, selectedClass);
+    getData(1, id, selectedClass);
   };
 
-  const getData = (school_id: string = "", class_id: string = "") => {
+  const getData = (
+    page: number,
+    school_id: string = "",
+    class_id: string = ""
+  ) => {
     setData([]);
     setIsLoading("listing");
-    console.log("school id===", typeof school_id, class_id);
-
-    Fetch(`schedule?school=${school_id}&sch_class=${class_id}&limit=30&offset=0`).then(
-      (res: any) => {
-        if (res.status) {
-          setData(res?.data?.results);
-        }
-        setIsLoading("");
+    const offset = (page - 1) * pagination.itemsPerPage;
+    Fetch(
+      `schedule?school=${school_id}&sch_class=${class_id}&limit=${pagination.itemsPerPage}&offset=${offset}`
+    ).then((res: any) => {
+      if (res.status) {
+        setData(res?.data?.results);
+        setPagination((prev) => {
+          return {
+            ...prev,
+            total: res.data?.count,
+          };
+        });
       }
-    );
+      setIsLoading("");
+    });
   };
-
-  console.log("data===", data);
 
   const handleDelete = () => {
     setIsLoading("delete");
     Fetch(`schedule/${itemToDelete}/`, {}, { method: "delete" }).then(
       (res: any) => {
         if (res.status) {
-          getData();
+          if (pagination.total % pagination.itemsPerPage === 1) {
+            if (pagination.currentPage === 1) {
+              getData(1);
+            } else {
+              setPagination((prevState) => {
+                return {
+                  ...prevState,
+                  currentPage: Math.max(prevState.currentPage - 1, 1),
+                };
+              });
+            }
+          } else {
+            getData(pagination.currentPage);
+          }
           showToast();
         }
         setShowModal(false);
@@ -115,12 +141,21 @@ function Class() {
         })) || [];
 
     setClasses(schoolClasses);
-    getData(school, classId);
-  }, [schools]);
+    getData(school, classId, pagination.currentPage);
+  }, [schools, pagination.currentPage]);
 
   const handleDeleteRequest = (id: string) => {
     setItemToDelete(id);
     setShowModal(true);
+  };
+
+  const handlePageChange = (page: number) => {
+    setPagination((prev) => {
+      return {
+        ...prev,
+        currentPage: page,
+      };
+    });
   };
 
   const columns = [
@@ -216,7 +251,10 @@ function Class() {
         <DataTable
           data={data}
           columns={columns}
-          itemsPerPage={10}
+          itemsPerPage={pagination.itemsPerPage}
+          currentPage={pagination.currentPage}
+          totalRecords={pagination.total}
+          onPageChange={handlePageChange}
           isLoading={isLoading === "listing"}
         />
       </div>

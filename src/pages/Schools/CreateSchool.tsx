@@ -83,8 +83,6 @@ const CreateSchool: React.FC<Props> = () => {
     navigate("/schools");
   };
 
-  console.log("data=====", data);
-
   const onSubmit = () => {
     setIsLoading(true);
     let url = "";
@@ -98,7 +96,6 @@ const CreateSchool: React.FC<Props> = () => {
     if (!isLogoChanged && id) {
       delete params.logo;
     }
-    console.log("params===", params);
 
     Fetch(url, params, {
       method: id ? "put" : "post",
