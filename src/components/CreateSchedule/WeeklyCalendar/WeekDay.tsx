@@ -112,7 +112,7 @@ const WeekDay: React.FC<Props> = ({
           </button>
         </div>
 
-        {day !== "Monday" && !isEditMode && (
+        {day !== "Monday" && (
           <TextButton onClick={() => replicateDay(day, previousDay(day))}>
             Same as {previousDay(day)}
           </TextButton>

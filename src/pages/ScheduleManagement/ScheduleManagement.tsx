@@ -80,7 +80,7 @@ const ScheduleManagement: React.FC = () => {
 
   const { schools, subjects } = useAppContext();
 
-  const showToast = (message: string, status: "success" | "danger") => {
+  const showToast = (message: string) => {
     toast.show(message, 2000, "#4CAF50");
   };
 
@@ -96,8 +96,6 @@ const ScheduleManagement: React.FC = () => {
     };
 
     data.forEach((entry) => {
-      console.log("entry===", entry);
-
       const day = entry.day_of_week;
       if (result[day]) {
         result[day].push({
@@ -110,16 +108,14 @@ const ScheduleManagement: React.FC = () => {
       }
     });
 
-    Object.keys(result).forEach((day) => {
-      if (result[day].length === 0) {
-        delete result[day];
-      }
-    });
+    // Object.keys(result).forEach((day) => {
+    //   if (result[day].length === 0) {
+    //     delete result[day];
+    //   }
+    // });
 
     return result;
   };
-
-  console.log("teahcers===", teachers);
 
   const convertToDateState = (data: any[]) => {
     let convertedFormat = {};
@@ -376,13 +372,10 @@ const ScheduleManagement: React.FC = () => {
     Fetch(url, { ...params }, { method: id ? "put" : "post" }).then(
       (res: any) => {
         if (res.status) {
-          navigate("/schedule");
           showToast(
-            id
-              ? "Schedule updated successfully"
-              : "Schedule added successfully",
-            "success"
+            id ? "Schedule updated successfully" : "Schedule added successfully"
           );
+          navigate("/schedule");
         } else {
           let resErr = arrayString(res);
           handleNewError(resErr);
@@ -401,9 +394,6 @@ const ScheduleManagement: React.FC = () => {
         time_slots: Object.entries(obj.time_slots).reduce(
           (acc, [day, daySlots]) => {
             let slots = [...daySlots];
-            // if (id) {
-            //   slots = slots.filter((item) => item.isEdited === true);
-            // }
             const slotsForDay = slots.map((slot) => ({
               day_of_week: day,
               start_time: slot.start_time,
@@ -425,9 +415,6 @@ const ScheduleManagement: React.FC = () => {
       return object;
     } else {
       let slots = [...obj?.time_slots];
-      // if (id) {
-      //   slots = slots.filter((item) => item?.isEdited === true);
-      // }
       let object = {
         school: obj.school,
         sch_class: obj.class_assigned,
@@ -443,26 +430,6 @@ const ScheduleManagement: React.FC = () => {
         }),
       };
       return object;
-    }
-  };
-
-  const checkDataPresent = () => {
-    if (id) {
-      // allow empty slots in update mode so that user can delete slots
-      return false;
-    }
-    if (viewMode === "date") {
-      if (dateState.schedule.length === 0) {
-        return true;
-      }
-    } else {
-      let isEmpty = true;
-      Object.entries(dayState).forEach(([key, value]) => {
-        if (value.length > 0) {
-          isEmpty = false;
-        }
-      });
-      return isEmpty;
     }
   };
 
@@ -540,7 +507,8 @@ const ScheduleManagement: React.FC = () => {
       return {
         ...prevState,
         [replicateTo]: prevState[replicateFrom].map((item) => {
-          return { ...item, isEdited: id ? true : false };
+          const { id, ...rest } = item;
+          return { ...rest, isEdited: true };
         }),
       };
     });
@@ -576,16 +544,21 @@ const ScheduleManagement: React.FC = () => {
     Fetch(`time-slot/${deleteId}/`, {}, { method: "delete" }).then(
       (res: any) => {
         if (res.status) {
-          showToast("Slot deleted successfully", "danger");
+          showToast("Slot deleted successfully");
           setDeleteId(null);
 
           if (viewMode === "day") {
             let slotsPresent = 0;
-            Object.values(dayState).forEach((item) => {
-              if (!!item?.length) {
+
+            for (const item of Object.values(dayState)) {
+              for (let i = 0; i < item.length; i++) {
                 slotsPresent++;
               }
-            });
+
+              if (slotsPresent > 1) {
+                break;
+              }
+            }
 
             if (slotsPresent === 1) {
               navigate("/schedule");
@@ -831,6 +804,7 @@ const ScheduleManagement: React.FC = () => {
         onCancel={() => setDeleteId(null)}
         visible={!!deleteId}
         isLoading={isLoading === "delete-modal"}
+        primaryButtonVariant="danger"
       />
     </Layout>
   );

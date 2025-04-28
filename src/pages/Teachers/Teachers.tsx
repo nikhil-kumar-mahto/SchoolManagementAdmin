@@ -3,7 +3,7 @@ import DataTable from "../../components/common/DataTable/DataTable";
 import styles from "../../styles/Listing.module.css";
 import Button from "../../components/common/Button/Button";
 import { useNavigate } from "react-router-dom";
-import { DeleteIcon, EditIcon } from "../../assets/svgs";
+import { CrossIcon, DeleteIcon, EditIcon, TickIcon } from "../../assets/svgs";
 import { useEffect, useState } from "react";
 import Fetch from "../../utils/form-handling/fetch";
 import { useToast } from "../../contexts/Toast";
@@ -19,7 +19,7 @@ function Teachers() {
   const toast = useToast();
 
   const showToast = () => {
-    toast.show("Teacher deleted successfully", 2000, "#4CAF50");
+    toast.show("Teacher status updated successfully", 2000, "#4CAF50");
   };
 
   const getData = () => {
@@ -80,6 +80,12 @@ function Teachers() {
     { key: "teacher_code", header: "Teacher Code" },
     { key: "gender", header: "Gender" },
     {
+      key: "is_active",
+      header: "Status",
+      render: (item: any) =>
+        item?.status === "ACTIVE" ? "Active" : "Inactive",
+    },
+    {
       key: "actions",
       header: "Actions",
       render: (item: any) => (
@@ -94,16 +100,18 @@ function Teachers() {
             </button>
           </Tooltip>
 
-          <Tooltip text="Delete">
+          <Tooltip text={item?.status !== "ACTIVE" ? "Activate" : "Deactivate"}>
             <button
               style={{
                 border: "none",
                 background: "none",
                 cursor: "pointer",
+                width: "1.8rem",
+                height: "1.8rem",
               }}
               onClick={() => handleDeleteRequest(item?.id)}
             >
-              <DeleteIcon size={20} color="#d32f2f" />
+              {item?.status === "ACTIVE" ? <CrossIcon /> : <TickIcon />}
             </button>
           </Tooltip>
         </div>
@@ -143,7 +151,7 @@ function Teachers() {
       </div>
       <Modal
         title="Confirm!"
-        message="Are you sure you want to delete this item?"
+        message="Are you sure you want to change the status of this teacher?"
         onConfirm={handleDelete}
         onCancel={handleCancel}
         visible={showModal}

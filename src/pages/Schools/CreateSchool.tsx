@@ -83,8 +83,6 @@ const CreateSchool: React.FC<Props> = () => {
     navigate("/schools");
   };
 
-  console.log("data=====", data);
-
   const onSubmit = () => {
     setIsLoading(true);
     let url = "";
@@ -98,7 +96,6 @@ const CreateSchool: React.FC<Props> = () => {
     if (!isLogoChanged && id) {
       delete params.logo;
     }
-    console.log("params===", params);
 
     Fetch(url, params, {
       method: id ? "put" : "post",
@@ -234,7 +231,7 @@ const CreateSchool: React.FC<Props> = () => {
           <div className={styles.row}>
             <div className={styles.column}>
               <Input
-                label="Password"
+                label={`Password${id ? "" : "*"}`}
                 name="password"
                 value={data?.password}
                 onChange={handleChange}
@@ -256,7 +253,7 @@ const CreateSchool: React.FC<Props> = () => {
             </div>
             <div className={styles.column}>
               <Input
-                label="Confirm Password"
+                label={`Confirm Password${id ? "" : "*"}`}
                 name="confirm_password"
                 value={data?.confirm_password}
                 onChange={handleChange}

@@ -76,8 +76,6 @@ const LoginScreen: React.FC = () => {
     onSubmit,
   });
 
-  console.log("check===", data);
-
   return (
     <div className="login-container">
       <div className="login-form-container flex-center">

@@ -3,7 +3,7 @@ import DataTable from "../../components/common/DataTable/DataTable";
 import styles from "../../styles/Listing.module.css";
 import Button from "../../components/common/Button/Button";
 import { useNavigate } from "react-router-dom";
-import { DeleteIcon, EditIcon } from "../../assets/svgs";
+import { CrossIcon, DeleteIcon, EditIcon, TickIcon } from "../../assets/svgs";
 import { useEffect, useState } from "react";
 import Fetch from "../../utils/form-handling/fetch";
 import Modal from "../../components/common/Modal/Modal";
@@ -19,7 +19,7 @@ function Schools() {
   const toast = useToast();
 
   const showToast = () => {
-    toast.show("School deleted successfully", 2000, "#4CAF50");
+    toast.show("School status updated successfully", 2000, "#4CAF50");
   };
 
   const getData = () => {
@@ -70,6 +70,11 @@ function Schools() {
     { key: "phone", header: "Phone" },
     { key: "address", header: "Address" },
     {
+      key: "is_active",
+      header: "Status",
+      render: (item: any) => (item.is_active ? "Active" : "Inactive"),
+    },
+    {
       key: "actions",
       header: "Actions",
       render: (item: any) => (
@@ -84,16 +89,18 @@ function Schools() {
             </button>
           </Tooltip>
 
-          <Tooltip text="Delete">
+          <Tooltip text={!item?.is_active ? "Activate" : "Deactivate"}>
             <button
               style={{
                 border: "none",
                 background: "none",
                 cursor: "pointer",
+                width: "1.8rem",
+                height: "1.8rem",
               }}
               onClick={() => handleDeleteRequest(item?.id)}
             >
-              <DeleteIcon size={20} color="#d32f2f" />
+              {item?.is_active ? <CrossIcon /> : <TickIcon />}
             </button>
           </Tooltip>
         </div>
@@ -134,7 +141,7 @@ function Schools() {
       </div>
       <Modal
         title="Confirm!"
-        message="Are you sure you want to delete this item?"
+        message="Are you sure you want to change the status of this school?"
         onConfirm={handleDelete}
         onCancel={handleCancel}
         visible={showModal}

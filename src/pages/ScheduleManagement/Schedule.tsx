@@ -67,19 +67,16 @@ function Class() {
   const getData = (school_id: string = "", class_id: string = "") => {
     setData([]);
     setIsLoading("listing");
-    console.log("school id===", typeof school_id, class_id);
 
-    Fetch(`schedule?school=${school_id}&sch_class=${class_id}&limit=30&offset=0`).then(
-      (res: any) => {
-        if (res.status) {
-          setData(res?.data?.results);
-        }
-        setIsLoading("");
+    Fetch(
+      `schedule?school=${school_id}&sch_class=${class_id}&limit=30&offset=0`
+    ).then((res: any) => {
+      if (res.status) {
+        setData(res?.data?.results);
       }
-    );
+      setIsLoading("");
+    });
   };
-
-  console.log("data===", data);
 
   const handleDelete = () => {
     setIsLoading("delete");
