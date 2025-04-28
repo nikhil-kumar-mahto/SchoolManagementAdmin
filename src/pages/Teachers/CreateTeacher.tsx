@@ -318,6 +318,25 @@ const CreateTeacher: React.FC<Props> = () => {
         return 4;
       case "family_adhaar1":
         return 16;
+      case "teacher_code":
+        return 10;
+      case "department_code":
+        return 10;
+      case "branch_id":
+        return 10;
+      case "teacher_adt_reg_no":
+        return 15;
+      case "pancard":
+        return 10;
+      case "bank_account_number":
+        return 18;
+      case "bank_ifsc_code":
+        return 11;
+      case "universal_account_number":
+        return 12;
+      case "gov_provident_fund":
+        return 22;
+
       default:
         return undefined;
     }
@@ -638,6 +657,9 @@ const CreateTeacher: React.FC<Props> = () => {
                       }
                       maxLength={getMaxLength(key)}
                       tabIndex={tabIndex++}
+                      disabled={
+                        (key === "email" || key === "phone_number") && id
+                      }
                     />
                   </div>
                 );

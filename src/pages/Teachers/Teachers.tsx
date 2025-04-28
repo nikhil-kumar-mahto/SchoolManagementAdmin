@@ -61,6 +61,11 @@ function Teachers() {
 
   const columns = [
     {
+      key: "school_name",
+      header: "School",
+      render: (item: any) => `${item?.school?.name}`,
+    },
+    {
       key: "name",
       header: "Name",
       render: (item: any) =>

@@ -66,7 +66,7 @@ function Class() {
 
   const getData = (school_id: string = "", class_id: string = "") => {
     setIsLoading("listing");
-    Fetch(`schedule?school_id=${school_id}&class_id=${class_id}`).then(
+    Fetch(`schedule?school=${school_id}&sch_class=${class_id}`).then(
       (res: any) => {
         if (res.status) {
           setData(res?.data?.results);
