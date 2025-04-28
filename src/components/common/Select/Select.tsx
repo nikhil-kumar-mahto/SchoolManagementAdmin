@@ -35,23 +35,23 @@ function Select({
 }: SelectProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [filteredOptions, setFilteredOptions] = useState(options);
+  const [filteredOptions, setFilteredOptions] = useState(options || []);
   const [focusedIndex, setFocusedIndex] = useState(-1);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const optionsRef = useRef<(HTMLDivElement | null)[]>([]);
 
   const isValueInOptions =
-    options.some((option) => option.value === value) ?? false;
-  const selectedOption = options.find((option) => option.value === value);
+    options?.some((option) => option.value === value) ?? false;
+  const selectedOption = options?.find((option) => option.value === value);
 
   useEffect(() => {
-    optionsRef.current = Array(filteredOptions.length).fill(null);
-  }, [filteredOptions.length]);
+    optionsRef.current = Array(filteredOptions?.length).fill(null);
+  }, [filteredOptions?.length]);
 
   useEffect(() => {
     setFilteredOptions(
-      options.filter((option) =>
+      options?.filter((option) =>
         option.label.toLowerCase().includes(searchTerm.toLowerCase())
       )
     );
@@ -181,7 +181,7 @@ function Select({
               {moment(value, "HH:mm").format("hh:mm A")}
             </option>
           )}
-          {options.map((option, index) => (
+          {options?.map((option, index) => (
             <option key={index} value={option.value} style={{ color: "#333" }}>
               {option.label}
             </option>

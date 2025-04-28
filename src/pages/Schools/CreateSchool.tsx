@@ -48,7 +48,7 @@ const CreateSchool: React.FC<Props> = () => {
   const getSchoolInfo = () => {
     Fetch(`schools/${id}/`).then((res: any) => {
       if (res.status) {
-        setData(res.data);
+        setData({ ...initialState, ...res?.data });
       }
     });
   };
@@ -83,6 +83,8 @@ const CreateSchool: React.FC<Props> = () => {
     navigate("/schools");
   };
 
+  console.log("data=====", data);
+
   const onSubmit = () => {
     setIsLoading(true);
     let url = "";
@@ -91,10 +93,13 @@ const CreateSchool: React.FC<Props> = () => {
     } else {
       url = "schools/";
     }
-    let params = { ...data, password: !id ? data?.password : "" };
+
+    let params = { ...data };
     if (!isLogoChanged && id) {
       delete params.logo;
     }
+    console.log("params===", params);
+
     Fetch(url, params, {
       method: id ? "put" : "post",
       inFormData: true,
@@ -226,56 +231,56 @@ const CreateSchool: React.FC<Props> = () => {
             </div>
           </div>
 
-          {!id && (
-            <div className={styles.row}>
-              <div className={styles.column}>
-                <Input
-                  label="Password"
-                  name="password"
-                  value={data?.password}
-                  onChange={handleChange}
-                  placeholder="Enter password"
-                  tabIndex={tabIndex++}
-                  error={errors?.password}
-                  iconRight={
-                    !passwordVisible.password ? <IconEye /> : <IconViewOff />
-                  }
-                  handleIconButtonClick={() =>
-                    setPasswordVisible((prevState) => ({
-                      ...prevState,
-                      password: !prevState.password,
-                    }))
-                  }
-                  type={!passwordVisible.password ? "password" : "text"}
-                />
-              </div>
-              <div className={styles.column}>
-                <Input
-                  label="Confirm Password"
-                  name="confirm_password"
-                  value={data?.confirm_password}
-                  onChange={handleChange}
-                  placeholder="Confirm password"
-                  tabIndex={tabIndex++}
-                  error={errors?.confirm_password}
-                  iconRight={
-                    !passwordVisible.confirm_password ? (
-                      <IconEye />
-                    ) : (
-                      <IconViewOff />
-                    )
-                  }
-                  handleIconButtonClick={() =>
-                    setPasswordVisible((prevState) => ({
-                      ...prevState,
-                      confirm_password: !prevState.confirm_password,
-                    }))
-                  }
-                  type={!passwordVisible.confirm_password ? "password" : "text"}
-                />
-              </div>
+          <div className={styles.row}>
+            <div className={styles.column}>
+              <Input
+                label="Password"
+                name="password"
+                value={data?.password}
+                onChange={handleChange}
+                placeholder="Enter password"
+                tabIndex={tabIndex++}
+                error={errors?.password}
+                iconRight={
+                  !passwordVisible.password ? <IconEye /> : <IconViewOff />
+                }
+                handleIconButtonClick={() =>
+                  setPasswordVisible((prevState) => ({
+                    ...prevState,
+                    password: !prevState.password,
+                  }))
+                }
+                type={!passwordVisible.password ? "password" : "text"}
+                autoComplete="new-password"
+              />
             </div>
-          )}
+            <div className={styles.column}>
+              <Input
+                label="Confirm Password"
+                name="confirm_password"
+                value={data?.confirm_password}
+                onChange={handleChange}
+                placeholder="Confirm password"
+                tabIndex={tabIndex++}
+                error={errors?.confirm_password}
+                iconRight={
+                  !passwordVisible.confirm_password ? (
+                    <IconEye />
+                  ) : (
+                    <IconViewOff />
+                  )
+                }
+                handleIconButtonClick={() =>
+                  setPasswordVisible((prevState) => ({
+                    ...prevState,
+                    confirm_password: !prevState.confirm_password,
+                  }))
+                }
+                type={!passwordVisible.confirm_password ? "password" : "text"}
+                autoComplete="new-password"
+              />
+            </div>
+          </div>
 
           {errors?.non_field_errors && (
             <p className="error">{errors?.non_field_errors}</p>

@@ -12,6 +12,7 @@ interface InputProps {
   onKeyPress?: () => void;
   maxLength?: undefined | number;
   tabIndex?: undefined | number;
+  disabled?: boolean;
   handleIconButtonClick?: () => void;
 }
 
@@ -26,6 +27,8 @@ const Input: React.FC<InputProps> = ({
   maxLength = undefined,
   tabIndex = undefined,
   handleIconButtonClick = () => {},
+  autoComplete = "on",
+  disabled = false,
   ...props
 }) => {
   return (
@@ -36,16 +39,22 @@ const Input: React.FC<InputProps> = ({
         </label>
       )}
       <div
-        className={`${styles.inputWrapper} ${error ? styles.errorState : ""}`}
+        className={`${styles.inputWrapper} ${error ? styles.errorState : ""} ${
+          disabled ? styles.disabled : ""
+        }`}
       >
         <input
           type={type}
           value={value}
           onChange={onChange}
-          className={`${styles.input} ${iconRight ? styles.withIconRight : ""}`}
+          className={`${styles.input} ${
+            iconRight ? styles.withIconRight : ""
+          } ${disabled ? styles.disabled : ""}`}
           onKeyDown={onKeyPress}
           maxLength={maxLength}
           tabIndex={tabIndex}
+          autoComplete={autoComplete}
+          disabled={disabled}
           {...props}
         />
         {iconRight && (

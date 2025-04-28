@@ -35,6 +35,8 @@ const mandatoryFields = [
   "last_name",
   "gender",
   "department_code",
+  "password",
+  "confirm_password",
 ];
 
 const initialState = {
@@ -48,6 +50,8 @@ const initialState = {
   gender: "",
   department_code: "",
   phone_number_prefix: "+91",
+  password: "",
+  confirm_password: "",
 
   // non mandatory fields
   branch_id: "",
@@ -112,8 +116,6 @@ const initialState = {
   family_age1: "",
   family_adhaar1: "",
   status: "",
-  password: "",
-  confirm_password: "",
 };
 
 const CreateTeacher: React.FC<Props> = () => {
@@ -139,10 +141,6 @@ const CreateTeacher: React.FC<Props> = () => {
   const excludedKeys: string[] = ["id", "user", "phone_number_prefix"];
 
   const { id } = useParams();
-
-  if (id) {
-    excludedKeys.push("password", "confirm_password");
-  }
 
   const { schools, getSchools } = useAppContext();
 
@@ -272,7 +270,7 @@ const CreateTeacher: React.FC<Props> = () => {
       last_name: data?.last_name,
       gender: data?.gender,
       department_code: data?.department_code,
-      ...(data?.password
+      ...(data?.password || !id
         ? { password: data?.password, confirm_password: data?.confirm_password }
         : {}),
     },
@@ -619,6 +617,7 @@ const CreateTeacher: React.FC<Props> = () => {
                             [key]: !prevState[key],
                           }))
                         }
+                        autoComplete="new-password"
                       />
                     </div>
                   );

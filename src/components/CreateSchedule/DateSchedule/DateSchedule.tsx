@@ -2,6 +2,7 @@ import React, { ChangeEvent } from "react";
 import DatePicker from "../../DatePicker/DatePicker";
 import TimeEntry from "../TimeEntry/TimeEntry";
 import { PlusCircleIcon } from "../../../assets/svgs";
+import moment from "moment";
 
 type Options = { label: string; value: string };
 
@@ -89,6 +90,7 @@ const DateSchedule: React.FC<Props> = ({
           }
           error={errors?.date}
           disabled={isEditMode}
+          min={moment().format("YYYY-MM-DD")}
         />
         {schedule.map((item, index) => (
           <TimeEntry

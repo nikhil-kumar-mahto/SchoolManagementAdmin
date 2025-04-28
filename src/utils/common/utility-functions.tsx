@@ -48,12 +48,95 @@ export function generateTimeArray() {
   return timeArray;
 }
 
-export function filterTimeArray(
-  start_time,
-  dateArray,
-  type,
-  allowEqual = false
-) {
+// export function filterTimeArray(
+//   start_time,
+//   dateArray,
+//   type,
+//   allowEqual = false
+// ) {
+//   const timeArray = generateTimeArray();
+
+//   if (type === "end_time" && !start_time) {
+//     return [];
+//   }
+
+//   if (!start_time) {
+//     return timeArray;
+//   }
+
+//   console.log("date array====", dateArray);
+
+//   const parsedStartTime = moment(start_time, "HH:mm", true);
+//   if (!parsedStartTime.isValid()) {
+//     throw new Error("Invalid time format. Please use 'HH:mm' format.");
+//   }
+
+//   // return timeArray.filter((time) => {
+//   //   const currentTime = moment(time.value, "HH:mm");
+
+//   //   if (type === "end_time" && !currentTime.isAfter(parsedStartTime)) {
+//   //     return false;
+//   //   }
+
+//   //   if (dateArray?.schedule) {
+//   //     for (const existing of dateArray.schedule) {
+//   //       const existingStart = moment(existing.start_time, "HH:mm");
+//   //       const existingEnd = moment(existing.end_time, "HH:mm");
+
+//   //       if (type === "start_time") {
+//   //         if (
+//   //           currentTime.isBetween(existingStart, existingEnd, null, "[)") // [start, end)
+//   //         ) {
+//   //           return false;
+//   //         }
+//   //       } else if (type === "end_time") {
+//   //         const overlaps =
+//   //           parsedStartTime.isBefore(existingEnd) &&
+//   //           currentTime.isAfter(existingStart);
+//   //         if (overlaps) {
+//   //           return false;
+//   //         }
+//   //       }
+//   //     }
+//   //   }
+
+//   //   return true;
+//   // });
+
+//   return timeArray.filter((time) => {
+//     const currentTime = moment(time.value, "HH:mm");
+
+//     if (
+//       type === "end_time" &&
+//       (allowEqual
+//         ? currentTime.isBefore(parsedStartTime)
+//         : !currentTime.isAfter(parsedStartTime))
+//     ) {
+//       return false;
+//     }
+
+//     if (dateArray?.schedule) {
+//       for (const existing of dateArray.schedule) {
+//         const existingStart = moment(existing.start_time, "HH:mm");
+//         const existingEnd = moment(existing.end_time, "HH:mm");
+
+//         if (type === "start_time") {
+//           if (currentTime.isBetween(existingStart, existingEnd, null, "[)")) {
+//             return false;
+//           }
+//         } else if (type === "end_time") {
+//           if (currentTime.isBetween(existingStart, existingEnd, null, "[)")) {
+//             return false;
+//           }
+//         }
+//       }
+//     }
+
+//     return true;
+//   });
+// }
+
+export function filterTimeArray(start_time, dateArray, type) {
   const timeArray = generateTimeArray();
 
   if (type === "end_time" && !start_time) {
@@ -72,6 +155,7 @@ export function filterTimeArray(
   return timeArray.filter((time) => {
     const currentTime = moment(time.value, "HH:mm");
 
+    // For end_time, must be strictly after start_time
     if (type === "end_time" && !currentTime.isAfter(parsedStartTime)) {
       return false;
     }
@@ -82,12 +166,18 @@ export function filterTimeArray(
         const existingEnd = moment(existing.end_time, "HH:mm");
 
         if (type === "start_time") {
-          if (
-            currentTime.isBetween(existingStart, existingEnd, null, "[)") // [start, end)
-          ) {
+          // Block times inside existing slots (allow adjacent slots)
+          if (currentTime.isBetween(existingStart, existingEnd, null, "[)")) {
             return false;
           }
         } else if (type === "end_time") {
+          // Skip checking against the slot that has the same start time
+          // (the slot we're currently editing)
+          if (existing.start_time === start_time) {
+            continue;
+          }
+
+          // Check overlap with other slots
           const overlaps =
             parsedStartTime.isBefore(existingEnd) &&
             currentTime.isAfter(existingStart);
