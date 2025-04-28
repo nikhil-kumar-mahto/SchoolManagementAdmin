@@ -183,12 +183,6 @@ const CreateTeacher: React.FC<Props> = () => {
         orderedData.gov_provident_fund = res?.data?.gov_provident_fund
           ? res?.data?.gov_provident_fund
           : "";
-        // orderedData.file_adhaar_front = res?.data?.file_adhaar_front
-        //   ? res?.data?.file_adhaar_front
-        //   : "";
-        // orderedData.file_adhaar_back = res?.data?.file_adhaar_back
-        //   ? res?.data?.file_adhaar_back
-        //   : "";
 
         setData(orderedData);
 
@@ -270,7 +264,9 @@ const CreateTeacher: React.FC<Props> = () => {
       last_name: data?.last_name,
       gender: data?.gender,
       department_code: data?.department_code,
-      ...(data?.password || !id
+      ...(data?.password ||
+      !id ||
+      (id && (data?.password || data?.confirm_password))
         ? { password: data?.password, confirm_password: data?.confirm_password }
         : {}),
     },

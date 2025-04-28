@@ -128,7 +128,7 @@ const CreateSchool: React.FC<Props> = () => {
   delete params.classes; // not taken on state, but is received from backend API during edit mode
   delete params.phone_number_prefix;
 
-  if (id) {
+  if (id && !params.password && !params.confirm_password) {
     delete params.password;
     delete params.confirm_password;
   }
