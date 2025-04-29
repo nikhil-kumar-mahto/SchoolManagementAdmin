@@ -24,7 +24,7 @@ const CreateSchool: React.FC<Props> = () => {
 
   const { getSubjects } = useAppContext();
 
-  const showToast = (message: string) => {
+  const  showToast = (message: string) => {
     toast.show(message, 2000, "#4CAF50");
   };
 

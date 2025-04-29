@@ -297,7 +297,7 @@ export const getCategory = () => {
 
 export const getStatuses = () => {
   return [
-    { label: "Active", value: "ACTIVE" },
+    { label: "Active", value: "Active" },
     { label: "Probation", value: "PROB" },
     { label: "Resigned", value: "RESIGNED" },
     { label: "Retired", value: "RETIRED" },

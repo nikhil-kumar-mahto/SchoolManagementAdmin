@@ -27,7 +27,7 @@ import { IconEye, IconViewOff } from "../../assets/svgs";
 
 interface Props {}
 
-const mandatoryFields = [
+let mandatoryFields = [
   "email",
   "phone_number",
   "teacher_code",
@@ -141,6 +141,12 @@ const CreateTeacher: React.FC<Props> = () => {
   const excludedKeys: string[] = ["id", "user", "phone_number_prefix"];
 
   const { id } = useParams();
+
+  if (id) {
+    mandatoryFields = mandatoryFields.filter(
+      (field) => field !== "password" && field !== "confirm_password"
+    );
+  }
 
   const { schools, getSchools } = useAppContext();
 
@@ -507,7 +513,7 @@ const CreateTeacher: React.FC<Props> = () => {
                   return (
                     <Select
                       key={key}
-                      label="Select status*"
+                      label="Select status"
                       options={getStatuses()}
                       value={data?.status}
                       onChange={(value) => handleSelectChange(value, "status")}
@@ -554,6 +560,7 @@ const CreateTeacher: React.FC<Props> = () => {
                       }
                       max={getMax(key)}
                       tabIndex={tabIndex++}
+                      key={key}
                     />
                   );
                 } else if (

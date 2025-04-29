@@ -231,7 +231,7 @@ const CreateSchool: React.FC<Props> = () => {
           <div className={styles.row}>
             <div className={styles.column}>
               <Input
-                label="Password"
+                label={`Password${id ? "" : "*"}`}
                 name="password"
                 value={data?.password}
                 onChange={handleChange}
@@ -253,7 +253,7 @@ const CreateSchool: React.FC<Props> = () => {
             </div>
             <div className={styles.column}>
               <Input
-                label="Confirm Password"
+                label={`Confirm Password${id ? "" : "*"}`}
                 name="confirm_password"
                 value={data?.confirm_password}
                 onChange={handleChange}

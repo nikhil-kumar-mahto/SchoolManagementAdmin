@@ -25,7 +25,7 @@ function Class() {
   const toast = useToast();
 
   const showToast = () => {
-    toast.show("Class deleted successfully", 2000, "##4CAF50");
+    toast.show("Class deleted successfully", 2000, "#4CAF50");
   };
 
   const getData = (page: number) => {
