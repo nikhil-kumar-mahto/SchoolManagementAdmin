@@ -48,6 +48,12 @@ function Class() {
       class: id,
     };
     setSearchParams(updatedParams);
+    setPagination((prevState) => {
+      return {
+        ...prevState,
+        currentPage: 1,
+      };
+    });
     getData(1, selectedSchool, id);
   };
 
@@ -67,6 +73,12 @@ function Class() {
     const updatedParams: any = { school: id };
     setSearchParams(updatedParams);
 
+    setPagination((prevState) => {
+      return {
+        ...prevState,
+        currentPage: 1,
+      };
+    });
     getData(1, id, selectedClass);
   };
 
@@ -101,7 +113,7 @@ function Class() {
         if (res.status) {
           if (pagination.total % pagination.itemsPerPage === 1) {
             if (pagination.currentPage === 1) {
-              getData(1);
+              getData(1, selectedSchool, selectedClass);
             } else {
               setPagination((prevState) => {
                 return {
@@ -111,7 +123,7 @@ function Class() {
               });
             }
           } else {
-            getData(pagination.currentPage);
+            getData(pagination.currentPage, selectedSchool, selectedClass);
           }
           showToast();
         }
@@ -141,7 +153,7 @@ function Class() {
         })) || [];
 
     setClasses(schoolClasses);
-    getData(school, classId, pagination.currentPage);
+    getData(pagination.currentPage, selectedSchool, selectedClass);
   }, [schools, pagination.currentPage]);
 
   const handleDeleteRequest = (id: string) => {
