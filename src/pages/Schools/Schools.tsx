@@ -3,8 +3,8 @@ import DataTable from "../../components/common/DataTable/DataTable";
 import styles from "../../styles/Listing.module.css";
 import Button from "../../components/common/Button/Button";
 import { useNavigate } from "react-router-dom";
-import { CrossIcon, DeleteIcon, EditIcon, TickIcon } from "../../assets/svgs";
-import { useContext, useEffect, useState } from "react";
+import { CrossIcon, EditIcon, TickIcon } from "../../assets/svgs";
+import { useEffect, useState } from "react";
 import Fetch from "../../utils/form-handling/fetch";
 import Modal from "../../components/common/Modal/Modal";
 import { useToast } from "../../contexts/Toast";
@@ -16,7 +16,6 @@ function Schools() {
   const [isLoading, setIsLoading] = useState<"listing" | "delete" | "">("");
   const [showModal, setShowModal] = useState(false);
   const [itemToDelete, setItemToDelete] = useState("");
-  
 
   const navigate = useNavigate();
   const toast = useToast();

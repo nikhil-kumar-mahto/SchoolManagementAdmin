@@ -3,7 +3,7 @@ import DataTable from "../../components/common/DataTable/DataTable";
 import styles from "../../styles/Listing.module.css";
 import Button from "../../components/common/Button/Button";
 import { useNavigate } from "react-router-dom";
-import { CrossIcon, DeleteIcon, EditIcon, TickIcon } from "../../assets/svgs";
+import { CrossIcon, EditIcon, TickIcon } from "../../assets/svgs";
 import { useEffect, useState } from "react";
 import Fetch from "../../utils/form-handling/fetch";
 import { useToast } from "../../contexts/Toast";
@@ -61,15 +61,15 @@ function Teachers() {
 
   const columns = [
     {
-      key: "school_name",
-      header: "School",
-      render: (item: any) => `${item?.school?.name}`,
-    },
-    {
       key: "name",
       header: "Name",
       render: (item: any) =>
         `${item?.first_name || ""} ${item?.last_name || ""}`,
+    },
+    {
+      key: "school_name",
+      header: "School",
+      render: (item: any) => `${item?.school?.name}`,
     },
     {
       key: "email",
