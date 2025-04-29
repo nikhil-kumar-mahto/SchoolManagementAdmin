@@ -77,8 +77,6 @@ function Teachers() {
       render: (item: any) => <a href={`mailto:${item.email}`}>{item.email}</a>,
     },
     { key: "phone_number", header: "Phone" },
-    { key: "teacher_code", header: "Teacher Code" },
-    { key: "gender", header: "Gender" },
     {
       key: "is_active",
       header: "Status",

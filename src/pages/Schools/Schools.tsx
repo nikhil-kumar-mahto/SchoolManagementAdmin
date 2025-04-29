@@ -4,19 +4,23 @@ import styles from "../../styles/Listing.module.css";
 import Button from "../../components/common/Button/Button";
 import { useNavigate } from "react-router-dom";
 import { CrossIcon, DeleteIcon, EditIcon, TickIcon } from "../../assets/svgs";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Fetch from "../../utils/form-handling/fetch";
 import Modal from "../../components/common/Modal/Modal";
 import { useToast } from "../../contexts/Toast";
 import Tooltip from "../../components/common/ToolTip/ToolTip";
+import { useAppContext } from "../../contexts/AppContext";
 
 function Schools() {
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState<"listing" | "delete" | "">("");
   const [showModal, setShowModal] = useState(false);
   const [itemToDelete, setItemToDelete] = useState("");
+  
+
   const navigate = useNavigate();
   const toast = useToast();
+  const { getSchools } = useAppContext();
 
   const showToast = () => {
     toast.show("School status updated successfully", 2000, "#4CAF50");
@@ -24,7 +28,7 @@ function Schools() {
 
   const getData = () => {
     setIsLoading("listing");
-    Fetch("schools/?limit=30&offset=0").then((res: any) => {
+    Fetch("schools/?limit=40&offset=0").then((res: any) => {
       if (res.status) {
         setData(res.data?.results);
       }
@@ -38,6 +42,7 @@ function Schools() {
       (res: any) => {
         if (res.status) {
           getData();
+          getSchools();
           showToast();
         }
         setShowModal(false);

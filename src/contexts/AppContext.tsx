@@ -43,7 +43,7 @@ const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   }, []);
 
   const getSchools = () => {
-    Fetch("schools/?limit=30&offset=0").then((res: any) => {
+    Fetch("schools/?limit=40&offset=0&is_active=true").then((res: any) => {
       if (res.status) {
         let schools = res.data?.results?.map(
           (item: {
@@ -64,7 +64,7 @@ const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   };
 
   const getSubjects = () => {
-    Fetch("subjects/?limit=30&offset=0").then((res: any) => {
+    Fetch("subjects/?limit=40&offset=0").then((res: any) => {
       if (res.status) {
         setSubjects(res.data?.results);
       }

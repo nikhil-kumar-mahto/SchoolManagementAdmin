@@ -24,7 +24,7 @@ function Subject() {
 
   const getData = () => {
     setIsLoading("listing");
-    Fetch("subjects/?limit=30&offset=0").then((res: any) => {
+    Fetch("subjects/?limit=40&offset=0").then((res: any) => {
       if (res.status) {
         setData(res.data?.results);
       }
