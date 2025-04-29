@@ -53,6 +53,7 @@ type Props = {
   errors: any;
   replicateDay: (replicateTo: string, replicateFrom: string) => void;
   isEditMode: boolean;
+  disableEdit: boolean;
 };
 
 const WeekDay: React.FC<Props> = ({
@@ -66,6 +67,7 @@ const WeekDay: React.FC<Props> = ({
   replicateDay,
   isEditMode,
   dateState = [],
+  disableEdit,
 }) => {
   let disableAddingMore =
     !!errors?.length ||
@@ -79,14 +81,6 @@ const WeekDay: React.FC<Props> = ({
   }
 
   const [showModal, setShowModal] = useState(false);
-
-  const handleAddMore = () => {
-    if (disableAddingMore) {
-      setShowModal(true);
-    } else {
-      addItem();
-    }
-  };
 
   return (
     <>
@@ -107,13 +101,17 @@ const WeekDay: React.FC<Props> = ({
               cursor: "pointer",
             }}
             type="button"
+            disabled={disableEdit}
           >
             <PlusCircleIcon />
           </button>
         </div>
 
         {day !== "Monday" && (
-          <TextButton onClick={() => replicateDay(day, previousDay(day))}>
+          <TextButton
+            disabled={disableEdit}
+            onClick={() => replicateDay(day, previousDay(day))}
+          >
             Same as {previousDay(day)}
           </TextButton>
         )}
@@ -136,6 +134,7 @@ const WeekDay: React.FC<Props> = ({
             errors={errors?.[index]}
             teachers={teachers}
             minStartTime={index > 0 ? schedule[index - 1].end_time : undefined}
+            disabled={disableEdit}
           />
         ))}
         <hr />

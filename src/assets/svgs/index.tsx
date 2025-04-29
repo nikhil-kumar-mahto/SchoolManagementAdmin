@@ -1,3 +1,9 @@
+interface IconEyeProps extends React.SVGProps<SVGSVGElement> {
+  color?: string;
+  width?: string | number;
+  height?: string | number;
+}
+
 export const SchoolIcon = () => {
   return (
     <svg
@@ -371,12 +377,19 @@ export const PlusCircleIcon = ({ color = "#0056b3", ...props }) => (
   </svg>
 );
 
-export const IconEye: React.FC<React.SVGProps<SVGSVGElement>> = (props) => {
+export const IconEye: React.FC<IconEyeProps> = ({
+  color = "#000000",
+  width = 24,
+  height = 24,
+  ...props
+}) => {
   return (
     <svg
       viewBox="0 0 24 24"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
+      width={width}
+      height={height}
       {...props}
     >
       <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
@@ -388,22 +401,22 @@ export const IconEye: React.FC<React.SVGProps<SVGSVGElement>> = (props) => {
       <g id="SVGRepo_iconCarrier">
         <path
           d="M12 16.01C14.2091 16.01 16 14.2191 16 12.01C16 9.80087 14.2091 8.01001 12 8.01001C9.79086 8.01001 8 9.80087 8 12.01C8 14.2191 9.79086 16.01 12 16.01Z"
-          stroke="#000000"
-          strokeWidth="1.5"
+          stroke={color}
+          strokeWidth="1.7"
           strokeLinecap="round"
           strokeLinejoin="round"
         ></path>
         <path
           d="M2 11.98C8.09 1.31996 15.91 1.32996 22 11.98"
-          stroke="#000000"
-          strokeWidth="1.5"
+          stroke={color}
+          strokeWidth="1.7"
           strokeLinecap="round"
           strokeLinejoin="round"
         ></path>
         <path
           d="M22 12.01C15.91 22.67 8.09 22.66 2 12.01"
-          stroke="#000000"
-          strokeWidth="1.5"
+          stroke={color}
+          strokeWidth="1.7"
           strokeLinecap="round"
           strokeLinejoin="round"
         ></path>

@@ -12,6 +12,7 @@ import { useToast } from "../../contexts/Toast";
 import Button from "../../components/common/Button/Button";
 import { useAppContext } from "../../contexts/AppContext";
 import Modal from "../../components/common/Modal/Modal";
+import FullPageLoader from "../../components/common/FullPageLoader/FullPageLoader";
 
 type Day =
   | "Monday"
@@ -67,6 +68,8 @@ const ScheduleManagement: React.FC = () => {
   const [showEmptyStateModal, setShowEmptyStateModal] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [isValidated, setIsValidated] = useState(false);
+  const [disableEdit, setDisableEdit] = useState(false);
+
   const [parameters, setParamaters] = useState({});
   const [searchParams, setSearchParams] = useSearchParams({});
   const [commonInfo, setCommonInfo] = useState({
@@ -134,6 +137,7 @@ const ScheduleManagement: React.FC = () => {
   };
 
   const getScheduleInfo = () => {
+    setIsLoading("full-page-loader");
     Fetch(`schedule/${id}`).then((res: any) => {
       if (res.status) {
         let classes = schools
@@ -142,6 +146,13 @@ const ScheduleManagement: React.FC = () => {
             label: item?.name + " " + item?.section,
             value: item?.id,
           }));
+
+        if (
+          res?.data?.time_slots?.length > 0 &&
+          res?.data?.time_slots[0]?.is_deleted
+        ) {
+          setDisableEdit(true);
+        }
 
         setClasses(classes || []);
         setCommonInfo({
@@ -159,6 +170,7 @@ const ScheduleManagement: React.FC = () => {
           setDateState(convertToDateState(res?.data) as any);
         }
       }
+      setIsLoading("");
     });
   };
 
@@ -593,197 +605,206 @@ const ScheduleManagement: React.FC = () => {
 
   return (
     <Layout>
-      <form
-        action=""
-        onSubmit={() => {
-          if (viewMode === "date") {
-            handleDateTimeSlots(
-              {
-                ...dateState,
+      {isLoading === "full-page-loader" ? (
+        <FullPageLoader visible={true} />
+      ) : (
+        <form
+          action=""
+          onSubmit={() => {
+            if (viewMode === "date") {
+              handleDateTimeSlots(
+                {
+                  ...dateState,
+                  school: commonInfo.school,
+                  class: commonInfo.class_assigned,
+                },
+                true
+              );
+            } else {
+              handleWeekTimeSlots({
+                ...dayState,
                 school: commonInfo.school,
                 class: commonInfo.class_assigned,
-              },
-              true
-            );
-          } else {
-            handleWeekTimeSlots({
-              ...dayState,
-              school: commonInfo.school,
-              class: commonInfo.class_assigned,
-            });
-          }
-        }}
-      >
-        <div className={styles.container}>
-          <h2>{id ? "Update" : "Create"} Schedule</h2>
-          <div className={`${styles.selectContainer} mt-4`}>
-            <Select
-              label="Select school*"
-              options={schools}
-              value={commonInfo?.school}
-              onChange={(value: string) =>
-                handlecommonInfoChange(value, "school")
-              }
-              error={errors?.school}
-              disabled={id ? true : false}
-            />
+              });
+            }
+          }}
+        >
+          <div className={styles.container}>
+            <h2>{id ? disableEdit ? "Deleted" : "Update" : "Create"} Schedule</h2>
+            <div className={`${styles.selectContainer} mt-4`}>
+              <Select
+                label="Select school*"
+                options={schools}
+                value={commonInfo?.school}
+                onChange={(value: string) =>
+                  handlecommonInfoChange(value, "school")
+                }
+                error={errors?.school}
+                disabled={id ? true : false}
+              />
 
-            <Select
-              label="Select class*"
-              options={classes}
-              value={commonInfo.class_assigned}
-              onChange={(value: string) =>
-                handlecommonInfoChange(value, "class_assigned")
-              }
-              error={errors?.class}
-              disabled={id ? true : false}
-            />
-          </div>
+              <Select
+                label="Select class*"
+                options={classes}
+                value={commonInfo.class_assigned}
+                onChange={(value: string) =>
+                  handlecommonInfoChange(value, "class_assigned")
+                }
+                error={errors?.class}
+                disabled={id ? true : false}
+              />
+            </div>
 
-          <div className={`${styles.viewToggle} mt-3`}>
-            <button
-              disabled={id ? true : false}
-              type="button"
-              className={`${styles.toggleButton} ${
-                viewMode === "date" ? styles.active : ""
-              }`}
-              onClick={() => changeViewMode("date")}
-            >
-              Date
-            </button>
-            <button
-              disabled={id ? true : false}
-              type="button"
-              className={`${styles.toggleButton} ${
-                viewMode === "day" ? styles.active : ""
-              }`}
-              onClick={() => changeViewMode("day")}
-            >
-              Week
-            </button>
-          </div>
+            <div className={`${styles.viewToggle} mt-3`}>
+              <button
+                disabled={id ? true : false}
+                type="button"
+                className={`${styles.toggleButton} ${
+                  viewMode === "date" ? styles.active : ""
+                }`}
+                onClick={() => changeViewMode("date")}
+              >
+                Date
+              </button>
+              <button
+                disabled={id ? true : false}
+                type="button"
+                className={`${styles.toggleButton} ${
+                  viewMode === "day" ? styles.active : ""
+                }`}
+                onClick={() => changeViewMode("day")}
+              >
+                Week
+              </button>
+            </div>
 
-          {viewMode === "day" ? (
-            <>
-              {Object.entries(dayState).map(([key, value]) => (
-                <WeekDay
-                  dateState={dayState[key]}
-                  key={key}
-                  day={key}
-                  schedule={value}
-                  addItem={() => addItem("day", key as Day)}
-                  handleChange={(
-                    index: number,
-                    type: "start_time" | "end_time" | "subject" | "teacher",
-                    value: string,
-                    id = undefined
-                  ) => handleChange(key as Day, index, type, value, id)}
-                  handleDelete={(index: number, id = undefined) => {
-                    if (id) {
-                      setDeleteId(id);
+            {viewMode === "day" ? (
+              <>
+                {Object.entries(dayState).map(([key, value]) => (
+                  <WeekDay
+                    dateState={dayState[key]}
+                    key={key}
+                    day={key}
+                    schedule={value}
+                    addItem={() => addItem("day", key as Day)}
+                    handleChange={(
+                      index: number,
+                      type: "start_time" | "end_time" | "subject" | "teacher",
+                      value: string,
+                      id = undefined
+                    ) => handleChange(key as Day, index, type, value, id)}
+                    handleDelete={(index: number, id = undefined) => {
+                      if (id) {
+                        setDeleteId(id);
+                      } else {
+                        handleDelete(index, "day", key as Day, id);
+                      }
+                    }}
+                    errors={errors?.schedule?.[key]}
+                    teachers={teachers}
+                    replicateDay={replicateDay}
+                    isEditMode={!!id}
+                    disableEdit={disableEdit}
+                  />
+                ))}
+              </>
+            ) : (
+              <DateSchedule
+                dateState={dateState}
+                handleChange={(value: string, type: string) => {
+                  setDateState((prevState) => {
+                    return {
+                      ...prevState,
+                      [type]: value,
+                    };
+                  });
+                  handleDateTimeSlots({
+                    ...commonInfo,
+                    ...dateState,
+                    [type]: value,
+                  });
+                }}
+                handleTimeChange={(
+                  index: number,
+                  type: "start_time" | "end_time" | "subject" | "teacher",
+                  value: string,
+                  id = undefined
+                ) => handleTimeChange(index, type, value, id)}
+                teachers={teachers}
+                subjects={subjects}
+                errors={errors}
+                schedule={dateState.schedule}
+                addItem={() => addItem("date")}
+                handleDelete={(index: number, id = undefined) => {
+                  if (id) {
+                    setDeleteId(id);
+                  } else {
+                    handleDelete(index, "date", "", id);
+                  }
+                }}
+                isEditMode={!!id}
+                disableEdit={disableEdit}
+              />
+            )}
+
+            {errors?.non_field_errors && (
+              <p className="error">{errors?.non_field_errors}</p>
+            )}
+
+            {errors?.unauthorized && (
+              <p className="error">{errors?.unauthorized}</p>
+            )}
+
+            {errors?.internalServerError && (
+              <p className="error">{errors?.internalServerError}</p>
+            )}
+
+            {!disableEdit && (
+              <div className={styles.buttonContainer}>
+                <Button
+                  text="Cancel"
+                  type="outline"
+                  onClick={navigateBack}
+                  className="mt-2 mr-4"
+                  style={{ width: "8rem" }}
+                />
+                <Button
+                  text={id ? "Update" : "Submit"}
+                  onClick={() => {
+                    if (viewMode === "date") {
+                      handleDateTimeSlots(
+                        {
+                          ...dateState,
+                          school: commonInfo.school,
+                          class: commonInfo.class_assigned,
+                        },
+                        true
+                      );
                     } else {
-                      handleDelete(index, "day", key as Day, id);
+                      handleWeekTimeSlots(
+                        {
+                          ...dayState,
+                          school: commonInfo.school,
+                          class: commonInfo.class_assigned,
+                        },
+                        true
+                      );
                     }
                   }}
-                  errors={errors?.schedule?.[key]}
-                  teachers={teachers}
-                  replicateDay={replicateDay}
-                  isEditMode={!!id}
+                  className="mt-2"
+                  isLoading={isLoading === "button"}
+                  style={{ width: "8rem" }}
                 />
-              ))}
-            </>
-          ) : (
-            <DateSchedule
-              dateState={dateState}
-              handleChange={(value: string, type: string) => {
-                setDateState((prevState) => {
-                  return {
-                    ...prevState,
-                    [type]: value,
-                  };
-                });
-                handleDateTimeSlots({
-                  ...commonInfo,
-                  ...dateState,
-                  [type]: value,
-                });
-              }}
-              handleTimeChange={(
-                index: number,
-                type: "start_time" | "end_time" | "subject" | "teacher",
-                value: string,
-                id = undefined
-              ) => handleTimeChange(index, type, value, id)}
-              teachers={teachers}
-              subjects={subjects}
-              errors={errors}
-              schedule={dateState.schedule}
-              addItem={() => addItem("date")}
-              handleDelete={(index: number, id = undefined) => {
-                if (id) {
-                  setDeleteId(id);
-                } else {
-                  handleDelete(index, "date", "", id);
-                }
-              }}
-              isEditMode={!!id}
-            />
-          )}
-
-          {errors?.non_field_errors && (
-            <p className="error">{errors?.non_field_errors}</p>
-          )}
-
-          {errors?.unauthorized && (
-            <p className="error">{errors?.unauthorized}</p>
-          )}
-
-          {errors?.internalServerError && (
-            <p className="error">{errors?.internalServerError}</p>
-          )}
-
-          <div className={styles.buttonContainer}>
-            <Button
-              text="Cancel"
-              type="outline"
-              onClick={navigateBack}
-              className="mt-2 mr-4"
-              style={{ width: "8rem" }}
-            />
-            <Button
-              text={id ? "Update" : "Submit"}
-              onClick={() => {
-                if (viewMode === "date") {
-                  handleDateTimeSlots(
-                    {
-                      ...dateState,
-                      school: commonInfo.school,
-                      class: commonInfo.class_assigned,
-                    },
-                    true
-                  );
-                } else {
-                  handleWeekTimeSlots(
-                    {
-                      ...dayState,
-                      school: commonInfo.school,
-                      class: commonInfo.class_assigned,
-                    },
-                    true
-                  );
-                }
-              }}
-              className="mt-2"
-              isLoading={isLoading === "button"}
-              style={{ width: "8rem" }}
-            />
+              </div>
+            )}
           </div>
-        </div>
-      </form>
+        </form>
+      )}
+
       <Modal
         title="Confirm!"
         message={
-          "Are you sure you want to override your previously added slots?"
+          "Are you sure you want to override your previous existing schedule?"
         }
         onConfirm={() => handleApiCall(parameters)}
         onCancel={() => setShowModal(false)}

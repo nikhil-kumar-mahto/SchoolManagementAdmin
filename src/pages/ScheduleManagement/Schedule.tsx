@@ -3,7 +3,7 @@ import DataTable from "../../components/common/DataTable/DataTable";
 import styles from "../../styles/Listing.module.css";
 import Button from "../../components/common/Button/Button";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { DeleteIcon, EditIcon } from "../../assets/svgs";
+import { DeleteIcon, EditIcon, IconEye } from "../../assets/svgs";
 import { useEffect, useState } from "react";
 import Fetch from "../../utils/form-handling/fetch";
 import { useToast } from "../../contexts/Toast";
@@ -141,28 +141,49 @@ function Class() {
       header: "Actions",
       render: (item: any) => (
         <div>
-          <Tooltip text="Edit">
-            <button
-              className="mr-3"
-              style={{ border: "none", background: "none", cursor: "pointer" }}
-              onClick={() => handleEdit(item?.id)}
-            >
-              <EditIcon size={20} color="#1976d2" />
-            </button>
-          </Tooltip>
+          {item?.is_deleted ? (
+            <Tooltip text="View">
+              <button
+                style={{
+                  border: "none",
+                  background: "none",
+                  cursor: "pointer",
+                }}
+                onClick={() => handleEdit(item?.id)}
+              >
+                <IconEye color="#1976d2" />
+              </button>
+            </Tooltip>
+          ) : (
+            <>
+              <Tooltip text="Edit">
+                <button
+                  className="mr-3"
+                  style={{
+                    border: "none",
+                    background: "none",
+                    cursor: "pointer",
+                  }}
+                  onClick={() => handleEdit(item?.id)}
+                >
+                  <EditIcon size={20} color="#1976d2" />
+                </button>
+              </Tooltip>
 
-          <Tooltip text="Delete">
-            <button
-              style={{
-                border: "none",
-                background: "none",
-                cursor: "pointer",
-              }}
-              onClick={() => handleDeleteRequest(item?.id)}
-            >
-              <DeleteIcon size={20} color="#d32f2f" />
-            </button>
-          </Tooltip>
+              <Tooltip text="Delete">
+                <button
+                  style={{
+                    border: "none",
+                    background: "none",
+                    cursor: "pointer",
+                  }}
+                  onClick={() => handleDeleteRequest(item?.id)}
+                >
+                  <DeleteIcon size={20} color="#d32f2f" />
+                </button>
+              </Tooltip>
+            </>
+          )}
         </div>
       ),
     },

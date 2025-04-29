@@ -68,18 +68,20 @@ export default function Fetch(endPoint, params = {}, option = {}, isFile = false
         if (err?.response?.status === 500) {
           return { internalServerError: ["Something went wrong."], status: false };
         } else if (err?.response?.status === 401) {
-          let errRes = {}
-          const newToken = await refreshToken();
-          if (newToken === 'expired') {
-            window.location.href = "/login";
-            errRes = { err: ["expired"], status: false };
-          } else if (newToken) {
-            errRes = await fetch(newToken);
-          } else {
-            errRes = { unauthorized: ["Your session has expired. Please log in again to continue."], status: false };
-          }
+          const event = new CustomEvent("unauthorizedError", { detail: { message: "Unauthorized access" } });
+          window.dispatchEvent(event);
+          // let errRes = {}
+          // const newToken = await refreshToken();
+          // if (newToken === 'expired') {
+          //   window.location.href = "/login";
+          //   errRes = { err: ["expired"], status: false };
+          // } else if (newToken) {
+          //   errRes = await fetch(newToken);
+          // } else {
+          //   errRes = { unauthorized: ["Your session has expired. Please log in again to continue."], status: false };
+          // }
 
-          return errRes
+          // return errRes
         } else {
           return { ...err?.response?.data, status: false };
         }

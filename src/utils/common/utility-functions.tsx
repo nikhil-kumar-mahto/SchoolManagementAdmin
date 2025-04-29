@@ -33,7 +33,7 @@ export function getIdFromUrl(url: any) {
 
 export function generateTimeArray() {
   const timeArray = [];
-  const interval = 15; // 15 minutes
+  const interval = 5; // 15 minutes
 
   for (let hour = 0; hour < 24; hour++) {
     for (let minute = 0; minute < 60; minute += interval) {

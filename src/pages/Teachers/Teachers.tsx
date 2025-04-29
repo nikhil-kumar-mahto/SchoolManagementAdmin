@@ -81,7 +81,7 @@ function Teachers() {
       key: "is_active",
       header: "Status",
       render: (item: any) =>
-        item?.status === "ACTIVE" ? "Active" : "Inactive",
+        item?.status === "Active" ? "Active" : "Inactive",
     },
     {
       key: "actions",
@@ -98,7 +98,7 @@ function Teachers() {
             </button>
           </Tooltip>
 
-          <Tooltip text={item?.status !== "ACTIVE" ? "Activate" : "Deactivate"}>
+          <Tooltip text={item?.status !== "Active" ? "Activate" : "Deactivate"}>
             <button
               style={{
                 border: "none",
@@ -109,7 +109,7 @@ function Teachers() {
               }}
               onClick={() => handleDeleteRequest(item?.id)}
             >
-              {item?.status === "ACTIVE" ? <CrossIcon /> : <TickIcon />}
+              {item?.status === "Active" ? <CrossIcon /> : <TickIcon />}
             </button>
           </Tooltip>
         </div>

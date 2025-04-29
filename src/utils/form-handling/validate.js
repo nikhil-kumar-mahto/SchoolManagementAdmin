@@ -122,7 +122,7 @@ const inputValidation = (data, property, selectFields = []) => {
 export const passwordCheck = (password) => {
   if (password.length < 8) return "Password must have minimum of 8 characters.";
   const regex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z])(?=.*[^\w\d\s]).{8,}$/;
-  if (!regex.test(password)) return "Your password is incorrect. Please try again";
+  if (!regex.test(password)) return "Password must include at least 8 characters, with at least one uppercase letter, one lowercase letter, one number, and one special character.";
 };
 export const ValidateEmailAddress = (emailString) => {
   if (!emailString) return "Please enter email";

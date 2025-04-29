@@ -441,6 +441,7 @@ const CreateTeacher: React.FC<Props> = () => {
                           : ""
                       }
                       tabIndex={tabIndex++}
+                      name={key}
                     />
                   );
                 } else if (key === "marital_status") {
@@ -463,6 +464,7 @@ const CreateTeacher: React.FC<Props> = () => {
                           : ""
                       }
                       tabIndex={tabIndex++}
+                      name={key}
                     />
                   );
                 } else if (key === "blood_group") {
@@ -485,6 +487,7 @@ const CreateTeacher: React.FC<Props> = () => {
                           : ""
                       }
                       tabIndex={tabIndex++}
+                      name={key}
                     />
                   );
                 } else if (key === "category_type") {
@@ -507,6 +510,7 @@ const CreateTeacher: React.FC<Props> = () => {
                           : ""
                       }
                       tabIndex={tabIndex++}
+                      name={key}
                     />
                   );
                 } else if (key === "status") {
@@ -525,6 +529,7 @@ const CreateTeacher: React.FC<Props> = () => {
                           : ""
                       }
                       tabIndex={tabIndex++}
+                      name={key}
                     />
                   );
                 } else if (
@@ -561,6 +566,7 @@ const CreateTeacher: React.FC<Props> = () => {
                       max={getMax(key)}
                       tabIndex={tabIndex++}
                       key={key}
+                      name={key}
                     />
                   );
                 } else if (
