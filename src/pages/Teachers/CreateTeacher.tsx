@@ -112,7 +112,7 @@ const CreateTeacher: React.FC<Props> = () => {
     "phone_number",
     "teacher_code",
     "first_name",
-    "last_name",  
+    "last_name",
     "gender",
     "department_code",
     "password",
@@ -392,8 +392,6 @@ const CreateTeacher: React.FC<Props> = () => {
         return undefined;
     }
   };
-
-  console.log("id===", id);
 
   return (
     <Layout>

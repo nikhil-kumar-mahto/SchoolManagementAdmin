@@ -73,8 +73,6 @@ const WeekDay: React.FC<Props> = ({
 }) => {
   const [showModal, setShowModal] = useState(false);
 
-  console.log("allow===", allowLastEntryDelete);
-
   return (
     <>
       <div className="mb-4">
@@ -128,7 +126,7 @@ const WeekDay: React.FC<Props> = ({
             teachers={teachers}
             minStartTime={index > 0 ? schedule[index - 1].end_time : undefined}
             disabled={disableEdit}
-            allowLastEntryDelete={!allowLastEntryDelete}
+            allowLastEntryDelete={allowLastEntryDelete}
           />
         ))}
         <hr />

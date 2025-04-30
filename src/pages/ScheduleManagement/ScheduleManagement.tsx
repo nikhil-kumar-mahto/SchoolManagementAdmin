@@ -608,7 +608,15 @@ const ScheduleManagement: React.FC = () => {
       return Array.isArray(value) && value.length === 1;
     }).length;
 
-    return singleItemCount === 1 || id;
+    if (id) {
+      return true;
+    }
+
+    if (singleItemCount === 1) {
+      return false;
+    }
+
+    return true;
   };
 
   return (
