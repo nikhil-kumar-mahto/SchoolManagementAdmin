@@ -69,6 +69,7 @@ const ScheduleManagement: React.FC = () => {
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [isValidated, setIsValidated] = useState(false);
   const [disableEdit, setDisableEdit] = useState(false);
+  const [showNoTeacherModal, setNoTeacherModal] = useState("");
 
   const [parameters, setParamaters] = useState({});
   const [searchParams, setSearchParams] = useSearchParams({});
@@ -391,11 +392,36 @@ const ScheduleManagement: React.FC = () => {
         } else {
           let resErr = arrayString(res);
           handleNewError(resErr);
+          console.log("teacher====", resErr);
+          if (resErr?.is_conflict) {
+            setNoTeacherModal(resErr?.message);
+          }
         }
         setIsLoading("");
         setShowModal(false);
       }
     );
+  };
+
+  const getDayNumber = (day: string): number | undefined => {
+    switch (day) {
+      case "Monday":
+        return 0;
+      case "Tuesday":
+        return 1;
+      case "Wednesday":
+        return 2;
+      case "Thursday":
+        return 3;
+      case "Friday":
+        return 4;
+      case "Saturday":
+        return 5;
+      case "Sunday":
+        return 6;
+      default:
+        return undefined;
+    }
   };
 
   const convertForm = (obj: any) => {
@@ -407,7 +433,7 @@ const ScheduleManagement: React.FC = () => {
           (acc, [day, daySlots]) => {
             let slots = [...daySlots];
             const slotsForDay = slots.map((slot) => ({
-              day_of_week: day,
+              day_of_week: getDayNumber(day),
               start_time: slot.start_time,
               end_time: slot.end_time,
               teacher: slot.teacher,
@@ -551,6 +577,8 @@ const ScheduleManagement: React.FC = () => {
     selectFields,
   });
 
+  console.log("err===", errors);
+
   const deleteItem = () => {
     setIsLoading("delete-modal");
     Fetch(`time-slot/${deleteId}/`, {}, { method: "delete" }).then(
@@ -604,15 +632,18 @@ const ScheduleManagement: React.FC = () => {
   };
 
   const allowLastEntryDelete = () => {
-    const singleItemCount = Object.entries(dayState).filter(([key, value]) => {
-      return Array.isArray(value) && value.length === 1;
-    }).length;
+    let count = 0;
+    Object.entries(dayState).forEach(([key, value]) => {
+      count += value?.length;
+    });
+
+    console.log("single item count====", count);
 
     if (id) {
       return true;
     }
 
-    if (singleItemCount === 1) {
+    if (count === 1) {
       return false;
     }
 
@@ -845,6 +876,16 @@ const ScheduleManagement: React.FC = () => {
         visible={!!deleteId}
         isLoading={isLoading === "delete-modal"}
         primaryButtonVariant="danger"
+      />
+      <Modal
+        title="Alert!"
+        message={showNoTeacherModal}
+        onConfirm={() => {
+          setNoTeacherModal("");
+          removeAllError();
+        }}
+        confirmText="OK"
+        visible={!!showNoTeacherModal}
       />
     </Layout>
   );
