@@ -54,6 +54,7 @@ type Props = {
   replicateDay: (replicateTo: string, replicateFrom: string) => void;
   isEditMode: boolean;
   disableEdit: boolean;
+  allowLastEntryDelete: boolean;
 };
 
 const WeekDay: React.FC<Props> = ({
@@ -68,19 +69,11 @@ const WeekDay: React.FC<Props> = ({
   isEditMode,
   dateState = [],
   disableEdit,
+  allowLastEntryDelete,
 }) => {
-  let disableAddingMore =
-    !!errors?.length ||
-    !schedule[schedule.length - 1]?.start_time ||
-    !schedule[schedule.length - 1]?.end_time ||
-    !schedule[schedule.length - 1]?.teacher ||
-    !schedule[schedule.length - 1]?.subject;
-
-  if (schedule.length === 0) {
-    disableAddingMore = false;
-  }
-
   const [showModal, setShowModal] = useState(false);
+
+  console.log("allow===", allowLastEntryDelete);
 
   return (
     <>
@@ -135,6 +128,7 @@ const WeekDay: React.FC<Props> = ({
             teachers={teachers}
             minStartTime={index > 0 ? schedule[index - 1].end_time : undefined}
             disabled={disableEdit}
+            allowLastEntryDelete={!allowLastEntryDelete}
           />
         ))}
         <hr />

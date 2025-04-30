@@ -603,6 +603,14 @@ const ScheduleManagement: React.FC = () => {
     );
   };
 
+  const allowLastEntryDelete = () => {
+    const singleItemCount = Object.entries(dayState).filter(([key, value]) => {
+      return Array.isArray(value) && value.length === 1;
+    }).length;
+
+    return singleItemCount === 1 || id;
+  };
+
   return (
     <Layout>
       {isLoading === "full-page-loader" ? (
@@ -630,7 +638,9 @@ const ScheduleManagement: React.FC = () => {
           }}
         >
           <div className={styles.container}>
-            <h2>{id ? disableEdit ? "Deleted" : "Update" : "Create"} Schedule</h2>
+            <h2>
+              {id ? (disableEdit ? "Deleted" : "Update") : "Create"} Schedule
+            </h2>
             <div className={`${styles.selectContainer} mt-4`}>
               <Select
                 label="Select school*"
@@ -705,6 +715,7 @@ const ScheduleManagement: React.FC = () => {
                     replicateDay={replicateDay}
                     isEditMode={!!id}
                     disableEdit={disableEdit}
+                    allowLastEntryDelete={allowLastEntryDelete()}
                   />
                 ))}
               </>

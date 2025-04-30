@@ -173,6 +173,7 @@ const CreateSchool: React.FC<Props> = () => {
                 type="email"
                 error={errors?.email}
                 tabIndex={tabIndex++}
+                disabled={!!id}
               />
             </div>
           </div>
@@ -188,6 +189,7 @@ const CreateSchool: React.FC<Props> = () => {
                 onKeyPress={onKeyPress}
                 maxLength={10}
                 tabIndex={tabIndex++}
+                disabled={!!id}
               />
             </div>
             <div className={styles.column}>

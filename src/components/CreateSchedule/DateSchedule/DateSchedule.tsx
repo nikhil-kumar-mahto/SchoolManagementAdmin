@@ -62,6 +62,13 @@ const DateSchedule: React.FC<Props> = ({
     disableAddingMore = false;
   }
 
+  const allowLastEntryDelete = () => {
+    if (schedule.length > 1 || isEditMode) {
+      return true;
+    }
+    return false;
+  };
+
   return (
     <>
       <div className="mt-4">
@@ -112,6 +119,7 @@ const DateSchedule: React.FC<Props> = ({
             minStartTime={index > 0 ? schedule[index - 1].end_time : undefined}
             dateArray={dateState}
             disabled={disableEdit}
+            allowLastEntryDelete={allowLastEntryDelete()}
           />
         ))}
       </div>

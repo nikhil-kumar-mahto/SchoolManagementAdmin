@@ -22,6 +22,7 @@ interface Time {
   minStartTime?: undefined | number | string;
   dateArray: any[];
   disabled?: boolean;
+  allowLastEntryDelete?: boolean;
 }
 
 const TimeEntry: React.FC<Time> = ({
@@ -36,6 +37,7 @@ const TimeEntry: React.FC<Time> = ({
   dateArray,
   errors = {},
   disabled = false,
+  allowLastEntryDelete = true,
 }) => {
   const { subjects } = useAppContext();
   let subjectsFormatted = subjects?.map(
@@ -93,7 +95,7 @@ const TimeEntry: React.FC<Time> = ({
         error={errors?.subject}
         disabled={disabled}
       />
-      {!disabled && (
+      {!disabled && allowLastEntryDelete && (
         <button
           className={styles.iconContainer}
           onClick={handleDelete}

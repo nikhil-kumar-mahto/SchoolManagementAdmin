@@ -1,4 +1,3 @@
-import moment from "moment";
 import { useState, useEffect } from "react";
 export const validation = (data, selectFields = []) => {
   let errors = {};
@@ -47,43 +46,41 @@ export const onKeyPress = (evt, reg) => {
     evt.key === "ArrowLeft" ||
     evt.key === "ArrowRight" ||
     evt.key === "Delete" ||
-    evt.ctrlKey || evt.metaKey
+    evt.ctrlKey ||
+    evt.metaKey
   ) {
     return;
   }
 
-  var theEvent = evt || window.event;
-  var key = theEvent.keyCode || theEvent.which;
-  key = String.fromCharCode(key);
-  var regex = reg ? reg : /^[0-9\b]+$/;
+  const key = evt.key;
+  const regex = reg ? reg : /^[0-9\b]+$/;
   if (!regex.test(key)) {
-    theEvent.returnValue = false;
-    if (theEvent.preventDefault) theEvent.preventDefault();
+    evt.preventDefault();
   }
 };
 
 const inputValidation = (data, property, selectFields = []) => {
   const errors = {};
-  if (data[property] === null || data[property] === undefined || !data[property].toString().length) {
+  if (data[property] === null || data[property] === undefined || !data[property].toString().trim().length) {
     errors[property] = `Please ${selectFields.includes(property) ? "select" : property.includes("photo") || property.includes("logo") || property.includes("file_passbook") || property.includes("file_adhaar") || property.includes("file_pancard") || property.includes("form_11") ? "upload" : "enter"} ${property === "email"
       ? "email address."
       : property.replace(/_/g, " ") + "."
       }`;
   }
 
-  if (property.includes("website") && data[property]?.length) {
+  if (property.includes("website") && data[property]?.trim().length) {
     const regex = /^(http|https):\/\/[^ "]+$/;
     if (!regex.test(data[property])) {
       errors[property] = "Please enter valid website URL.";
     }
   }
 
-  if (property.includes("email") && data[property]?.length) {
+  if (property.includes("email") && data[property]?.trim().length) {
     if (ValidateEmailAddress(data[property])) {
       errors[property] = ValidateEmailAddress(data[property]);
     }
   }
-  if (property.includes("phone") && data[property]?.length) {
+  if (property.includes("phone") && data[property]?.trim().length) {
     if (data[property]?.length < 10) {
       errors[property] = "Phone number must have at least 10 digits.";
     }
@@ -93,19 +90,19 @@ const inputValidation = (data, property, selectFields = []) => {
       errors[property] = "Phone number must have exactly 8 digits.";
     }
   }
-  if ((property === "password" || property === "new_password") && data[property].length) {
+  if ((property === "password" || property === "new_password") && data[property].trim().length) {
     if (passwordCheck(data[property])) {
       errors[property] = passwordCheck(data[property]);
     }
   }
-  if (property === "confirm_password" && data["confirm_password"]?.length) {
+  if (property === "confirm_password" && data["confirm_password"]?.trim().length) {
     if (data["confirm_password"] !== data["password"]) {
       errors["confirm_password"] = "Password does not match. Please make sure they match.";
     } else {
       delete errors["confirm_password"];
     }
   }
-  if (property === "confirm_new_password" && data["confirm_password"]?.length) {
+  if (property === "confirm_new_password" && data["confirm_password"]?.trim().length) {
     if (data["confirm_new_password"] !== data["new_password"]) {
       errors["confirm_new_password"] = "Password does not match. Please make sure they match.";
     } else {
