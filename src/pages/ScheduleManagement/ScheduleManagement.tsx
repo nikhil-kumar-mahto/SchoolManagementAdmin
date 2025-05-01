@@ -392,7 +392,7 @@ const ScheduleManagement: React.FC = () => {
         } else {
           let resErr = arrayString(res);
           handleNewError(resErr);
-          console.log("teacher====", resErr);
+
           if (resErr?.is_conflict) {
             setNoTeacherModal(resErr?.message);
           }
@@ -577,8 +577,6 @@ const ScheduleManagement: React.FC = () => {
     selectFields,
   });
 
-  console.log("err===", errors);
-
   const deleteItem = () => {
     setIsLoading("delete-modal");
     Fetch(`time-slot/${deleteId}/`, {}, { method: "delete" }).then(
@@ -636,8 +634,6 @@ const ScheduleManagement: React.FC = () => {
     Object.entries(dayState).forEach(([key, value]) => {
       count += value?.length;
     });
-
-    console.log("single item count====", count);
 
     if (id) {
       return true;
