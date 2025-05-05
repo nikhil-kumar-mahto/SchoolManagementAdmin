@@ -19,14 +19,14 @@ function Class() {
   const toast = useToast();
 
   const showToast = () => {
-    toast.show("Class deleted successfully", 2000, "##4CAF50");
+    toast.show("Class deleted successfully", 2000, "#4CAF50");
   };
 
   const getData = () => {
     setIsLoading("listing");
     Fetch("classes/").then((res: any) => {
       if (res.status) {
-        setData(res.data.results);
+        setData(res.data?.results);
       }
       setIsLoading("");
     });

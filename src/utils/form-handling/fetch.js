@@ -66,20 +66,22 @@ export default function Fetch(endPoint, params = {}, option = {}, isFile = false
       })
       .catch(async (err) => {
         if (err?.response?.status === 500) {
-          return { err: ["Something Went axiosWrong"], status: false };
+          return { internalServerError: ["Something went wrong."], status: false };
         } else if (err?.response?.status === 401) {
-          let errRes = {}
-          const newToken = await refreshToken();
-          if (newToken === 'expired') {
-            window.location.href = "/login";
-            errRes = { err: ["expired"], status: false };
-          } else if (newToken) {
-            errRes = await fetch(newToken);
-          } else {
-            errRes = { err: ["Unauthorized"], status: false };
-          }
+          const event = new CustomEvent("unauthorizedError", { detail: { message: "Unauthorized access" } });
+          window.dispatchEvent(event);
+          // let errRes = {}
+          // const newToken = await refreshToken();
+          // if (newToken === 'expired') {
+          //   window.location.href = "/login";
+          //   errRes = { err: ["expired"], status: false };
+          // } else if (newToken) {
+          //   errRes = await fetch(newToken);
+          // } else {
+          //   errRes = { unauthorized: ["Your session has expired. Please log in again to continue."], status: false };
+          // }
 
-          return errRes
+          // return errRes
         } else {
           return { ...err?.response?.data, status: false };
         }
@@ -90,7 +92,6 @@ export default function Fetch(endPoint, params = {}, option = {}, isFile = false
   }
   return Auth.getAsyncToken().then((res) => fetch(res.token));
 }
-
 
 export async function refreshToken() {
   const refresh_token = localStorage.getItem("refresh_token");

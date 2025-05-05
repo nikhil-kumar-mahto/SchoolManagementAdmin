@@ -1,4 +1,3 @@
-import moment from "moment";
 import { useState, useEffect } from "react";
 export const validation = (data, selectFields = []) => {
   let errors = {};
@@ -47,43 +46,41 @@ export const onKeyPress = (evt, reg) => {
     evt.key === "ArrowLeft" ||
     evt.key === "ArrowRight" ||
     evt.key === "Delete" ||
-    evt.ctrlKey || evt.metaKey
+    evt.ctrlKey ||
+    evt.metaKey
   ) {
     return;
   }
 
-  var theEvent = evt || window.event;
-  var key = theEvent.keyCode || theEvent.which;
-  key = String.fromCharCode(key);
-  var regex = reg ? reg : /^[0-9\b]+$/;
+  const key = evt.key;
+  const regex = reg ? reg : /^[0-9\b]+$/;
   if (!regex.test(key)) {
-    theEvent.returnValue = false;
-    if (theEvent.preventDefault) theEvent.preventDefault();
+    evt.preventDefault();
   }
 };
 
 const inputValidation = (data, property, selectFields = []) => {
   const errors = {};
-  if (data[property] === null || data[property] === undefined || !data[property].toString().length) {
+  if (data[property] === null || data[property] === undefined || !data[property].toString().trim().length) {
     errors[property] = `Please ${selectFields.includes(property) ? "select" : property.includes("photo") || property.includes("logo") || property.includes("file_passbook") || property.includes("file_adhaar") || property.includes("file_pancard") || property.includes("form_11") ? "upload" : "enter"} ${property === "email"
       ? "email address."
       : property.replace(/_/g, " ") + "."
       }`;
   }
 
-  if (property.includes("website") && data[property]?.length) {
+  if (property.includes("website") && data[property]?.trim().length) {
     const regex = /^(http|https):\/\/[^ "]+$/;
     if (!regex.test(data[property])) {
       errors[property] = "Please enter valid website URL.";
     }
   }
 
-  if (property.includes("email") && data[property]?.length) {
+  if (property.includes("email") && data[property]?.trim().length) {
     if (ValidateEmailAddress(data[property])) {
       errors[property] = ValidateEmailAddress(data[property]);
     }
   }
-  if (property.includes("phone") && data[property]?.length) {
+  if (property.includes("phone") && data[property]?.trim().length) {
     if (data[property]?.length < 10) {
       errors[property] = "Phone number must have at least 10 digits.";
     }
@@ -93,19 +90,19 @@ const inputValidation = (data, property, selectFields = []) => {
       errors[property] = "Phone number must have exactly 8 digits.";
     }
   }
-  if ((property === "password" || property === "new_password") && data[property].length) {
+  if ((property === "password" || property === "new_password") && data[property].trim().length) {
     if (passwordCheck(data[property])) {
       errors[property] = passwordCheck(data[property]);
     }
   }
-  if (property === "confirm_password" && data["confirm_password"]?.length) {
+  if (property === "confirm_password" && data["confirm_password"]?.trim().length) {
     if (data["confirm_password"] !== data["password"]) {
       errors["confirm_password"] = "Password does not match. Please make sure they match.";
     } else {
       delete errors["confirm_password"];
     }
   }
-  if (property === "confirm_new_password" && data["confirm_password"]?.length) {
+  if (property === "confirm_new_password" && data["confirm_password"]?.trim().length) {
     if (data["confirm_new_password"] !== data["new_password"]) {
       errors["confirm_new_password"] = "Password does not match. Please make sure they match.";
     } else {
@@ -122,7 +119,7 @@ const inputValidation = (data, property, selectFields = []) => {
 export const passwordCheck = (password) => {
   if (password.length < 8) return "Password must have minimum of 8 characters.";
   const regex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z])(?=.*[^\w\d\s]).{8,}$/;
-  if (!regex.test(password)) return "Your password is incorrect. Please try again";
+  if (!regex.test(password)) return "Password must include at least 8 characters, with at least one uppercase letter, one lowercase letter, one number, and one special character.";
 };
 export const ValidateEmailAddress = (emailString) => {
   if (!emailString) return "Please enter email";
@@ -145,6 +142,7 @@ export const FormC = ({ values, removeValidValue, onSubmit, onSubmitError, selec
     e?.preventDefault();
     const data = removeFormValidation(stateParam);
     const error = validation(data, selectFields);
+
     setErr(error);
     if (!Object?.keys(error)?.length) {
       setErr({});
@@ -164,6 +162,15 @@ export const FormC = ({ values, removeValidValue, onSubmit, onSubmitError, selec
     }
   };
   const handleNewError = (error) => {
+    if (Object.keys(error)?.length) {
+      const firstKey = Object.keys(error)[0];
+      const input = document.querySelector(`input[name=${firstKey}]`) || document.querySelector(`select[name=${firstKey}]`);
+      input?.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+        inline: "nearest",
+      });
+    }
     setErr({ ...error });
   };
   const handleBlur = (e) => {
@@ -236,7 +243,6 @@ export const FormC = ({ values, removeValidValue, onSubmit, onSubmitError, selec
     if (isSubmit) {
       removeAllError()
     }
-    console.log("values==>", values);
 
     let errors = { ...err }
 
@@ -289,27 +295,27 @@ export const FormC = ({ values, removeValidValue, onSubmit, onSubmitError, selec
     }
 
     // check for consecutive elements in array, that stores time slots
-    for (let i = 0; i < values.schedule.length; i++) {
-      const slot1Start = moment(values.schedule[i].start_time, "HH:mm")
-      const slot1End = moment(values.schedule[i].end_time, "HH:mm")
+    // for (let i = 0; i < values.schedule.length; i++) {
+    //   const slot1Start = moment(values.schedule[i].start_time, "HH:mm")
+    //   const slot1End = moment(values.schedule[i].end_time, "HH:mm")
 
-      if (slot1End.isBefore(slot1Start) || slot1End.isSame(slot1Start)) {
-        errors["schedule"][i].start_time = "Start time must be before end time."
-      }
+    //   if (slot1End.isBefore(slot1Start) || slot1End.isSame(slot1Start)) {
+    //     errors["schedule"][i].start_time = "Start time must be before end time."
+    //   }
 
-      if (i === values.schedule.length - 1) {
-        break;
-      }
+    //   if (i === values.schedule.length - 1) {
+    //     break;
+    //   }
 
-      const slot2Start = moment(values.schedule[i + 1].start_time, "HH:mm")
-      const slot2End = moment(values.schedule[i + 1].end_time, "HH:mm")
+    //   const slot2Start = moment(values.schedule[i + 1].start_time, "HH:mm")
+    //   const slot2End = moment(values.schedule[i + 1].end_time, "HH:mm")
 
-      if (slot1End.isAfter(slot2Start)) {
-        errors.schedule[i].end_time = "Time slot overlaps with another entry.";
-        errors.schedule[i + 1].start_time = "Time slot overlaps with another entry.";
-      }
+    //   if (slot1End.isAfter(slot2Start)) {
+    //     errors.schedule[i].end_time = "Time slot overlaps with another entry.";
+    //     errors.schedule[i + 1].start_time = "Time slot overlaps with another entry.";
+    //   }
 
-    }
+    // }
 
     // Loop through all schedule object and check if any error is present, if not remove that object.
     let errorPresent = false
@@ -393,29 +399,6 @@ export const FormC = ({ values, removeValidValue, onSubmit, onSubmitError, selec
         }
       }
 
-      // check for consecutive elements in array, that stores time slots
-      for (let i = 0; i < schedule.length; i++) {
-        const slot1Start = moment(schedule[i].start_time, "HH:mm");
-        const slot1End = moment(schedule[i].end_time, "HH:mm");
-
-        if (slot1End.isBefore(slot1Start) || slot1End.isSame(slot1Start)) {
-          errors.schedule[day][i].start_time = "Start time must be before end time.";
-        }
-
-        if (i === schedule.length - 1) {
-          break;
-        }
-
-        const slot2Start = moment(schedule[i + 1].start_time, "HH:mm");
-        const slot2End = moment(schedule[i + 1].end_time, "HH:mm");
-
-        if (slot1End.isAfter(slot2Start)) {
-          errors.schedule[day][i].end_time = "Time slot overlaps with another entry.";
-          errors.schedule[day][i + 1].start_time = "Time slot overlaps with another entry.";
-        }
-      }
-
-      // Loop through all schedule object and check if any error is present, if not remove that object.
       let errorPresent = false;
       for (let i = 0; i < errors.schedule[day].length; i++) {
         if (Object.keys(errors.schedule[day][i]).length > 0) {
@@ -437,8 +420,15 @@ export const FormC = ({ values, removeValidValue, onSubmit, onSubmitError, selec
 
     setErr(errors);
 
-    if (Object.values(errors.schedule).every(item => item.length === 0) && isSubmit && !errors.school && !errors.class) {
+    if (Object.keys(errors).length === 0 && isSubmit) {
       onSubmit();
+      return
+    }
+
+    if (errors?.schedule) {
+      if (Object.values(errors?.schedule).every(item => item.length === 0) && isSubmit && !errors.school && !errors.class) {
+        onSubmit();
+      }
     }
   }
 

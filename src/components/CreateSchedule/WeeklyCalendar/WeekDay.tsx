@@ -53,6 +53,8 @@ type Props = {
   errors: any;
   replicateDay: (replicateTo: string, replicateFrom: string) => void;
   isEditMode: boolean;
+  disableEdit: boolean;
+  allowLastEntryDelete: boolean;
 };
 
 const WeekDay: React.FC<Props> = ({
@@ -65,27 +67,11 @@ const WeekDay: React.FC<Props> = ({
   teachers,
   replicateDay,
   isEditMode,
+  dateState = [],
+  disableEdit,
+  allowLastEntryDelete,
 }) => {
-  let disableAddingMore =
-    !!errors?.length ||
-    !schedule[schedule.length - 1]?.start_time ||
-    !schedule[schedule.length - 1]?.end_time ||
-    !schedule[schedule.length - 1]?.teacher ||
-    !schedule[schedule.length - 1]?.subject;
-
-  if (schedule.length === 0) {
-    disableAddingMore = false;
-  }
-
   const [showModal, setShowModal] = useState(false);
-
-  const handleAddMore = () => {
-    if (disableAddingMore) {
-      setShowModal(true);
-    } else {
-      addItem();
-    }
-  };
 
   return (
     <>
@@ -96,7 +82,7 @@ const WeekDay: React.FC<Props> = ({
         >
           <h4>{day}</h4>
           <button
-            onClick={handleAddMore}
+            onClick={addItem}
             style={{
               width: "1.875rem",
               height: "1.875rem",
@@ -106,13 +92,17 @@ const WeekDay: React.FC<Props> = ({
               cursor: "pointer",
             }}
             type="button"
+            disabled={disableEdit}
           >
             <PlusCircleIcon />
           </button>
         </div>
 
-        {day !== "Monday" && !isEditMode && (
-          <TextButton onClick={() => replicateDay(day, previousDay(day))}>
+        {day !== "Monday" && (
+          <TextButton
+            disabled={disableEdit}
+            onClick={() => replicateDay(day, previousDay(day))}
+          >
             Same as {previousDay(day)}
           </TextButton>
         )}
@@ -121,6 +111,7 @@ const WeekDay: React.FC<Props> = ({
 
         {schedule.map((item, index) => (
           <TimeEntry
+            dateArray={{ schedule: dateState }}
             key={index}
             start_time={item.start_time}
             end_time={item.end_time}
@@ -134,6 +125,8 @@ const WeekDay: React.FC<Props> = ({
             errors={errors?.[index]}
             teachers={teachers}
             minStartTime={index > 0 ? schedule[index - 1].end_time : undefined}
+            disabled={disableEdit}
+            allowLastEntryDelete={allowLastEntryDelete}
           />
         ))}
         <hr />

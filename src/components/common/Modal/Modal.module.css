@@ -44,6 +44,12 @@
 }
 
 .confirmButton {
-    background-color: #007bff;
+    background-color: var(--primary-color);
     color: white;
 }
+
+.errorButton {
+    background-color: var(--danger-color);
+    color: white;
+}
+

@@ -3,7 +3,7 @@ import DataTable from "../../components/common/DataTable/DataTable";
 import styles from "../../styles/Listing.module.css";
 import Button from "../../components/common/Button/Button";
 import { useNavigate } from "react-router-dom";
-import { DeleteIcon, EditIcon } from "../../assets/svgs";
+import { CrossIcon, EditIcon, TickIcon } from "../../assets/svgs";
 import { useEffect, useState } from "react";
 import Fetch from "../../utils/form-handling/fetch";
 import { useToast } from "../../contexts/Toast";
@@ -13,20 +13,26 @@ import Tooltip from "../../components/common/ToolTip/ToolTip";
 function Teachers() {
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState<"listing" | "delete" | "">("");
-  const [showModal, setShowModal] = useState(false);
+  const [showModal, setShowModal] = useState("");
   const [itemToDelete, setItemToDelete] = useState("");
   const navigate = useNavigate();
   const toast = useToast();
 
   const showToast = () => {
-    toast.show("Teacher deleted successfully", 2000, "#4CAF50");
+    toast.show(
+      `Teacher ${
+        showModal === "activate" ? "activated" : "deactivated"
+      } successfully`,
+      2000,
+      "#4CAF50"
+    );
   };
 
   const getData = () => {
     setIsLoading("listing");
-    Fetch("teachers/").then((res: any) => {
+    Fetch("teachers/?limit=40&offset=0").then((res: any) => {
       if (res.status) {
-        setData(res.data.results);
+        setData(res.data);
       }
       setIsLoading("");
     });
@@ -40,7 +46,7 @@ function Teachers() {
           getData();
           showToast();
         }
-        setShowModal(false);
+        setShowModal("");
         setIsLoading("listing");
       }
     );
@@ -54,9 +60,9 @@ function Teachers() {
     getData();
   }, []);
 
-  const handleDeleteRequest = (id: string) => {
+  const handleDeleteRequest = (id: string, type: string) => {
     setItemToDelete(id);
-    setShowModal(true);
+    setShowModal(type);
   };
 
   const columns = [
@@ -67,11 +73,16 @@ function Teachers() {
         `${item?.first_name || ""} ${item?.last_name || ""}`,
     },
     {
+      key: "school_name",
+      header: "School",
+      render: (item: any) => `${item?.school?.name}`,
+    },
+    {
       key: "email",
       header: "Email",
       render: (item: any) => <a href={`mailto:${item.email}`}>{item.email}</a>,
     },
-    { key: "phone_number", header: "Phone" },
+    { key: "phone", header: "Phone" },
     { key: "teacher_code", header: "Teacher Code" },
     { key: "gender", header: "Gender" },
     {
@@ -89,16 +100,23 @@ function Teachers() {
             </button>
           </Tooltip>
 
-          <Tooltip text="Delete">
+          <Tooltip text={item?.status !== "Active" ? "Activate" : "Deactivate"}>
             <button
               style={{
                 border: "none",
                 background: "none",
                 cursor: "pointer",
+                width: "1.8rem",
+                height: "1.8rem",
               }}
-              onClick={() => handleDeleteRequest(item?.id)}
+              onClick={() =>
+                handleDeleteRequest(
+                  item?.id,
+                  item?.status !== "Active" ? "activate" : "deactivate"
+                )
+              }
             >
-              <DeleteIcon size={20} color="#d32f2f" />
+              {item?.status === "Active" ? <CrossIcon /> : <TickIcon />}
             </button>
           </Tooltip>
         </div>
@@ -111,7 +129,7 @@ function Teachers() {
 
   const handleCancel = () => {
     setItemToDelete("");
-    setShowModal(false);
+    setShowModal("");
   };
 
   return (
@@ -138,10 +156,10 @@ function Teachers() {
       </div>
       <Modal
         title="Confirm!"
-        message="Are you sure you want to delete this item?"
+        message={`Are you sure you want to ${showModal} this teacher?`}
         onConfirm={handleDelete}
         onCancel={handleCancel}
-        visible={showModal}
+        visible={!!showModal}
         isLoading={isLoading === "delete"}
         primaryButtonVariant="danger"
       />

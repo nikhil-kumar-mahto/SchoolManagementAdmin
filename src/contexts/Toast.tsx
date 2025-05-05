@@ -16,29 +16,30 @@ const ToastProvider: React.FC<ToastProviderProps> = ({ children }) => {
     null
   );
   const [visible, setVisible] = useState(false);
-  const [progress, setProgress] = useState(0);
+  const [progressStyle, setProgressStyle] = useState({
+    width: "0%",
+    transition: "none",
+  });
 
   const show = (message: string, duration = 3000, color = "#333") => {
     setToast({ message, color });
     setVisible(true);
-    setProgress(0);
 
-    const interval = 10;
-    const step = 100 / (duration / interval);
+    // Reset progress bar
+    setProgressStyle({ width: "0%", transition: "none" });
 
-    const progressInterval = setInterval(() => {
-      setProgress((prev) => {
-        const next = prev + step;
-        if (next >= 100) {
-          clearInterval(progressInterval);
-        }
-        return next;
+    // Trigger the progress bar animation
+    setTimeout(() => {
+      setProgressStyle({
+        width: "100%",
+        transition: `width ${duration}ms linear`,
       });
-    }, interval);
+    }, 10); // Small delay to ensure the style update is applied
 
+    // Automatically hide the toast after the duration
     setTimeout(() => {
       setVisible(false);
-      setProgress(0);
+      setProgressStyle({ width: "0%", transition: "none" });
     }, duration);
   };
 
@@ -51,10 +52,7 @@ const ToastProvider: React.FC<ToastProviderProps> = ({ children }) => {
           style={{ backgroundColor: toast?.color }}
         >
           {toast?.message}
-          <div
-            className="toast-progress-bar"
-            style={{ width: `${progress}%` }}
-          ></div>
+          <div className="toast-progress-bar" style={progressStyle}></div>
         </div>,
         document.body
       )}

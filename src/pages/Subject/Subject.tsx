@@ -24,9 +24,9 @@ function Subject() {
 
   const getData = () => {
     setIsLoading("listing");
-    Fetch("subjects/").then((res: any) => {
+    Fetch("subjects/?limit=40&offset=0").then((res: any) => {
       if (res.status) {
-        setData(res.data.results);  
+        setData(res.data?.results);
       }
       setIsLoading("");
     });
@@ -132,7 +132,7 @@ function Subject() {
         onCancel={handleCancel}
         visible={showModal}
         isLoading={isLoading === "delete"}
-        primaryButtonVariant="danger" 
+        primaryButtonVariant="danger"
       />
     </Layout>
   );

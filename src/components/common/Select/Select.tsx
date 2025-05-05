@@ -15,6 +15,7 @@ interface SelectProps {
   tabIndex?: number | undefined;
   name?: string | undefined;
   searchable?: boolean;
+  allowEmpty?: boolean;
 }
 
 function Select({
@@ -30,26 +31,27 @@ function Select({
   tabIndex = undefined,
   name = undefined,
   searchable = false,
+  allowEmpty = true,
 }: SelectProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [filteredOptions, setFilteredOptions] = useState(options);
+  const [filteredOptions, setFilteredOptions] = useState(options || []);
   const [focusedIndex, setFocusedIndex] = useState(-1);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const optionsRef = useRef<(HTMLDivElement | null)[]>([]);
 
   const isValueInOptions =
-    options.some((option) => option.value === value) ?? false;
-  const selectedOption = options.find((option) => option.value === value);
+    options?.some((option) => option.value === value) ?? false;
+  const selectedOption = options?.find((option) => option.value === value);
 
   useEffect(() => {
-    optionsRef.current = Array(filteredOptions.length).fill(null);
-  }, [filteredOptions.length]);
+    optionsRef.current = Array(filteredOptions?.length).fill(null);
+  }, [filteredOptions?.length]);
 
   useEffect(() => {
     setFilteredOptions(
-      options.filter((option) =>
+      options?.filter((option) =>
         option.label.toLowerCase().includes(searchTerm.toLowerCase())
       )
     );
@@ -136,7 +138,18 @@ function Select({
     setIsOpen(false);
     setSearchTerm("");
     setFocusedIndex(-1);
-    inputRef.current?.focus();
+    if (inputRef.current) {
+      const selectedLabel =
+        options.find((opt) => opt.value === optionValue)?.label || "";
+      inputRef.current.value = selectedLabel;
+    }
+  };
+
+  const toggleDropdown = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!disabled) {
+      setIsOpen(!isOpen);
+    }
   };
 
   if (!searchable) {
@@ -159,13 +172,16 @@ function Select({
           tabIndex={tabIndex}
           name={name}
         >
-          <option value="">{placeholder}</option>
+          {/* {allowEmpty && <option value="">{placeholder}</option>} */}
+          <option value="" disabled={!allowEmpty}>
+            {placeholder}
+          </option>
           {type === "time" && !isValueInOptions && value && (
             <option value={value} disabled>
               {moment(value, "HH:mm").format("hh:mm A")}
             </option>
           )}
-          {options.map((option, index) => (
+          {options?.map((option, index) => (
             <option key={index} value={option.value} style={{ color: "#333" }}>
               {option.label}
             </option>
@@ -214,10 +230,7 @@ function Select({
           aria-controls="options-listbox"
           role="combobox"
         />
-        <div
-          className={styles.dropdownIcon}
-          onClick={() => !disabled && setIsOpen(!isOpen)}
-        >
+        <div className={styles.dropdownIcon} onClick={toggleDropdown}>
           <svg viewBox="0 0 24 24" fill="#333">
             <path d="M7 10l5 5 5-5z" />
           </svg>
@@ -238,7 +251,10 @@ function Select({
                   className={`${styles.option} 
                     ${option.value === value ? styles.selectedOption : ""} 
                     ${index === focusedIndex ? styles.focusedOption : ""}`}
-                  onClick={() => selectOption(option.value)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    selectOption(option.value);
+                  }}
                   role="option"
                   aria-selected={option.value === value}
                   tabIndex={-1}

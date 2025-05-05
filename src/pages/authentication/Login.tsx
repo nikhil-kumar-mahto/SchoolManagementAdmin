@@ -45,9 +45,15 @@ const LoginScreen: React.FC = () => {
   const onSubmit = () => {
     localStorage.clear();
     setIsLoading(true);
-    Fetch("login/", 
-      {phone_number_or_email: data.username, password: data.password, phone_number_prefix: data.country_code}, 
-      { method: "post" }).then((res: any) => {
+    Fetch(
+      "login/",
+      {
+        phone_number_or_email: data.username,
+        phone_number_prefix: "+91",
+        password: data.password,
+      },
+      { method: "post" }
+    ).then((res: any) => {
       if (res.status) {
         const { access, refresh } = res.data;
         localStorage.setItem("token", access);
@@ -79,13 +85,13 @@ const LoginScreen: React.FC = () => {
             <h2 className="login-title mb-2">Sign In</h2>
             <p className="login-desc mb-4">Enter your email to sign in</p>
 
-            <Select
+            {/* <Select
               options={countryCodes}
               value={data.country_code}
               onChange={(value: string) => handleSelectChange(value)}
               label="Select country code"
-              searchable
-            />
+              searchable={true}
+            /> */}
 
             <Input
               label="Email*"
@@ -112,6 +118,14 @@ const LoginScreen: React.FC = () => {
 
             {errors?.non_field_errors && (
               <p className="error">{errors?.non_field_errors}</p>
+            )}
+
+            {errors?.unauthorized && (
+              <p className="error">{errors?.unauthorized}</p>
+            )}
+
+            {errors?.internalServerError && (
+              <p className="error">{errors?.internalServerError}</p>
             )}
 
             <Button

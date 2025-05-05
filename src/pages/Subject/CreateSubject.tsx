@@ -24,7 +24,7 @@ const CreateSchool: React.FC<Props> = () => {
 
   const { getSubjects } = useAppContext();
 
-  const showToast = (message: string) => {
+  const  showToast = (message: string) => {
     toast.show(message, 2000, "#4CAF50");
   };
 
@@ -96,7 +96,7 @@ const CreateSchool: React.FC<Props> = () => {
                 name="name"
                 value={data.name}
                 onChange={handleChange}
-                placeholder="Enter subject's name"
+                placeholder="Enter subject name"
                 error={errors?.name}
               />
             </div>
@@ -104,6 +104,14 @@ const CreateSchool: React.FC<Props> = () => {
 
           {errors?.non_field_errors && (
             <p className="error">{errors?.non_field_errors}</p>
+          )}
+
+          {errors?.unauthorized && (
+            <p className="error">{errors?.unauthorized}</p>
+          )}
+
+          {errors?.internalServerError && (
+            <p className="error">{errors?.internalServerError}</p>
           )}
 
           <div className={styles.buttonContainer}>

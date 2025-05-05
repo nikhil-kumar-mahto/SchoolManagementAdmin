@@ -12,6 +12,7 @@ import { useToast } from "../../contexts/Toast";
 import Button from "../../components/common/Button/Button";
 import { useAppContext } from "../../contexts/AppContext";
 import Modal from "../../components/common/Modal/Modal";
+import FullPageLoader from "../../components/common/FullPageLoader/FullPageLoader";
 
 type Day =
   | "Monday"
@@ -67,6 +68,9 @@ const ScheduleManagement: React.FC = () => {
   const [showEmptyStateModal, setShowEmptyStateModal] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [isValidated, setIsValidated] = useState(false);
+  const [disableEdit, setDisableEdit] = useState(false);
+  const [showNoTeacherModal, setNoTeacherModal] = useState("");
+
   const [parameters, setParamaters] = useState({});
   const [searchParams, setSearchParams] = useSearchParams({});
   const [commonInfo, setCommonInfo] = useState({
@@ -75,15 +79,14 @@ const ScheduleManagement: React.FC = () => {
   });
 
   const { id } = useParams();
-
+  const navigate = useNavigate();
   const toast = useToast();
+
   const { schools, subjects } = useAppContext();
 
-  const showToast = (message: string, status: "success" | "danger") => {
+  const showToast = (message: string) => {
     toast.show(message, 2000, "#4CAF50");
   };
-
-  const navigate = useNavigate();
 
   const convertToDayState = (data: any[]) => {
     const result: Record<string, (typeof emptyObj)[]> = {
@@ -109,11 +112,11 @@ const ScheduleManagement: React.FC = () => {
       }
     });
 
-    Object.keys(result).forEach((day) => {
-      if (result[day].length === 0) {
-        delete result[day];
-      }
-    });
+    // Object.keys(result).forEach((day) => {
+    //   if (result[day].length === 0) {
+    //     delete result[day];
+    //   }
+    // });
 
     return result;
   };
@@ -135,23 +138,29 @@ const ScheduleManagement: React.FC = () => {
   };
 
   const getScheduleInfo = () => {
+    setIsLoading("full-page-loader");
     Fetch(`schedule/${id}`).then((res: any) => {
       if (res.status) {
         let classes = schools
-          .find((item) => item?.value === res?.data?.school)
+          .find((item) => item?.value === res?.data?.school?.id)
           ?.classes?.map((item) => ({
             label: item?.name + " " + item?.section,
             value: item?.id,
           }));
 
-        console.log("classes===", classes);
+        if (
+          res?.data?.time_slots?.length > 0 &&
+          res?.data?.time_slots[0]?.is_deleted
+        ) {
+          setDisableEdit(true);
+        }
 
         setClasses(classes || []);
         setCommonInfo({
-          school: res?.data?.school,
-          class_assigned: res?.data?.sch_class,
+          school: res?.data?.school?.id,
+          class_assigned: res?.data?.sch_class?.id,
         });
-        getTeachers(res?.data?.school);
+        getTeachers(res?.data?.school?.id);
         if (res?.data?.time_slots[0]?.day_of_week) {
           // set state for week
           setViewMode("day");
@@ -162,19 +171,22 @@ const ScheduleManagement: React.FC = () => {
           setDateState(convertToDateState(res?.data) as any);
         }
       }
+      setIsLoading("");
     });
   };
 
   const getTeachers = (id: string) => {
     setTeachers([]);
-    Fetch(`list-teachers/?school_id=${id}`).then((res: any) => {
+    Fetch(`list-teachers/${id}/`).then((res: any) => {
       if (res.status) {
-        let teachers = res.data?.map((item: { name: string; id: string }) => {
-          return {
-            label: item?.first_name + " " + item?.last_name,
-            value: item?.id,
-          };
-        });
+        let teachers = res.data?.results?.map(
+          (item: { name: string; id: string }) => {
+            return {
+              label: item?.name,
+              value: item?.id,
+            };
+          }
+        );
         setTeachers(teachers);
       }
     });
@@ -374,20 +386,42 @@ const ScheduleManagement: React.FC = () => {
       (res: any) => {
         if (res.status) {
           showToast(
-            id
-              ? "Schedule updated successfully"
-              : "Schedule added successfully",
-            "success"
+            id ? "Schedule updated successfully" : "Schedule added successfully"
           );
           navigate("/schedule");
         } else {
           let resErr = arrayString(res);
           handleNewError(resErr);
+
+          if (resErr?.is_conflict) {
+            setNoTeacherModal(resErr?.message);
+          }
         }
         setIsLoading("");
         setShowModal(false);
       }
     );
+  };
+
+  const getDayNumber = (day: string): number | undefined => {
+    switch (day) {
+      case "Monday":
+        return 0;
+      case "Tuesday":
+        return 1;
+      case "Wednesday":
+        return 2;
+      case "Thursday":
+        return 3;
+      case "Friday":
+        return 4;
+      case "Saturday":
+        return 5;
+      case "Sunday":
+        return 6;
+      default:
+        return undefined;
+    }
   };
 
   const convertForm = (obj: any) => {
@@ -398,11 +432,8 @@ const ScheduleManagement: React.FC = () => {
         time_slots: Object.entries(obj.time_slots).reduce(
           (acc, [day, daySlots]) => {
             let slots = [...daySlots];
-            // if (id) {
-            //   slots = slots.filter((item) => item.isEdited === true);
-            // }
             const slotsForDay = slots.map((slot) => ({
-              day_of_week: day,
+              day_of_week: getDayNumber(day),
               start_time: slot.start_time,
               end_time: slot.end_time,
               teacher: slot.teacher,
@@ -422,9 +453,6 @@ const ScheduleManagement: React.FC = () => {
       return object;
     } else {
       let slots = [...obj?.time_slots];
-      // if (id) {
-      //   slots = slots.filter((item) => item?.isEdited === true);
-      // }
       let object = {
         school: obj.school,
         sch_class: obj.class_assigned,
@@ -440,26 +468,6 @@ const ScheduleManagement: React.FC = () => {
         }),
       };
       return object;
-    }
-  };
-
-  const checkDataPresent = () => {
-    if (id) {
-      // allow empty slots in update mode so that user can delete slots
-      return false;
-    }
-    if (viewMode === "date") {
-      if (dateState.schedule.length === 0) {
-        return true;
-      }
-    } else {
-      let isEmpty = true;
-      Object.entries(dayState).forEach(([key, value]) => {
-        if (value.length > 0) {
-          isEmpty = false;
-        }
-      });
-      return isEmpty;
     }
   };
 
@@ -537,7 +545,8 @@ const ScheduleManagement: React.FC = () => {
       return {
         ...prevState,
         [replicateTo]: prevState[replicateFrom].map((item) => {
-          return { ...item, isEdited: id ? true : false };
+          const { id, ...rest } = item;
+          return { ...rest, isEdited: true };
         }),
       };
     });
@@ -573,16 +582,21 @@ const ScheduleManagement: React.FC = () => {
     Fetch(`time-slot/${deleteId}/`, {}, { method: "delete" }).then(
       (res: any) => {
         if (res.status) {
-          showToast("Slot deleted successfully", "danger");
+          showToast("Slot deleted successfully");
           setDeleteId(null);
 
           if (viewMode === "day") {
             let slotsPresent = 0;
-            Object.values(dayState).forEach((item) => {
-              if (!!item?.length) {
+
+            for (const item of Object.values(dayState)) {
+              for (let i = 0; i < item.length; i++) {
                 slotsPresent++;
               }
-            });
+
+              if (slotsPresent > 1) {
+                break;
+              }
+            }
 
             if (slotsPresent === 1) {
               navigate("/schedule");
@@ -615,186 +629,228 @@ const ScheduleManagement: React.FC = () => {
     );
   };
 
+  const allowLastEntryDelete = () => {
+    let count = 0;
+    Object.entries(dayState).forEach(([key, value]) => {
+      count += value?.length;
+    });
+
+    if (id) {
+      return true;
+    }
+
+    if (count === 1) {
+      return false;
+    }
+
+    return true;
+  };
+
   return (
     <Layout>
-      <form
-        action=""
-        onSubmit={() => {
-          if (viewMode === "date") {
-            handleDateTimeSlots(
-              {
-                ...dateState,
+      {isLoading === "full-page-loader" ? (
+        <FullPageLoader visible={true} />
+      ) : (
+        <form
+          action=""
+          onSubmit={() => {
+            if (viewMode === "date") {
+              handleDateTimeSlots(
+                {
+                  ...dateState,
+                  school: commonInfo.school,
+                  class: commonInfo.class_assigned,
+                },
+                true
+              );
+            } else {
+              handleWeekTimeSlots({
+                ...dayState,
                 school: commonInfo.school,
                 class: commonInfo.class_assigned,
-              },
-              true
-            );
-          } else {
-            handleWeekTimeSlots({
-              ...dayState,
-              school: commonInfo.school,
-              class: commonInfo.class_assigned,
-            });
-          }
-        }}
-      >
-        <div className={styles.container}>
-          <h2>{id ? "Update" : "Create"} Schedule</h2>
-          <div className={`${styles.selectContainer} mt-4`}>
-            <Select
-              label="Select school*"
-              options={schools}
-              value={commonInfo?.school}
-              onChange={(value: string) =>
-                handlecommonInfoChange(value, "school")
-              }
-              error={errors?.school}
-              disabled={id ? true : false}
-            />
+              });
+            }
+          }}
+        >
+          <div className={styles.container}>
+            <h2>
+              {id ? (disableEdit ? "Deleted" : "Update") : "Create"} Schedule
+            </h2>
+            <div className={`${styles.selectContainer} mt-4`}>
+              <Select
+                label="Select school*"
+                options={schools}
+                value={commonInfo?.school}
+                onChange={(value: string) =>
+                  handlecommonInfoChange(value, "school")
+                }
+                error={errors?.school}
+                disabled={id ? true : false}
+              />
 
-            <Select
-              label="Select class*"
-              options={classes}
-              value={commonInfo.class_assigned}
-              onChange={(value: string) =>
-                handlecommonInfoChange(value, "class_assigned")
-              }
-              error={errors?.class}
-              disabled={id ? true : false}
-            />
-          </div>
+              <Select
+                label="Select class*"
+                options={classes}
+                value={commonInfo.class_assigned}
+                onChange={(value: string) =>
+                  handlecommonInfoChange(value, "class_assigned")
+                }
+                error={errors?.class}
+                disabled={id ? true : false}
+              />
+            </div>
 
-          <div className={`${styles.viewToggle} mt-3`}>
-            <button
-              disabled={id ? true : false}
-              type="button"
-              className={`${styles.toggleButton} ${
-                viewMode === "date" ? styles.active : ""
-              }`}
-              onClick={() => changeViewMode("date")}
-            >
-              Date
-            </button>
-            <button
-              disabled={id ? true : false}
-              type="button"
-              className={`${styles.toggleButton} ${
-                viewMode === "day" ? styles.active : ""
-              }`}
-              onClick={() => changeViewMode("day")}
-            >
-              Week
-            </button>
-          </div>
+            <div className={`${styles.viewToggle} mt-3`}>
+              <button
+                disabled={id ? true : false}
+                type="button"
+                className={`${styles.toggleButton} ${
+                  viewMode === "date" ? styles.active : ""
+                }`}
+                onClick={() => changeViewMode("date")}
+              >
+                Date
+              </button>
+              <button
+                disabled={id ? true : false}
+                type="button"
+                className={`${styles.toggleButton} ${
+                  viewMode === "day" ? styles.active : ""
+                }`}
+                onClick={() => changeViewMode("day")}
+              >
+                Week
+              </button>
+            </div>
 
-          {viewMode === "day" ? (
-            <>
-              {Object.entries(dayState).map(([key, value]) => (
-                <WeekDay
-                  key={key}
-                  day={key}
-                  schedule={value}
-                  addItem={() => addItem("day", key as Day)}
-                  handleChange={(
-                    index: number,
-                    type: "start_time" | "end_time" | "subject" | "teacher",
-                    value: string,
-                    id = undefined
-                  ) => handleChange(key as Day, index, type, value, id)}
-                  handleDelete={(index: number, id = undefined) => {
-                    if (id) {
-                      setDeleteId(id);
+            {viewMode === "day" ? (
+              <>
+                {Object.entries(dayState).map(([key, value]) => (
+                  <WeekDay
+                    dateState={dayState[key]}
+                    key={key}
+                    day={key}
+                    schedule={value}
+                    addItem={() => addItem("day", key as Day)}
+                    handleChange={(
+                      index: number,
+                      type: "start_time" | "end_time" | "subject" | "teacher",
+                      value: string,
+                      id = undefined
+                    ) => handleChange(key as Day, index, type, value, id)}
+                    handleDelete={(index: number, id = undefined) => {
+                      if (id) {
+                        setDeleteId(id);
+                      } else {
+                        handleDelete(index, "day", key as Day, id);
+                      }
+                    }}
+                    errors={errors?.schedule?.[key]}
+                    teachers={teachers}
+                    replicateDay={replicateDay}
+                    isEditMode={!!id}
+                    disableEdit={disableEdit}
+                    allowLastEntryDelete={allowLastEntryDelete()}
+                  />
+                ))}
+              </>
+            ) : (
+              <DateSchedule
+                dateState={dateState}
+                handleChange={(value: string, type: string) => {
+                  setDateState((prevState) => {
+                    return {
+                      ...prevState,
+                      [type]: value,
+                    };
+                  });
+                  handleDateTimeSlots({
+                    ...commonInfo,
+                    ...dateState,
+                    [type]: value,
+                  });
+                }}
+                handleTimeChange={(
+                  index: number,
+                  type: "start_time" | "end_time" | "subject" | "teacher",
+                  value: string,
+                  id = undefined
+                ) => handleTimeChange(index, type, value, id)}
+                teachers={teachers}
+                subjects={subjects}
+                errors={errors}
+                schedule={dateState.schedule}
+                addItem={() => addItem("date")}
+                handleDelete={(index: number, id = undefined) => {
+                  if (id) {
+                    setDeleteId(id);
+                  } else {
+                    handleDelete(index, "date", "", id);
+                  }
+                }}
+                isEditMode={!!id}
+                disableEdit={disableEdit}
+              />
+            )}
+
+            {errors?.non_field_errors && (
+              <p className="error">{errors?.non_field_errors}</p>
+            )}
+
+            {errors?.unauthorized && (
+              <p className="error">{errors?.unauthorized}</p>
+            )}
+
+            {errors?.internalServerError && (
+              <p className="error">{errors?.internalServerError}</p>
+            )}
+
+            {!disableEdit && (
+              <div className={styles.buttonContainer}>
+                <Button
+                  text="Cancel"
+                  type="outline"
+                  onClick={navigateBack}
+                  className="mt-2 mr-4"
+                  style={{ width: "8rem" }}
+                />
+                <Button
+                  text={id ? "Update" : "Submit"}
+                  onClick={() => {
+                    if (viewMode === "date") {
+                      handleDateTimeSlots(
+                        {
+                          ...dateState,
+                          school: commonInfo.school,
+                          class: commonInfo.class_assigned,
+                        },
+                        true
+                      );
                     } else {
-                      handleDelete(index, "day", key as Day, id);
+                      handleWeekTimeSlots(
+                        {
+                          ...dayState,
+                          school: commonInfo.school,
+                          class: commonInfo.class_assigned,
+                        },
+                        true
+                      );
                     }
                   }}
-                  errors={errors?.schedule?.[key]}
-                  teachers={teachers}
-                  replicateDay={replicateDay}
-                  isEditMode={!!id}
+                  className="mt-2"
+                  isLoading={isLoading === "button"}
+                  style={{ width: "8rem" }}
                 />
-              ))}
-            </>
-          ) : (
-            <DateSchedule
-              dateState={dateState}
-              handleChange={(value: string, type: string) => {
-                setDateState((prevState) => {
-                  return {
-                    ...prevState,
-                    [type]: value,
-                  };
-                });
-                handleDateTimeSlots({
-                  ...commonInfo,
-                  ...dateState,
-                  [type]: value,
-                });
-              }}
-              handleTimeChange={(
-                index: number,
-                type: "start_time" | "end_time" | "subject" | "teacher",
-                value: string,
-                id = undefined
-              ) => handleTimeChange(index, type, value, id)}
-              teachers={teachers}
-              subjects={subjects}
-              errors={errors}
-              schedule={dateState.schedule}
-              addItem={() => addItem("date")}
-              handleDelete={(index: number, id = undefined) => {
-                if (id) {
-                  setDeleteId(id);
-                } else {
-                  handleDelete(index, "date", "", id);
-                }
-              }}
-              isEditMode={!!id}
-            />
-          )}
-
-          <div className={styles.buttonContainer}>
-            <Button
-              text="Cancel"
-              type="outline"
-              onClick={navigateBack}
-              className="mt-2 mr-4"
-              style={{ width: "8rem" }}
-            />
-            <Button
-              text={id ? "Update" : "Submit"}
-              onClick={() => {
-                if (viewMode === "date") {
-                  handleDateTimeSlots(
-                    {
-                      ...dateState,
-                      school: commonInfo.school,
-                      class: commonInfo.class_assigned,
-                    },
-                    true
-                  );
-                } else {
-                  handleWeekTimeSlots(
-                    {
-                      ...dayState,
-                      school: commonInfo.school,
-                      class: commonInfo.class_assigned,
-                    },
-                    true
-                  );
-                }
-              }}
-              className="mt-2"
-              isLoading={isLoading === "button"}
-              style={{ width: "8rem" }}
-            />
+              </div>
+            )}
           </div>
-        </div>
-      </form>
+        </form>
+      )}
+
       <Modal
         title="Confirm!"
         message={
-          "Are you sure you want to override your previously added slots?"
+          "Are you sure you want to override your previous existing schedule?"
         }
         onConfirm={() => handleApiCall(parameters)}
         onCancel={() => setShowModal(false)}
@@ -815,6 +871,17 @@ const ScheduleManagement: React.FC = () => {
         onCancel={() => setDeleteId(null)}
         visible={!!deleteId}
         isLoading={isLoading === "delete-modal"}
+        primaryButtonVariant="danger"
+      />
+      <Modal
+        title="Alert!"
+        message={showNoTeacherModal}
+        onConfirm={() => {
+          setNoTeacherModal("");
+          removeAllError();
+        }}
+        confirmText="OK"
+        visible={!!showNoTeacherModal}
       />
     </Layout>
   );

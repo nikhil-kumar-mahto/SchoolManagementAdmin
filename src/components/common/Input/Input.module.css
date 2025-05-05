@@ -85,6 +85,17 @@
     cursor: pointer;
 }
 
-.input.withIconRight {
-    padding-right: 3.5rem;
+.disabled {
+    background-color: #f5f5f5; 
+    color: #a0a0a0;            
+    cursor: not-allowed;
+}
+
+.inputWrapper.disabled {
+    background-color: #f5f5f5;
+    border-color: #e0e0e0;
+}
+
+.input.disabled::placeholder {
+    color: #c0c0c0;            
 }

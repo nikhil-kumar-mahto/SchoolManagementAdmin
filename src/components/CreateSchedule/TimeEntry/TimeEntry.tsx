@@ -20,6 +20,9 @@ interface Time {
   teachers: Array<{ label: string; value: string }>;
   errors: any;
   minStartTime?: undefined | number | string;
+  dateArray: any[];
+  disabled?: boolean;
+  allowLastEntryDelete?: boolean;
 }
 
 const TimeEntry: React.FC<Time> = ({
@@ -31,8 +34,10 @@ const TimeEntry: React.FC<Time> = ({
   handleDelete,
   teachers,
   minStartTime = undefined,
-
+  dateArray,
   errors = {},
+  disabled = false,
+  allowLastEntryDelete = true,
 }) => {
   const { subjects } = useAppContext();
   let subjectsFormatted = subjects?.map(
@@ -49,21 +54,28 @@ const TimeEntry: React.FC<Time> = ({
       <Select
         label="Select start time*"
         options={
-          minStartTime ? filterTimeArray(minStartTime, true) : generateTimeArray()
+          minStartTime
+            ? filterTimeArray(minStartTime, dateArray, "start_time", true)
+            : generateTimeArray()
         }
         value={start_time}
         onChange={(value: string) => handleChange("start_time", value)}
         error={errors?.start_time}
         type="time"
+        allowEmpty={false}
+        disabled={disabled}
       />
 
       <Select
         label="Select end time*"
-        options={filterTimeArray(start_time)}
+        options={filterTimeArray(start_time, dateArray, "end_time", false)}
         value={end_time}
         onChange={(value: string) => handleChange("end_time", value)}
         error={errors?.end_time}
         type="time"
+        disabled={!start_time}
+        allowEmpty={false}
+        disabled={disabled}
       />
 
       <Select
@@ -72,6 +84,7 @@ const TimeEntry: React.FC<Time> = ({
         value={teacher}
         onChange={(value: string) => handleChange("teacher", value)}
         error={errors?.teacher}
+        disabled={disabled}
       />
 
       <Select
@@ -80,15 +93,17 @@ const TimeEntry: React.FC<Time> = ({
         value={subject}
         onChange={(value: string) => handleChange("subject", value)}
         error={errors?.subject}
+        disabled={disabled}
       />
-
-      <button
-        className={styles.iconContainer}
-        onClick={handleDelete}
-        type="button"
-      >
-        <DeleteIcon />
-      </button>
+      {!disabled && allowLastEntryDelete && (
+        <button
+          className={styles.iconContainer}
+          onClick={handleDelete}
+          type="button"
+        >
+          <DeleteIcon />
+        </button>
+      )}
     </div>
   );
 };

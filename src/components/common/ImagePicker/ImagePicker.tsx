@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent, useEffect } from "react";
+import React, { useState, ChangeEvent, useEffect, useRef } from "react";
 import styles from "./ImagePicker.module.css";
 import { DeleteIcon } from "../../../assets/svgs";
 
@@ -25,6 +25,7 @@ const ImagePicker: React.FC<ImagePickerProps> = ({
 }) => {
   const [fileName, setFileName] = useState<string | null>(value ? value : null);
   const [file, setFile] = useState<File | null | string>(null);
+  const inputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
     if (!fileName) {
@@ -32,8 +33,6 @@ const ImagePicker: React.FC<ImagePickerProps> = ({
       setFile(value);
     }
   }, [value]);
-
-  console.log();
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -43,14 +42,18 @@ const ImagePicker: React.FC<ImagePickerProps> = ({
       onChange(file);
     } else {
       setFileName(null);
-      onChange(null);
+      onChange("");
     }
   };
 
   const handleDeleteImage = () => {
     setFile(null);
     setFileName(null);
-    onChange(null);
+    onChange("");
+
+    if (inputRef.current) {
+      inputRef.current.value = "";
+    }
   };
 
   return (
@@ -70,6 +73,7 @@ const ImagePicker: React.FC<ImagePickerProps> = ({
           accept="image/jpeg,image/png,image/webp,image/jpg"
           onChange={handleFileChange}
           className={`${styles.input} ${error ? styles.errorState : ""}`}
+          ref={inputRef}
         />
         <label
           htmlFor={`imageInput-${componentKey}`}

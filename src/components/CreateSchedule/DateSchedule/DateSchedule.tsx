@@ -1,8 +1,8 @@
-import React, { ChangeEvent, useState } from "react";
+import React, { ChangeEvent } from "react";
 import DatePicker from "../../DatePicker/DatePicker";
 import TimeEntry from "../TimeEntry/TimeEntry";
 import { PlusCircleIcon } from "../../../assets/svgs";
-import Modal from "../../common/Modal/Modal";
+import moment from "moment";
 
 type Options = { label: string; value: string };
 
@@ -36,6 +36,7 @@ interface Props {
   addItem: () => void;
   handleDelete: (index: number, id: string | undefined) => void;
   isEditMode?: boolean;
+  disableEdit?: boolean;
 }
 
 const DateSchedule: React.FC<Props> = ({
@@ -48,6 +49,7 @@ const DateSchedule: React.FC<Props> = ({
   addItem,
   handleDelete,
   isEditMode,
+  disableEdit,
 }) => {
   let disableAddingMore =
     !!errors?.schedule?.length ||
@@ -60,21 +62,20 @@ const DateSchedule: React.FC<Props> = ({
     disableAddingMore = false;
   }
 
-  const [showModal, setShowModal] = useState(false);
-  const handleAddMore = () => {
-    if (disableAddingMore) {
-      setShowModal(true);
-    } else {
-      addItem();
+  const allowLastEntryDelete = () => {
+    if (schedule.length > 1 || isEditMode) {
+      return true;
     }
+    return false;
   };
+
   return (
     <>
       <div className="mt-4">
         <div style={{ display: "flex", justifyContent: "space-between" }}>
           <h4>Select Date</h4>
           <button
-            onClick={handleAddMore}
+            onClick={addItem}
             style={{
               width: "1.875rem",
               height: "1.875rem",
@@ -83,6 +84,7 @@ const DateSchedule: React.FC<Props> = ({
               background: "none",
               cursor: "pointer",
             }}
+            disabled={disableEdit}
             type="button"
           >
             <PlusCircleIcon />
@@ -98,6 +100,7 @@ const DateSchedule: React.FC<Props> = ({
           }
           error={errors?.date}
           disabled={isEditMode}
+          min={moment().format("YYYY-MM-DD")}
         />
         {schedule.map((item, index) => (
           <TimeEntry
@@ -114,16 +117,12 @@ const DateSchedule: React.FC<Props> = ({
             errors={errors?.schedule?.[index]}
             teachers={teachers}
             minStartTime={index > 0 ? schedule[index - 1].end_time : undefined}
+            dateArray={dateState}
+            disabled={disableEdit}
+            allowLastEntryDelete={allowLastEntryDelete()}
           />
         ))}
       </div>
-      <Modal
-        title="Alert!"
-        message="Please ensure all fields are filled out correctly before adding more time slots."
-        onConfirm={() => setShowModal(false)}
-        visible={showModal}
-        confirmText="OK"
-      />
     </>
   );
 };

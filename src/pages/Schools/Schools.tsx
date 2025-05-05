@@ -3,30 +3,39 @@ import DataTable from "../../components/common/DataTable/DataTable";
 import styles from "../../styles/Listing.module.css";
 import Button from "../../components/common/Button/Button";
 import { useNavigate } from "react-router-dom";
-import { DeleteIcon, EditIcon } from "../../assets/svgs";
+import { CrossIcon, EditIcon, TickIcon } from "../../assets/svgs";
 import { useEffect, useState } from "react";
 import Fetch from "../../utils/form-handling/fetch";
 import Modal from "../../components/common/Modal/Modal";
 import { useToast } from "../../contexts/Toast";
 import Tooltip from "../../components/common/ToolTip/ToolTip";
+import { useAppContext } from "../../contexts/AppContext";
 
 function Schools() {
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState<"listing" | "delete" | "">("");
-  const [showModal, setShowModal] = useState(false);
+  const [showModal, setShowModal] = useState("");
   const [itemToDelete, setItemToDelete] = useState("");
+
   const navigate = useNavigate();
   const toast = useToast();
+  const { getSchools } = useAppContext();
 
   const showToast = () => {
-    toast.show("School deleted successfully", 2000, "#4CAF50");
+    toast.show(
+      `School ${
+        showModal === "activate" ? "activated" : "deactivated"
+      } successfully`,
+      2000,
+      "#4CAF50"
+    );
   };
 
   const getData = () => {
     setIsLoading("listing");
-    Fetch("schools/").then((res: any) => {
+    Fetch("schools/?limit=40&offset=0").then((res: any) => {
       if (res.status) {
-        setData(res.data.results);
+        setData(res.data?.results);
       }
       setIsLoading("");
     });
@@ -38,9 +47,10 @@ function Schools() {
       (res: any) => {
         if (res.status) {
           getData();
+          getSchools();
           showToast();
         }
-        setShowModal(false);
+        setShowModal("");
         setIsLoading("listing");
       }
     );
@@ -54,9 +64,9 @@ function Schools() {
     getData();
   }, []);
 
-  const handleDeleteRequest = (id: string) => {
+  const handleDeleteRequest = (id: string, type: string) => {
     setItemToDelete(id);
-    setShowModal(true);
+    setShowModal(type);
   };
 
   const columns = [
@@ -66,13 +76,14 @@ function Schools() {
       header: "Email",
       render: (item: any) => <a href={`mailto:${item.email}`}>{item.email}</a>,
     },
-    // {
-    //   key: "logo",
-    //   header: "Logo",
-    //   render: (item: any) => <img width={150} height={50} src={item.logo} />,
-    // },
+
     { key: "phone", header: "Phone" },
     { key: "address", header: "Address" },
+    {
+      key: "is_active",
+      header: "Status",
+      render: (item: any) => (item.is_active ? "Active" : "Inactive"),
+    },
     {
       key: "actions",
       header: "Actions",
@@ -88,16 +99,23 @@ function Schools() {
             </button>
           </Tooltip>
 
-          <Tooltip text="Delete">
+          <Tooltip text={!item?.is_active ? "Activate" : "Deactivate"}>
             <button
               style={{
                 border: "none",
                 background: "none",
                 cursor: "pointer",
+                width: "1.8rem",
+                height: "1.8rem",
               }}
-              onClick={() => handleDeleteRequest(item?.id)}
+              onClick={() =>
+                handleDeleteRequest(
+                  item?.id,
+                  !item?.is_active ? "activate" : "deactivate"
+                )
+              }
             >
-              <DeleteIcon size={20} color="#d32f2f" />
+              {item?.is_active ? <CrossIcon /> : <TickIcon />}
             </button>
           </Tooltip>
         </div>
@@ -111,7 +129,7 @@ function Schools() {
 
   const handleCancel = () => {
     setItemToDelete("");
-    setShowModal(false);
+    setShowModal("");
   };
 
   return (
@@ -138,10 +156,10 @@ function Schools() {
       </div>
       <Modal
         title="Confirm!"
-        message="Are you sure you want to delete this item?"
+        message={`Are you sure you want to ${showModal} this school?`}
         onConfirm={handleDelete}
         onCancel={handleCancel}
-        visible={showModal}
+        visible={!!showModal}
         isLoading={isLoading === "delete"}
         primaryButtonVariant="danger"
       />

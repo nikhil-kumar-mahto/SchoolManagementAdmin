@@ -11,16 +11,20 @@ import Fetch from "../../utils/form-handling/fetch";
 import { arrayString } from "../../utils/form-handling/arrayString";
 import { useToast } from "../../contexts/Toast";
 import { useAppContext } from "../../contexts/AppContext";
+import { IconEye, IconViewOff } from "../../assets/svgs";
 
 interface Props {}
 
 const initialState = {
   name: "",
   email: "",
-  phone: "",
+  phone_number: "",
   address: "",
   logo: null,
   website: "",
+  phone_number_prefix: "+91",
+  password: "",
+  confirm_password: "",
 };
 
 const CreateSchool: React.FC<Props> = () => {
@@ -30,6 +34,10 @@ const CreateSchool: React.FC<Props> = () => {
   const [isLogoChanged, setIsLogoChanged] = useState(false);
   const navigate = useNavigate();
   const toast = useToast();
+  const [passwordVisible, setPasswordVisible] = useState({
+    password: false,
+    confirm_password: false,
+  });
 
   const { getSchools } = useAppContext();
 
@@ -40,11 +48,7 @@ const CreateSchool: React.FC<Props> = () => {
   const getSchoolInfo = () => {
     Fetch(`schools/${id}/`).then((res: any) => {
       if (res.status) {
-        setData({
-          ...res.data,
-          phone:res.data.phone_number,
-
-      });
+        setData({ ...initialState, ...res?.data });
       }
     });
   };
@@ -87,15 +91,12 @@ const CreateSchool: React.FC<Props> = () => {
     } else {
       url = "schools/";
     }
-    let params = { 
-      ...data,
-      phone_number: data.phone,
-      phone_number_prefix: "+91",
-      password:`${data.phone  }`
-     };
+
+    let params = { ...data };
     if (!isLogoChanged && id) {
       delete params.logo;
     }
+
     Fetch(url, params, {
       method: id ? "put" : "post",
       inFormData: true,
@@ -122,6 +123,12 @@ const CreateSchool: React.FC<Props> = () => {
     delete params.website;
   }
   delete params.classes; // not taken on state, but is received from backend API during edit mode
+  delete params.phone_number_prefix;
+
+  if (id && !params.password && !params.confirm_password) {
+    delete params.password;
+    delete params.confirm_password;
+  }
 
   const { errors, handleSubmit, handleNewError } = FormC({
     values: params,
@@ -151,7 +158,7 @@ const CreateSchool: React.FC<Props> = () => {
                 name="name"
                 value={data.name}
                 onChange={handleChange}
-                placeholder="Enter school's name"
+                placeholder="Enter school name"
                 error={errors?.name}
                 tabIndex={tabIndex++}
               />
@@ -162,10 +169,11 @@ const CreateSchool: React.FC<Props> = () => {
                 name="email"
                 value={data.email}
                 onChange={handleChange}
-                placeholder="Enter school's email"
+                placeholder="Enter school email"
                 type="email"
                 error={errors?.email}
                 tabIndex={tabIndex++}
+                disabled={!!id}
               />
             </div>
           </div>
@@ -173,14 +181,15 @@ const CreateSchool: React.FC<Props> = () => {
             <div className={styles.column}>
               <Input
                 label="Phone*"
-                name="phone"
-                value={data.phone}
+                name="phone_number"
+                value={data.phone_number}
                 onChange={handleChange}
-                placeholder="Enter school's phone number"
-                error={errors?.phone}
+                placeholder="Enter school phone number"
+                error={errors?.phone_number}
                 onKeyPress={onKeyPress}
-                maxLength={12}
+                maxLength={10}
                 tabIndex={tabIndex++}
+                disabled={!!id}
               />
             </div>
             <div className={styles.column}>
@@ -189,7 +198,7 @@ const CreateSchool: React.FC<Props> = () => {
                 name="address"
                 value={data.address}
                 onChange={handleChange}
-                placeholder="Enter school's address"
+                placeholder="Enter school address"
                 error={errors?.address}
                 tabIndex={tabIndex++}
               />
@@ -214,15 +223,74 @@ const CreateSchool: React.FC<Props> = () => {
                 name="website"
                 value={data.website}
                 onChange={handleChange}
-                placeholder="Enter website's URL"
+                placeholder="Enter website URL"
                 tabIndex={tabIndex++}
                 error={errors?.website}
               />
             </div>
           </div>
 
+          <div className={styles.row}>
+            <div className={styles.column}>
+              <Input
+                label={`Password${id ? "" : "*"}`}
+                name="password"
+                value={data?.password}
+                onChange={handleChange}
+                placeholder="Enter password"
+                tabIndex={tabIndex++}
+                error={errors?.password}
+                iconRight={
+                  !passwordVisible.password ? <IconEye /> : <IconViewOff />
+                }
+                handleIconButtonClick={() =>
+                  setPasswordVisible((prevState) => ({
+                    ...prevState,
+                    password: !prevState.password,
+                  }))
+                }
+                type={!passwordVisible.password ? "password" : "text"}
+                autoComplete="new-password"
+              />
+            </div>
+            <div className={styles.column}>
+              <Input
+                label={`Confirm Password${id ? "" : "*"}`}
+                name="confirm_password"
+                value={data?.confirm_password}
+                onChange={handleChange}
+                placeholder="Confirm password"
+                tabIndex={tabIndex++}
+                error={errors?.confirm_password}
+                iconRight={
+                  !passwordVisible.confirm_password ? (
+                    <IconEye />
+                  ) : (
+                    <IconViewOff />
+                  )
+                }
+                handleIconButtonClick={() =>
+                  setPasswordVisible((prevState) => ({
+                    ...prevState,
+                    confirm_password: !prevState.confirm_password,
+                  }))
+                }
+                type={!passwordVisible.confirm_password ? "password" : "text"}
+                autoComplete="new-password"
+              />
+            </div>
+          </div>
+
           {errors?.non_field_errors && (
             <p className="error">{errors?.non_field_errors}</p>
+          )}
+
+          {errors?.unauthorized && (
+            <p className="error">{errors?.unauthorized}</p>
+          )}
+
+          {errors?.internalServerError && (
+            <p className="error">{errors?.internalServerError}</p>
           )}
 
           <div className={styles.buttonContainer}>
