@@ -580,6 +580,8 @@ const ScheduleManagement: React.FC = () => {
     selectFields,
   });
 
+  console.log("Errors===", errors);
+
   const deleteItem = () => {
     setIsLoading("delete-modal");
     Fetch(`time-slot/${deleteId}/`, {}, { method: "delete" }).then(

@@ -1,4 +1,3 @@
-
 /* eslint-disable */
 // @ts-nocheck
 import React, { ChangeEvent, useEffect, useState } from "react";
@@ -291,6 +290,8 @@ const CreateTeacher: React.FC<Props> = () => {
     onSubmit,
   });
 
+  console.log("Err===", errors);
+
   const handleSelectChange = (value: string, type: string) => {
     if (type === "date_of_birth") {
       setMinDates((prevState) => {
@@ -536,6 +537,7 @@ const CreateTeacher: React.FC<Props> = () => {
                           value={data[key]}
                           onChange={(value) => handleSelectChange(value, key)}
                           tabIndex={tabIndex++}
+                          error={errors?.gender}
                         />
                       );
                     }
