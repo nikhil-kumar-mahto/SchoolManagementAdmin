@@ -21,7 +21,7 @@ function Class() {
   const [pagination, setPagination] = useState({
     total: 0,
     currentPage: 1,
-    itemsPerPage: 3,
+    itemsPerPage: 10,
   });
 
   const navigate = useNavigate();
