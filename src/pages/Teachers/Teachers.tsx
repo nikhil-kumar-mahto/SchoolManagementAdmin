@@ -13,13 +13,19 @@ import Tooltip from "../../components/common/ToolTip/ToolTip";
 function Teachers() {
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState<"listing" | "delete" | "">("");
-  const [showModal, setShowModal] = useState(false);
+  const [showModal, setShowModal] = useState("");
   const [itemToDelete, setItemToDelete] = useState("");
   const navigate = useNavigate();
   const toast = useToast();
 
   const showToast = () => {
-    toast.show("Teacher status updated successfully", 2000, "#4CAF50");
+    toast.show(
+      `Teacher ${
+        showModal === "activate" ? "activated" : "deactivated"
+      } successfully`,
+      2000,
+      "#4CAF50"
+    );
   };
 
   const getData = () => {
@@ -40,7 +46,7 @@ function Teachers() {
           getData();
           showToast();
         }
-        setShowModal(false);
+        setShowModal("");
         setIsLoading("listing");
       }
     );
@@ -54,9 +60,9 @@ function Teachers() {
     getData();
   }, []);
 
-  const handleDeleteRequest = (id: string) => {
+  const handleDeleteRequest = (id: string, type: string) => {
     setItemToDelete(id);
-    setShowModal(true);
+    setShowModal(type);
   };
 
   const columns = [
@@ -107,7 +113,12 @@ function Teachers() {
                 width: "1.8rem",
                 height: "1.8rem",
               }}
-              onClick={() => handleDeleteRequest(item?.id)}
+              onClick={() =>
+                handleDeleteRequest(
+                  item?.id,
+                  item?.status !== "Active" ? "activate" : "deactivate"
+                )
+              }
             >
               {item?.status === "Active" ? <CrossIcon /> : <TickIcon />}
             </button>
@@ -122,7 +133,7 @@ function Teachers() {
 
   const handleCancel = () => {
     setItemToDelete("");
-    setShowModal(false);
+    setShowModal("");
   };
 
   return (
@@ -149,10 +160,10 @@ function Teachers() {
       </div>
       <Modal
         title="Confirm!"
-        message="Are you sure you want to change the status of this teacher?"
+        message={`Are you sure you want to ${showModal} this teacher?`}
         onConfirm={handleDelete}
         onCancel={handleCancel}
-        visible={showModal}
+        visible={!!showModal}
         isLoading={isLoading === "delete"}
         primaryButtonVariant="danger"
       />
