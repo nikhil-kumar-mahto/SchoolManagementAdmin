@@ -7,7 +7,7 @@ import styles from "./Select.module.css";
 
 interface SelectProps {
   options: { value: string; label: string }[];
-  value: string;
+  value: string | undefined;
   onChange: (value: string) => void;
   label?: string;
   placeholder?: string;
