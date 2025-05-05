@@ -1,6 +1,3 @@
-/* eslint-disable */
-// @ts-nocheck
-
 import React, { useEffect, useState } from "react";
 import styles from "./ScheduleManagement.module.css";
 import Layout from "../../components/common/Layout/Layout";
@@ -31,6 +28,7 @@ interface Time {
   end_time: string;
   subject: string;
   teacher: string;
+  id?: string;
 }
 
 interface Props {
@@ -115,17 +113,14 @@ const ScheduleManagement: React.FC = () => {
       }
     });
 
-    // Object.keys(result).forEach((day) => {
-    //   if (result[day].length === 0) {
-    //     delete result[day];
-    //   }
-    // });
-
     return result;
   };
 
   const convertToDateState = (data: any[]) => {
-    let convertedFormat = {};
+    let convertedFormat: { date: string; schedule: Time[] } = {
+      date: "",
+      schedule: [],
+    };
     convertedFormat.date = data?.time_slots?.[0]?.date;
     convertedFormat.schedule = data?.time_slots?.map((item) => {
       return {
@@ -579,8 +574,6 @@ const ScheduleManagement: React.FC = () => {
     onSubmit,
     selectFields,
   });
-
-  console.log("Errors===", errors);
 
   const deleteItem = () => {
     setIsLoading("delete-modal");

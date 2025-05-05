@@ -1,6 +1,3 @@
-/* eslint-disable */
-// @ts-nocheck
-
 import React, { ChangeEvent, useEffect, useState } from "react";
 import Input from "../../components/common/Input/Input";
 import Button from "../../components/common/Button/Button";
@@ -16,7 +13,18 @@ import { useToast } from "../../contexts/Toast";
 import { useAppContext } from "../../contexts/AppContext";
 import { IconEye, IconViewOff } from "../../assets/svgs";
 
-interface Props {}
+interface Props {
+  name: string;
+  email: string;
+  phone_number: string;
+  address: string;
+  logo?: null | { name: string };
+  website?: string;
+  phone_number_prefix?: string;
+  password?: string;
+  confirm_password?: string;
+  classes?: string[];
+}
 
 const initialState = {
   name: "",
@@ -30,9 +38,9 @@ const initialState = {
   confirm_password: "",
 };
 
-const CreateSchool: React.FC<Props> = () => {
+const CreateSchool: React.FC = () => {
   let tabIndex = 1;
-  const [data, setData] = useState(initialState);
+  const [data, setData] = useState<Props>(initialState);
   const [isLoading, setIsLoading] = useState(false);
   const [isLogoChanged, setIsLogoChanged] = useState(false);
   const navigate = useNavigate();

@@ -290,7 +290,6 @@ const CreateTeacher: React.FC<Props> = () => {
     onSubmit,
   });
 
-  console.log("Err===", errors);
 
   const handleSelectChange = (value: string, type: string) => {
     if (type === "date_of_birth") {

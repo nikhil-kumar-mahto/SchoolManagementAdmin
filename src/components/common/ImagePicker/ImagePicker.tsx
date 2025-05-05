@@ -8,7 +8,7 @@ import { DeleteIcon } from "../../../assets/svgs";
 
 interface ImagePickerProps {
   label?: string;
-  value: string | null;
+  value: string | { name: string; } | null | undefined
   onChange: (file: File | null) => void;
   className?: string;
   error?: string;

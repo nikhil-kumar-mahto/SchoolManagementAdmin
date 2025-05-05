@@ -169,7 +169,7 @@ export const FormC = ({
   onSubmitError,
   selectFields = [],
 }) => {
-  const [err, setErr] = useState({});
+  const [err, setErr] = useState<any>({});
   const [stateParam, setStateParam] = useState({ ...values });
   useEffect(() => {
     if ((values && JSON.stringify(values)) !== JSON.stringify(stateParam)) {
