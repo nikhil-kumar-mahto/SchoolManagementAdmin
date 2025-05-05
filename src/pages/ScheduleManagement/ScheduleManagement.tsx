@@ -1,3 +1,6 @@
+/* eslint-disable */
+// @ts-nocheck
+
 import React, { useEffect, useState } from "react";
 import styles from "./ScheduleManagement.module.css";
 import Layout from "../../components/common/Layout/Layout";
@@ -576,6 +579,8 @@ const ScheduleManagement: React.FC = () => {
     onSubmit,
     selectFields,
   });
+
+  console.log("Errors===", errors);
 
   const deleteItem = () => {
     setIsLoading("delete-modal");

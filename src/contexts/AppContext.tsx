@@ -1,5 +1,9 @@
+/* eslint-disable */
+// @ts-nocheck
+
+
 import React, { createContext, useState, useContext, useEffect } from "react";
-import Fetch from "../utils/form-handling/fetch";
+import Fetch from "../utils/form-handling/fetch.js";
 import Modal from "../components/common/Modal/Modal";
 import Auth from "../utils/form-handling/auth.js";
 

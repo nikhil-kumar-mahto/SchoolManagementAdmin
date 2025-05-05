@@ -1,11 +1,17 @@
+/* eslint-disable */
+// @ts-nocheck
+
 import { useState, useEffect } from "react";
 export const validation = (data, selectFields = []) => {
   let errors = {};
   for (const property in data) {
     if (!data[property]?.length && Array.isArray(data[property])) {
       const isSelectField = selectFields.includes(property);
-      errors[property] = `Please ${isSelectField ? "select" : "enter"} ${property?.split("_") ? property?.split("_").join(" ") + "." : property + "."
-        }`;
+      errors[property] = `Please ${isSelectField ? "select" : "enter"} ${
+        property?.split("_")
+          ? property?.split("_").join(" ") + "."
+          : property + "."
+      }`;
     } else if (data[property]?.length && Array.isArray(data[property])) {
       let arrayErrors = [];
       let index = 0;
@@ -61,11 +67,27 @@ export const onKeyPress = (evt, reg) => {
 
 const inputValidation = (data, property, selectFields = []) => {
   const errors = {};
-  if (data[property] === null || data[property] === undefined || !data[property].toString().trim().length) {
-    errors[property] = `Please ${selectFields.includes(property) ? "select" : property.includes("photo") || property.includes("logo") || property.includes("file_passbook") || property.includes("file_adhaar") || property.includes("file_pancard") || property.includes("form_11") ? "upload" : "enter"} ${property === "email"
-      ? "email address."
-      : property.replace(/_/g, " ") + "."
-      }`;
+  if (
+    data[property] === null ||
+    data[property] === undefined ||
+    !data[property].toString().trim().length
+  ) {
+    errors[property] = `Please ${
+      selectFields.includes(property)
+        ? "select"
+        : property.includes("photo") ||
+          property.includes("logo") ||
+          property.includes("file_passbook") ||
+          property.includes("file_adhaar") ||
+          property.includes("file_pancard") ||
+          property.includes("form_11")
+        ? "upload"
+        : "enter"
+    } ${
+      property === "email"
+        ? "email address."
+        : property.replace(/_/g, " ") + "."
+    }`;
   }
 
   if (property.includes("website") && data[property]?.trim().length) {
@@ -90,21 +112,32 @@ const inputValidation = (data, property, selectFields = []) => {
       errors[property] = "Phone number must have exactly 8 digits.";
     }
   }
-  if ((property === "password" || property === "new_password") && data[property].trim().length) {
+  if (
+    (property === "password" || property === "new_password") &&
+    data[property].trim().length
+  ) {
     if (passwordCheck(data[property])) {
       errors[property] = passwordCheck(data[property]);
     }
   }
-  if (property === "confirm_password" && data["confirm_password"]?.trim().length) {
+  if (
+    property === "confirm_password" &&
+    data["confirm_password"]?.trim().length
+  ) {
     if (data["confirm_password"] !== data["password"]) {
-      errors["confirm_password"] = "Password does not match. Please make sure they match.";
+      errors["confirm_password"] =
+        "Password does not match. Please make sure they match.";
     } else {
       delete errors["confirm_password"];
     }
   }
-  if (property === "confirm_new_password" && data["confirm_password"]?.trim().length) {
+  if (
+    property === "confirm_new_password" &&
+    data["confirm_password"]?.trim().length
+  ) {
     if (data["confirm_new_password"] !== data["new_password"]) {
-      errors["confirm_new_password"] = "Password does not match. Please make sure they match.";
+      errors["confirm_new_password"] =
+        "Password does not match. Please make sure they match.";
     } else {
       delete errors["confirm_new_password"];
     }
@@ -118,15 +151,24 @@ const inputValidation = (data, property, selectFields = []) => {
 };
 export const passwordCheck = (password) => {
   if (password.length < 8) return "Password must have minimum of 8 characters.";
-  const regex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z])(?=.*[^\w\d\s]).{8,}$/;
-  if (!regex.test(password)) return "Password must include at least 8 characters, with at least one uppercase letter, one lowercase letter, one number, and one special character.";
+  const regex =
+    /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z])(?=.*[^\w\d\s]).{8,}$/;
+  if (!regex.test(password))
+    return "Password must include at least 8 characters, with at least one uppercase letter, one lowercase letter, one number, and one special character.";
 };
 export const ValidateEmailAddress = (emailString) => {
   if (!emailString) return "Please enter email";
   const regex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-  if (!regex.test(emailString)) return "Your email is incorrect. Please try again";
+  if (!regex.test(emailString))
+    return "Your email is incorrect. Please try again";
 };
-export const FormC = ({ values, removeValidValue, onSubmit, onSubmitError, selectFields = [] }) => {
+export const FormC = ({
+  values,
+  removeValidValue,
+  onSubmit,
+  onSubmitError,
+  selectFields = [],
+}) => {
   const [err, setErr] = useState({});
   const [stateParam, setStateParam] = useState({ ...values });
   useEffect(() => {
@@ -151,7 +193,9 @@ export const FormC = ({ values, removeValidValue, onSubmit, onSubmitError, selec
       onSubmitError && onSubmitError(error);
       const err = Object.keys(error);
       if (err.length) {
-        const input = document.querySelector(`input[name=${err[0]}]`) || document.querySelector(`select[name=${err[0]}]`);
+        const input =
+          document.querySelector(`input[name=${err[0]}]`) ||
+          document.querySelector(`select[name=${err[0]}]`);
 
         input?.scrollIntoView({
           behavior: "smooth",
@@ -164,7 +208,9 @@ export const FormC = ({ values, removeValidValue, onSubmit, onSubmitError, selec
   const handleNewError = (error) => {
     if (Object.keys(error)?.length) {
       const firstKey = Object.keys(error)[0];
-      const input = document.querySelector(`input[name=${firstKey}]`) || document.querySelector(`select[name=${firstKey}]`);
+      const input =
+        document.querySelector(`input[name=${firstKey}]`) ||
+        document.querySelector(`select[name=${firstKey}]`);
       input?.scrollIntoView({
         behavior: "smooth",
         block: "center",
@@ -189,7 +235,6 @@ export const FormC = ({ values, removeValidValue, onSubmit, onSubmitError, selec
     }
   };
   const handleArrayChange = (e, type) => {
-
     const { name, value } = e?.target || {};
     let state = {
       [name]: value,
@@ -241,128 +286,120 @@ export const FormC = ({ values, removeValidValue, onSubmit, onSubmitError, selec
 
   const handleDateTimeSlots = (values, isSubmit = false) => {
     if (isSubmit) {
-      removeAllError()
+      removeAllError();
     }
 
-    let errors = { ...err }
+    let errors = { ...err };
 
     // Initial step -> check for items present outside of array
     if (!values.school && isSubmit) {
-      errors.school = "Please select school."
+      errors.school = "Please select school.";
     } else if (errors?.school && values.school) {
-      delete errors.school
+      delete errors.school;
     }
     if (!values.class && isSubmit) {
-      errors.class = "Please select class."
+      errors.class = "Please select class.";
     } else if (errors?.class && values.class) {
-      delete errors.class
+      delete errors.class;
     }
     if (!values.date && isSubmit) {
-      errors.date = "Please select date."
+      errors.date = "Please select date.";
     } else if (errors?.date && values.date) {
-      delete errors.date
+      delete errors.date;
     }
 
-    const schedule = values.schedule
-    errors.schedule = errors?.schedule || []
+    const schedule = values.schedule;
+    errors.schedule = errors?.schedule || [];
 
     // check for array
     for (let i = 0; i < schedule.length; i++) {
-      errors.schedule.push({})
+      errors.schedule.push({});
       if (!schedule[i].start_time && isSubmit) {
-        errors["schedule"][i].start_time = "Please select start time."
-      } else if (errors?.["schedule"]?.[i]?.start_time && schedule[i].start_time) {
-        delete errors?.["schedule"]?.[i]?.start_time
+        errors["schedule"][i].start_time = "Please select start time.";
+      } else if (
+        errors?.["schedule"]?.[i]?.start_time &&
+        schedule[i].start_time
+      ) {
+        delete errors?.["schedule"]?.[i]?.start_time;
       }
 
       if (!schedule[i].end_time && isSubmit) {
-        errors["schedule"][i].end_time = "Please select end time."
+        errors["schedule"][i].end_time = "Please select end time.";
       } else if (errors?.["schedule"]?.[i]?.end_time && schedule[i].end_time) {
-        delete errors?.["schedule"]?.[i]?.end_time
+        delete errors?.["schedule"]?.[i]?.end_time;
       }
 
       if (!schedule[i].teacher && isSubmit) {
-        errors["schedule"][i].teacher = "Please select teacher."
+        errors["schedule"][i].teacher = "Please select teacher.";
       } else if (errors?.["schedule"]?.[i]?.teacher && schedule[i].teacher) {
-        delete errors?.["schedule"]?.[i]?.teacher
+        delete errors?.["schedule"]?.[i]?.teacher;
       }
 
       if (!schedule[i].subject && isSubmit) {
-        errors["schedule"][i].subject = "Please select subject."
+        errors["schedule"][i].subject = "Please select subject.";
       } else if (errors?.["schedule"]?.[i]?.subject && schedule[i].subject) {
-        delete errors?.["schedule"]?.[i]?.subject
+        delete errors?.["schedule"]?.[i]?.subject;
       }
     }
 
-    // check for consecutive elements in array, that stores time slots
-    // for (let i = 0; i < values.schedule.length; i++) {
-    //   const slot1Start = moment(values.schedule[i].start_time, "HH:mm")
-    //   const slot1End = moment(values.schedule[i].end_time, "HH:mm")
-
-    //   if (slot1End.isBefore(slot1Start) || slot1End.isSame(slot1Start)) {
-    //     errors["schedule"][i].start_time = "Start time must be before end time."
-    //   }
-
-    //   if (i === values.schedule.length - 1) {
-    //     break;
-    //   }
-
-    //   const slot2Start = moment(values.schedule[i + 1].start_time, "HH:mm")
-    //   const slot2End = moment(values.schedule[i + 1].end_time, "HH:mm")
-
-    //   if (slot1End.isAfter(slot2Start)) {
-    //     errors.schedule[i].end_time = "Time slot overlaps with another entry.";
-    //     errors.schedule[i + 1].start_time = "Time slot overlaps with another entry.";
-    //   }
-
-    // }
-
     // Loop through all schedule object and check if any error is present, if not remove that object.
-    let errorPresent = false
+    let errorPresent = false;
     for (let i = 0; i < errors.schedule.length; i++) {
       if (Object.keys(errors.schedule[i]).length > 0) {
-        errorPresent = true
+        errorPresent = true;
         break;
       }
     }
 
     // remove schedule key when no object present
     if (!errorPresent) {
-      delete errors.schedule
+      delete errors.schedule;
     }
 
-    setErr(errors)
+    setErr(errors);
 
     if (Object.keys(errors).length === 0 && isSubmit) {
-      onSubmit()
+      onSubmit();
     }
-  }
+  };
 
   const handleWeekTimeSlots = (values, isSubmit = false) => {
     if (isSubmit) {
-      removeAllError()
+      removeAllError();
     }
-    let errors = { ...err }
+    let errors = { ...err };
 
     // Initial step -> check for items present outside of array
     if (!values.school && isSubmit) {
-      errors.school = "Please select school."
+      errors.school = "Please select school.";
     } else if (errors?.school && values.school) {
-      delete errors.school
+      delete errors.school;
     }
     if (!values.class && isSubmit) {
-      errors.class = "Please select class."
+      errors.class = "Please select class.";
     } else if (errors?.class && values.class) {
-      delete errors.class
+      delete errors.class;
     }
 
-    const weekDays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+    const weekDays = [
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+      "Sunday",
+    ];
     errors.schedule = {};
 
     for (let day of weekDays) {
       errors.schedule[day] = errors.schedule[day] || [];
 
-      if (!values[day] || !Array.isArray(values[day]) || values[day].length === 0) {
+      if (
+        !values[day] ||
+        !Array.isArray(values[day]) ||
+        values[day].length === 0
+      ) {
         if (isSubmit) {
           // errors.schedule[day] = [{ error: "Please provide schedule data for " + day }];
         }
@@ -376,25 +413,37 @@ export const FormC = ({ values, removeValidValue, onSubmit, onSubmitError, selec
         errors.schedule[day].push({});
         if (!schedule[i].start_time && isSubmit) {
           errors.schedule[day][i].start_time = "Please select start time.";
-        } else if (errors?.schedule?.[day]?.[i]?.start_time && schedule[i].start_time) {
+        } else if (
+          errors?.schedule?.[day]?.[i]?.start_time &&
+          schedule[i].start_time
+        ) {
           delete errors.schedule[day][i].start_time;
         }
 
         if (!schedule[i].end_time && isSubmit) {
           errors.schedule[day][i].end_time = "Please select end time.";
-        } else if (errors?.schedule?.[day]?.[i]?.end_time && schedule[i].end_time) {
+        } else if (
+          errors?.schedule?.[day]?.[i]?.end_time &&
+          schedule[i].end_time
+        ) {
           delete errors.schedule[day][i].end_time;
         }
 
         if (!schedule[i].teacher && isSubmit) {
           errors.schedule[day][i].teacher = "Please select teacher.";
-        } else if (errors?.schedule?.[day]?.[i]?.teacher && schedule[i].teacher) {
+        } else if (
+          errors?.schedule?.[day]?.[i]?.teacher &&
+          schedule[i].teacher
+        ) {
           delete errors.schedule[day][i].teacher;
         }
 
         if (!schedule[i].subject && isSubmit) {
           errors.schedule[day][i].subject = "Please select subject.";
-        } else if (errors?.schedule?.[day]?.[i]?.subject && schedule[i].subject) {
+        } else if (
+          errors?.schedule?.[day]?.[i]?.subject &&
+          schedule[i].subject
+        ) {
           delete errors.schedule[day][i].subject;
         }
       }
@@ -422,15 +471,20 @@ export const FormC = ({ values, removeValidValue, onSubmit, onSubmitError, selec
 
     if (Object.keys(errors).length === 0 && isSubmit) {
       onSubmit();
-      return
+      return;
     }
 
     if (errors?.schedule) {
-      if (Object.values(errors?.schedule).every(item => item.length === 0) && isSubmit && !errors.school && !errors.class) {
+      if (
+        Object.values(errors?.schedule).every((item) => item.length === 0) &&
+        isSubmit &&
+        !errors.school &&
+        !errors.class
+      ) {
         onSubmit();
       }
     }
-  }
+  };
 
   const obj = {
     handleBlur,

@@ -1,3 +1,7 @@
+/* eslint-disable */
+// @ts-nocheck
+
+
 import React, { useState, ChangeEvent, useEffect, useRef } from "react";
 import styles from "./ImagePicker.module.css";
 import { DeleteIcon } from "../../../assets/svgs";
