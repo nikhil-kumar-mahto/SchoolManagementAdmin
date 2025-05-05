@@ -1,0 +1,36 @@
+.accordion {
+  cursor: pointer;
+  padding: 1rem;
+  width: 100%;
+  text-align: left;
+  border: 1px solid var(--white);
+  border-radius: 4px;
+  outline: none;
+  font-weight: 300;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+  /* margin-bottom: 0.5rem; */
+  font-size: 1rem;
+  background-color: var(--background-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+
+
+
+.panel {
+  max-height: 0;
+  overflow: hidden;
+  padding: 0 1rem;
+  transition:
+    max-height 0.2s ease-in,
+    opacity 0.15s ease-in,
+    padding 0.15s ease-in;
+  background-color: var(--white);
+}
+
+.panel.show {
+  max-height: max-content;
+  padding:1rem;
+}
