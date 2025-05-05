@@ -69,6 +69,7 @@ function Schools() {
             getData(pagination.currentPage);
           }
           showToast();
+          getSchools();
         }
         setShowModal(false);
         setIsLoading("listing");
