@@ -69,7 +69,7 @@ function Class() {
     setIsLoading("listing");
 
     Fetch(
-      `schedule?school=${school_id}&sch_class=${class_id}&limit=40&offset=0`
+      `schedule?school=${school_id}&sch_class=${class_id}&limit=60&offset=0`
     ).then((res: any) => {
       if (res.status) {
         setData(res?.data?.results);
