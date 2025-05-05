@@ -27,18 +27,6 @@ import { IconEye, IconViewOff } from "../../assets/svgs";
 
 interface Props {}
 
-let mandatoryFields = [
-  "email",
-  "phone_number",
-  "teacher_code",
-  "first_name",
-  "last_name",
-  "gender",
-  "department_code",
-  "password",
-  "confirm_password",
-];
-
 const initialState = {
   // mandatory mandatory fields
   school: "",
@@ -119,6 +107,17 @@ const initialState = {
 };
 
 const CreateTeacher: React.FC<Props> = () => {
+  let mandatoryFields = [
+    "email",
+    "phone_number",
+    "teacher_code",
+    "first_name",
+    "last_name",
+    "gender",
+    "department_code",
+    "password",
+    "confirm_password",
+  ];
   let tabIndex = 1;
   const [data, setData] = useState(initialState);
   const [isLoading, setIsLoading] = useState(false);
@@ -298,7 +297,7 @@ const CreateTeacher: React.FC<Props> = () => {
     if (id) {
       getTeacherInfo();
     }
-  }, []);
+  }, [id]);
 
   const getMaxLength = (type: string) => {
     switch (type) {
@@ -441,6 +440,7 @@ const CreateTeacher: React.FC<Props> = () => {
                           : ""
                       }
                       tabIndex={tabIndex++}
+                      name={key}
                     />
                   );
                 } else if (key === "marital_status") {
@@ -463,6 +463,7 @@ const CreateTeacher: React.FC<Props> = () => {
                           : ""
                       }
                       tabIndex={tabIndex++}
+                      name={key}
                     />
                   );
                 } else if (key === "blood_group") {
@@ -485,6 +486,7 @@ const CreateTeacher: React.FC<Props> = () => {
                           : ""
                       }
                       tabIndex={tabIndex++}
+                      name={key}
                     />
                   );
                 } else if (key === "category_type") {
@@ -507,6 +509,7 @@ const CreateTeacher: React.FC<Props> = () => {
                           : ""
                       }
                       tabIndex={tabIndex++}
+                      name={key}
                     />
                   );
                 } else if (key === "status") {
@@ -525,6 +528,7 @@ const CreateTeacher: React.FC<Props> = () => {
                           : ""
                       }
                       tabIndex={tabIndex++}
+                      name={key}
                     />
                   );
                 } else if (
@@ -561,6 +565,7 @@ const CreateTeacher: React.FC<Props> = () => {
                       max={getMax(key)}
                       tabIndex={tabIndex++}
                       key={key}
+                      name={key}
                     />
                   );
                 } else if (

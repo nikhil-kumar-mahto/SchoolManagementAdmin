@@ -51,6 +51,13 @@ export function generateTimeArray() {
 export function filterTimeArray(start_time, dateArray, type) {
   const timeArray = generateTimeArray();
 
+  if (type === "end_time") {
+    timeArray.push({
+      value: "24:00",
+      label: "12:00 AM",
+    });
+  }
+
   if (type === "end_time" && !start_time) {
     return [];
   }
@@ -65,6 +72,10 @@ export function filterTimeArray(start_time, dateArray, type) {
   }
 
   return timeArray.filter((time) => {
+    if (type === "start_time" && time.value === "24:00") {
+      return false;
+    }
+
     const currentTime = moment(time.value, "HH:mm");
 
     // For end_time, must be strictly after start_time

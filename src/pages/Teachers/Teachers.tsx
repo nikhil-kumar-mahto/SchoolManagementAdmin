@@ -3,7 +3,7 @@ import DataTable from "../../components/common/DataTable/DataTable";
 import styles from "../../styles/Listing.module.css";
 import Button from "../../components/common/Button/Button";
 import { useNavigate } from "react-router-dom";
-import { CrossIcon, DeleteIcon, EditIcon, TickIcon } from "../../assets/svgs";
+import { CrossIcon, EditIcon, TickIcon } from "../../assets/svgs";
 import { useEffect, useState } from "react";
 import Fetch from "../../utils/form-handling/fetch";
 import { useToast } from "../../contexts/Toast";
@@ -89,15 +89,15 @@ function Teachers() {
 
   const columns = [
     {
-      key: "school_name",
-      header: "School",
-      render: (item: any) => `${item?.school?.name}`,
-    },
-    {
       key: "name",
       header: "Name",
       render: (item: any) =>
         `${item?.first_name || ""} ${item?.last_name || ""}`,
+    },
+    {
+      key: "school_name",
+      header: "School",
+      render: (item: any) => `${item?.school?.name}`,
     },
     {
       key: "email",
@@ -105,13 +105,11 @@ function Teachers() {
       render: (item: any) => <a href={`mailto:${item.email}`}>{item.email}</a>,
     },
     { key: "phone_number", header: "Phone" },
-    { key: "teacher_code", header: "Teacher Code" },
-    { key: "gender", header: "Gender" },
     {
       key: "is_active",
       header: "Status",
       render: (item: any) =>
-        item?.status === "ACTIVE" ? "Active" : "Inactive",
+        item?.status === "Active" ? "Active" : "Inactive",
     },
     {
       key: "actions",
@@ -128,7 +126,7 @@ function Teachers() {
             </button>
           </Tooltip>
 
-          <Tooltip text={item?.status !== "ACTIVE" ? "Activate" : "Deactivate"}>
+          <Tooltip text={item?.status !== "Active" ? "Activate" : "Deactivate"}>
             <button
               style={{
                 border: "none",
@@ -139,7 +137,7 @@ function Teachers() {
               }}
               onClick={() => handleDeleteRequest(item?.id)}
             >
-              {item?.status === "ACTIVE" ? <CrossIcon /> : <TickIcon />}
+              {item?.status === "Active" ? <CrossIcon /> : <TickIcon />}
             </button>
           </Tooltip>
         </div>

@@ -21,6 +21,8 @@ interface Time {
   errors: any;
   minStartTime?: undefined | number | string;
   dateArray: any[];
+  disabled?: boolean;
+  allowLastEntryDelete?: boolean;
 }
 
 const TimeEntry: React.FC<Time> = ({
@@ -34,6 +36,8 @@ const TimeEntry: React.FC<Time> = ({
   minStartTime = undefined,
   dateArray,
   errors = {},
+  disabled = false,
+  allowLastEntryDelete = true,
 }) => {
   const { subjects } = useAppContext();
   let subjectsFormatted = subjects?.map(
@@ -59,6 +63,7 @@ const TimeEntry: React.FC<Time> = ({
         error={errors?.start_time}
         type="time"
         allowEmpty={false}
+        disabled={disabled}
       />
 
       <Select
@@ -70,6 +75,7 @@ const TimeEntry: React.FC<Time> = ({
         type="time"
         disabled={!start_time}
         allowEmpty={false}
+        disabled={disabled}
       />
 
       <Select
@@ -78,6 +84,7 @@ const TimeEntry: React.FC<Time> = ({
         value={teacher}
         onChange={(value: string) => handleChange("teacher", value)}
         error={errors?.teacher}
+        disabled={disabled}
       />
 
       <Select
@@ -86,15 +93,17 @@ const TimeEntry: React.FC<Time> = ({
         value={subject}
         onChange={(value: string) => handleChange("subject", value)}
         error={errors?.subject}
+        disabled={disabled}
       />
-
-      <button
-        className={styles.iconContainer}
-        onClick={handleDelete}
-        type="button"
-      >
-        <DeleteIcon />
-      </button>
+      {!disabled && allowLastEntryDelete && (
+        <button
+          className={styles.iconContainer}
+          onClick={handleDelete}
+          type="button"
+        >
+          <DeleteIcon />
+        </button>
+      )}
     </div>
   );
 };

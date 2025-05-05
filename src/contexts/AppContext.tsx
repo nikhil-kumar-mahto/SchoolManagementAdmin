@@ -1,5 +1,7 @@
 import React, { createContext, useState, useContext, useEffect } from "react";
 import Fetch from "../utils/form-handling/fetch";
+import Modal from "../components/common/Modal/Modal";
+import Auth from "../utils/form-handling/auth.js";
 
 type AppContextType = {
   isSidebarOpen: boolean;
@@ -27,6 +29,7 @@ const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   const [subjects, setSubjects] = useState([]);
   const [isLoggedIn, setIsLoggedIn] = useState<null | boolean>(null);
   const [schools, setSchools] = useState([]);
+  const [showModal, setShowModal] = useState(false);
 
   const toggleIsLoggedIn = () => {
     setIsLoggedIn((prevState) => !prevState);
@@ -42,8 +45,20 @@ const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     // setIsLoggedIn(true);
   }, []);
 
+  useEffect(() => {
+    const handleUnauthorized = (e) => {
+      setShowModal(true);
+    };
+
+    window.addEventListener("unauthorizedError", handleUnauthorized);
+
+    return () => {
+      window.removeEventListener("unauthorizedError", handleUnauthorized);
+    };
+  }, []);
+
   const getSchools = () => {
-    Fetch("schools/?limit=30&offset=0").then((res: any) => {
+    Fetch("schools/?limit=40&offset=0&is_active=true").then((res: any) => {
       if (res.status) {
         let schools = res.data?.results?.map(
           (item: {
@@ -64,7 +79,7 @@ const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   };
 
   const getSubjects = () => {
-    Fetch("subjects/?limit=30&offset=0").then((res: any) => {
+    Fetch("subjects/?limit=40&offset=0").then((res: any) => {
       if (res.status) {
         setSubjects(res.data?.results);
       }
@@ -82,6 +97,13 @@ const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     setIsSidebarOpen((prevState) => !prevState);
   };
 
+  const handleLogout = () => {
+    setShowModal(false);
+    localStorage.clear();
+    Auth.clearToken();
+    toggleIsLoggedIn();
+  };
+
   return (
     <AppContext.Provider
       value={{
@@ -96,6 +118,13 @@ const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
       }}
     >
       {children}
+      <Modal
+        title="Alert!"
+        message="You have been logged out. Please login again."
+        onConfirm={handleLogout}
+        visible={showModal}
+        confirmText="OK"
+      />
     </AppContext.Provider>
   );
 };
@@ -103,7 +132,7 @@ const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
 export const useAppContext = (): AppContextType => {
   const context = useContext(AppContext);
   if (!context) {
-    throw new Error("useToast must be used within a AppProvider");
+    throw new Error("useAppContext must be used within a AppProvider");
   }
   return context;
 };

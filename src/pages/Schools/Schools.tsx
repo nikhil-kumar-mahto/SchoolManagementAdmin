@@ -3,12 +3,13 @@ import DataTable from "../../components/common/DataTable/DataTable";
 import styles from "../../styles/Listing.module.css";
 import Button from "../../components/common/Button/Button";
 import { useNavigate } from "react-router-dom";
-import { CrossIcon, DeleteIcon, EditIcon, TickIcon } from "../../assets/svgs";
+import { CrossIcon, EditIcon, TickIcon } from "../../assets/svgs";
 import { useEffect, useState } from "react";
 import Fetch from "../../utils/form-handling/fetch";
 import Modal from "../../components/common/Modal/Modal";
 import { useToast } from "../../contexts/Toast";
 import Tooltip from "../../components/common/ToolTip/ToolTip";
+import { useAppContext } from "../../contexts/AppContext";
 
 function Schools() {
   const [data, setData] = useState([]);
@@ -23,6 +24,7 @@ function Schools() {
 
   const navigate = useNavigate();
   const toast = useToast();
+  const { getSchools } = useAppContext();
 
   const showToast = () => {
     toast.show("School status updated successfully", 2000, "#4CAF50");

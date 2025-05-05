@@ -36,6 +36,7 @@ interface Props {
   addItem: () => void;
   handleDelete: (index: number, id: string | undefined) => void;
   isEditMode?: boolean;
+  disableEdit?: boolean;
 }
 
 const DateSchedule: React.FC<Props> = ({
@@ -48,6 +49,7 @@ const DateSchedule: React.FC<Props> = ({
   addItem,
   handleDelete,
   isEditMode,
+  disableEdit,
 }) => {
   let disableAddingMore =
     !!errors?.schedule?.length ||
@@ -59,6 +61,13 @@ const DateSchedule: React.FC<Props> = ({
   if (schedule.length === 0) {
     disableAddingMore = false;
   }
+
+  const allowLastEntryDelete = () => {
+    if (schedule.length > 1 || isEditMode) {
+      return true;
+    }
+    return false;
+  };
 
   return (
     <>
@@ -75,6 +84,7 @@ const DateSchedule: React.FC<Props> = ({
               background: "none",
               cursor: "pointer",
             }}
+            disabled={disableEdit}
             type="button"
           >
             <PlusCircleIcon />
@@ -108,6 +118,8 @@ const DateSchedule: React.FC<Props> = ({
             teachers={teachers}
             minStartTime={index > 0 ? schedule[index - 1].end_time : undefined}
             dateArray={dateState}
+            disabled={disableEdit}
+            allowLastEntryDelete={allowLastEntryDelete()}
           />
         ))}
       </div>
