@@ -14,7 +14,7 @@ import { useAppContext } from "../../contexts/AppContext";
 function Schools() {
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState<"listing" | "delete" | "">("");
-  const [showModal, setShowModal] = useState(false);
+  const [showModal, setShowModal] = useState("");
   const [itemToDelete, setItemToDelete] = useState("");
   const [pagination, setPagination] = useState({
     total: 0,
@@ -27,7 +27,13 @@ function Schools() {
   const { getSchools } = useAppContext();
 
   const showToast = () => {
-    toast.show("School status updated successfully", 2000, "#4CAF50");
+    toast.show(
+      `School ${
+        showModal === "activate" ? "activated" : "deactivated"
+      } successfully`,
+      2000,
+      "#4CAF50"
+    );
   };
 
   const getData = (page: number) => {
@@ -71,7 +77,7 @@ function Schools() {
           showToast();
           getSchools();
         }
-        setShowModal(false);
+        setShowModal("");
         setIsLoading("listing");
       }
     );
@@ -85,9 +91,9 @@ function Schools() {
     getData(pagination.currentPage);
   }, [pagination.currentPage]);
 
-  const handleDeleteRequest = (id: string) => {
+  const handleDeleteRequest = (id: string, type: string) => {
     setItemToDelete(id);
-    setShowModal(true);
+    setShowModal(type);
   };
 
   const columns = [
@@ -129,7 +135,12 @@ function Schools() {
                 width: "1.8rem",
                 height: "1.8rem",
               }}
-              onClick={() => handleDeleteRequest(item?.id)}
+              onClick={() =>
+                handleDeleteRequest(
+                  item?.id,
+                  !item?.is_active ? "activate" : "deactivate"
+                )
+              }
             >
               {item?.is_active ? <CrossIcon /> : <TickIcon />}
             </button>
@@ -145,7 +156,7 @@ function Schools() {
 
   const handleCancel = () => {
     setItemToDelete("");
-    setShowModal(false);
+    setShowModal("");
   };
 
   const handlePageChange = (page: number) => {
@@ -184,10 +195,10 @@ function Schools() {
       </div>
       <Modal
         title="Confirm!"
-        message="Are you sure you want to change the status of this school?"
+        message={`Are you sure you want to ${showModal} this school?`}
         onConfirm={handleDelete}
         onCancel={handleCancel}
-        visible={showModal}
+        visible={!!showModal}
         isLoading={isLoading === "delete"}
         primaryButtonVariant="danger"
       />
