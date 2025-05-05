@@ -172,24 +172,6 @@ export const SubjectIcon = ({ fill = "#000000" }) => {
     </svg>
   );
 };
-export const TeacherAnalyticsIcon = ({ fill = "#000000" }) => {
-  return (
-    <svg
-      fill="none"
-      stroke={fill}
-      strokeWidth="2"
-      viewBox="0 0 24 24"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path d="M4 4h16v16H4z" /> {/* Chart border */}
-      <path d="M8 14v2" />       {/* Bar 1 */}
-      <path d="M12 10v6" />     {/* Bar 2 */}
-      <path d="M16 12v4" />     {/* Bar 3 */}
-      <circle cx="6" cy="6" r="1.5" fill={fill} /> {/* Represents teacher head */}
-      <path d="M5 8c.5-1 2.5-1 3 0" strokeLinecap="round" /> {/* Shoulders */}
-    </svg>
-  );
-};
 
 export const Options = ({ fill = "#000000" }) => {
   return (

@@ -32,7 +32,7 @@ function Teachers() {
     setIsLoading("listing");
     Fetch("teachers/?limit=40&offset=0").then((res: any) => {
       if (res.status) {
-        setData(res.data);
+        setData(res.data?.results);
       }
       setIsLoading("");
     });
@@ -121,7 +121,7 @@ function Teachers() {
           </Tooltip>
         </div>
       ),
-    },  
+    },
   ];
   const handleNavigate = () => {
     navigate("/teachers/create");

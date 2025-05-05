@@ -24,7 +24,6 @@ import ImagePicker from "../../components/common/ImagePicker/ImagePicker";
 import { useAppContext } from "../../contexts/AppContext";
 import moment from "moment";
 import { IconEye, IconViewOff } from "../../assets/svgs";
-import CustomAccordion from "../../components/common/Accordion/Accordion";
 
 interface Props {}
 
@@ -212,7 +211,6 @@ const CreateTeacher: React.FC<Props> = () => {
     "confirm_password",
   ];
   let tabIndex = 1;
-
   const [data, setData] = useState(initialState);
   const [isLoading, setIsLoading] = useState(false);
   const [isFilesModified, setIsFilesModified] = useState({
@@ -334,7 +332,9 @@ const CreateTeacher: React.FC<Props> = () => {
       });
     }
 
-    Fetch(url, params, {
+    delete params.school_id;
+
+    Fetch(url, id ? { ...params, school: data?.school.id, phone_number:data?.phone,phone_number_prefix:data?.phone_number_prefix } : params, {
       method: id ? "put" : "post",
       inFormData: true,
     }).then((res: any) => {
@@ -492,7 +492,7 @@ const CreateTeacher: React.FC<Props> = () => {
         <div className={styles.container}>
           <h2>{id ? "Update" : "Create"} Teacher</h2>
 
-          {/* <div className={formStyles["form-grid"]}>
+          <div className={formStyles["form-grid"]}>
             {Object.keys(data)
               .filter((key) => !excludedKeys.includes(key))
               .map((key) => {
@@ -525,6 +525,13 @@ const CreateTeacher: React.FC<Props> = () => {
                       options={getGender()}
                       value={data?.gender}
                       onChange={(value) => handleSelectChange(value, "gender")}
+                      error={
+                        errors?.gender
+                          ? data?.gender
+                            ? errors?.gender
+                            : "Please select gender."
+                          : ""
+                      }
                       tabIndex={tabIndex++}
                       name={key}
                     />
@@ -757,7 +764,7 @@ const CreateTeacher: React.FC<Props> = () => {
                   </div>
                 );
               })}
-          </div> */}
+          </div>
 
           {errors?.non_field_errors && (
             <p className="error">{errors?.non_field_errors}</p>

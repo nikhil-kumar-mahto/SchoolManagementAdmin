@@ -7,9 +7,7 @@ import {
 
 import LoginScreen from "./pages/authentication/Login";
 import Dashboard from "./pages/Dashboard";
-// import CreateTeacher from "./pages/Teachers/CreateTeacher";
-import CreateTeacherCustom from "./pages/Teachers/CreateTeacherCustom";
-
+import CreateTeacher from "./pages/Teachers/CreateTeacher";
 import Teachers from "./pages/Teachers/Teachers";
 import Class from "./pages/Class/Class";
 import CreateClass from "./pages/Class/CreateClass";
@@ -20,7 +18,7 @@ import CreateSubject from "./pages/Subject/CreateSubject";
 import ScheduleManagement from "./pages/ScheduleManagement/ScheduleManagement";
 import { useAppContext } from "./contexts/AppContext";
 import ScheduleList from "./pages/ScheduleManagement/Schedule";
-import TeacherAnalytics from "./pages/TeacherAnalytics/TeacherAnalytics";
+
 function App() {
   const { isLoggedIn } = useAppContext();
 
@@ -43,9 +41,7 @@ function App() {
         />
         <Route
           path="/teachers/create/:id?"
-          element={
-            isLoggedIn ? <CreateTeacherCustom /> : <Navigate to="/login" />
-          }
+          element={isLoggedIn ? <CreateTeacher /> : <Navigate to="/login" />}
         />
         <Route
           path="/classes"
@@ -74,10 +70,6 @@ function App() {
         <Route
           path="/schedule"
           element={isLoggedIn ? <ScheduleList /> : <Navigate to="/login" />}
-        />
-        <Route
-          path="/teacher-report"
-          element={isLoggedIn ? <TeacherAnalytics /> : <Navigate to="/login" />}
         />
         <Route
           path="/schedule/create/:id?"

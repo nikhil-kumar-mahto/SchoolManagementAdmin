@@ -4,7 +4,6 @@ import {
   ScheduleIcon,
   SchoolIcon2,
   SubjectIcon,
-  TeacherAnalyticsIcon,
   TeacherIcon,
 } from "../../../assets/svgs";
 
@@ -22,12 +21,6 @@ export const sidebarItems: SidebarItem[] = [
     href: "/dashboard",
     Icon: DashboardIcon,
     fill: "#000",
-  },
-  {
-    name:"Teacher Analytics",
-    href:"/teacher-report",
-    Icon: TeacherAnalyticsIcon,
-    fill:"#000"
   },
   {
     name: "School Management",
