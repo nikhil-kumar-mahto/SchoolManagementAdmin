@@ -45,7 +45,6 @@ const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   const getSchools = () => {
     Fetch("schools/").then((res: any) => {
       if (res.status) {
-        console.log(res.data,"878787887878887878787878787878");
         let schools = res.data?.results?.map(
           (item: {
             name: string;

@@ -103,7 +103,7 @@ function Teachers() {
           </Tooltip>
         </div>
       ),
-    },
+    },  
   ];
   const handleNavigate = () => {
     navigate("/teachers/create");

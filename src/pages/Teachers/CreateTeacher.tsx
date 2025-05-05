@@ -24,6 +24,7 @@ import ImagePicker from "../../components/common/ImagePicker/ImagePicker";
 import { useAppContext } from "../../contexts/AppContext";
 import moment from "moment";
 import { IconEye, IconViewOff } from "../../assets/svgs";
+import CustomAccordion from "../../components/common/Accordion/Accordion";
 
 interface Props {}
 
@@ -117,7 +118,100 @@ const initialState = {
 };
 
 const CreateTeacher: React.FC<Props> = () => {
+  // Form section definitions
+  const formSections = [
+    {
+      title: "Basic Information",
+      keys: [
+        "first_name",
+        "last_name",
+        "gender",
+        "date_of_birth",
+        "phone",
+        "email",
+        "teacher_code",
+        "marital_status",
+        "blood_group",
+        "address1",
+        "address2",
+        "city",
+        "state",
+        "permanent_address",
+        "emergency_number",
+        "emergency_name",
+        "nominee",
+        "nominee_relation",
+        "location",
+        "location_category",
+      ],
+    },
+    {
+      title: "Employment Details",
+      keys: [
+        "school",
+        "school_id",
+        "branch_id",
+        "branch",
+        "department",
+        "department_code",
+        "designation",
+        "grade",
+        "category_type",
+        "organizational_classification",
+        "organizational_category",
+        "department_head",
+        "immediate_reporting",
+        "teacher_SRA",
+        "teacher_cofirm",
+        "teacher_adhoc",
+        "teacher_disp",
+        "status",
+        "date_joining",
+        "date_of_leaving",
+        "date_of_retirement",
+        "reason",
+        "pension_amount",
+        "voluntary_provident_fund",
+        "universal_account_number",
+        "gov_provident_fund",
+        "gov_provided_fund_number",
+        "academic_qualification",
+        "academic_university",
+        "specialization",
+        "passing_year",
+        "last_school",
+        "last_designation",
+        "last_date_of_leaving",
+        "reference",
+        "teacher_adt_reg_no",
+        "card_number",
+      ],
+    },
+    {
+      title: "Documents & Security",
+      keys: [
+        "adhaar",
+        "pancard",
+        "bank_name",
+        "bank_account_number",
+        "bank_ifsc_code",
+        "file_passbook",
+        "file_adhaar_front",
+        "file_adhaar_back",
+        "file_pancard",
+        "form_11",
+        "family_name1",
+        "relation_name1",
+        "family_age1",
+        "family_adhaar1",
+        "password",
+        "confirm_password",
+      ],
+    },
+  ];
+
   let tabIndex = 1;
+
   const [data, setData] = useState(initialState);
   const [isLoading, setIsLoading] = useState(false);
   const [isFilesModified, setIsFilesModified] = useState({
@@ -150,7 +244,6 @@ const CreateTeacher: React.FC<Props> = () => {
     Fetch(`teachers/${id}/`).then((res: any) => {
       if (res.status) {
         const orderedData: any = {};
-          console.log(res.data,"000000000000000000000000000000000000000000000000000000000");
         // Reorder keys to match initialState
         Object.keys(initialState).forEach((key) => {
           orderedData[key] = res.data.hasOwnProperty(key)
@@ -232,10 +325,21 @@ const CreateTeacher: React.FC<Props> = () => {
 
     delete params.school_id;
 
-    Fetch(url, id ? { ...params, school: data?.school.id, phone_number:data?.phone,phone_number_prefix:data?.phone_number_prefix } : params, {
-      method: id ? "put" : "post",
-      inFormData: true,
-    }).then((res: any) => {
+    Fetch(
+      url,
+      id
+        ? {
+            ...params,
+            school: data?.school.id,
+            phone_number: data?.phone,
+            phone_number_prefix: data?.phone_number_prefix,
+          }
+        : params,
+      {
+        method: id ? "put" : "post",
+        inFormData: true,
+      }
+    ).then((res: any) => {
       if (res.status) {
         showToast(
           id ? "Teacher updated successfully" : "Teacher added successfully"
@@ -371,7 +475,7 @@ const CreateTeacher: React.FC<Props> = () => {
             name="school"
           />
 
-          <div className={formStyles["form-grid"]}>
+          {/* <div className={formStyles["form-grid"]}>
             {Object.keys(data)
               .filter((key) => !excludedKeys.includes(key))
               .map((key) => {
@@ -385,13 +489,6 @@ const CreateTeacher: React.FC<Props> = () => {
                       options={getGender()}
                       value={data?.gender}
                       onChange={(value) => handleSelectChange(value, "gender")}
-                      error={
-                        errors?.gender
-                          ? data?.gender
-                            ? errors?.gender
-                            : "Please select gender."
-                          : ""
-                      }
                       tabIndex={tabIndex++}
                     />
                   );
@@ -614,7 +711,7 @@ const CreateTeacher: React.FC<Props> = () => {
                   </div>
                 );
               })}
-          </div>
+          </div> */}
 
           <div className={styles.buttonContainer}>
             <Button
