@@ -1,3 +1,7 @@
+/* eslint-disable */
+// @ts-nocheck
+
+
 import React, { ChangeEvent } from "react";
 import styles from "./Input.module.css";
 

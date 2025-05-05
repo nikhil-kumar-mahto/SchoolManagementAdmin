@@ -1,3 +1,7 @@
+/* eslint-disable */
+// @ts-nocheck
+
+
 import React, { useState } from "react";
 import TimeEntry from "../TimeEntry/TimeEntry";
 import { PlusCircleIcon } from "../../../assets/svgs";

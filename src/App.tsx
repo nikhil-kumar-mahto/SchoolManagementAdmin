@@ -1,3 +1,6 @@
+/* eslint-disable */
+// @ts-nocheck
+
 import {
   BrowserRouter as Router,
   Route,

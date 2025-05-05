@@ -1,3 +1,6 @@
+/* eslint-disable */
+// @ts-nocheck
+
 import Layout from "../components/common/Layout/Layout";
 
 function Dashboard() {

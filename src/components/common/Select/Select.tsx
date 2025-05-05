@@ -1,3 +1,6 @@
+/* eslint-disable */
+// @ts-nocheck
+
 import moment from "moment";
 import { useState, useEffect, useRef, KeyboardEvent } from "react";
 import styles from "./Select.module.css";

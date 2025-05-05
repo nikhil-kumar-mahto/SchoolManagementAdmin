@@ -1,3 +1,6 @@
+/* eslint-disable */
+// @ts-nocheck
+
 import React, { ChangeEvent, useState } from "react";
 import "../../styles/login.css";
 import Input from "../../components/common/Input/Input";

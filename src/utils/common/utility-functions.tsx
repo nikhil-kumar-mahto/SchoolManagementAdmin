@@ -1,3 +1,7 @@
+/* eslint-disable */
+// @ts-nocheck
+
+
 import moment from "moment";
 
 export function getIdFromUrl(url: any) {

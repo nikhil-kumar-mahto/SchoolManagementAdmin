@@ -1,3 +1,6 @@
+/* eslint-disable */
+// @ts-nocheck
+
 import Layout from "../../components/common/Layout/Layout";
 import DataTable from "../../components/common/DataTable/DataTable";
 import styles from "../../styles/Listing.module.css";

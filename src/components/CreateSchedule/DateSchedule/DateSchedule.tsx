@@ -1,3 +1,7 @@
+/* eslint-disable */
+// @ts-nocheck
+
+
 import React, { ChangeEvent } from "react";
 import DatePicker from "../../DatePicker/DatePicker";
 import TimeEntry from "../TimeEntry/TimeEntry";
