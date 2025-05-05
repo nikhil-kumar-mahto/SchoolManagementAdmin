@@ -83,8 +83,12 @@ function Teachers() {
       render: (item: any) => <a href={`mailto:${item.email}`}>{item.email}</a>,
     },
     { key: "phone_number", header: "Phone" },
-    { key: "teacher_code", header: "Teacher Code" },
-    { key: "gender", header: "Gender" },
+    {
+      key: "is_active",
+      header: "Status",
+      render: (item: any) =>
+        item?.is_active === true ? "Active" : "Inactive",
+    },
     {
       key: "actions",
       header: "Actions",
@@ -100,7 +104,7 @@ function Teachers() {
             </button>
           </Tooltip>
 
-          <Tooltip text={item?.status !== "Active" ? "Activate" : "Deactivate"}>
+          <Tooltip text={item?.is_active !== true ? "Activate" : "Deactivate"}>
             <button
               style={{
                 border: "none",
@@ -112,11 +116,11 @@ function Teachers() {
               onClick={() =>
                 handleDeleteRequest(
                   item?.id,
-                  item?.status !== "Active" ? "activate" : "deactivate"
+                  item?.is_active !== true ? "activate" : "deactivate"
                 )
               }
             >
-              {item?.status === "Active" ? <CrossIcon /> : <TickIcon />}
+              {item?.is_active === true ? <CrossIcon /> : <TickIcon />}
             </button>
           </Tooltip>
         </div>

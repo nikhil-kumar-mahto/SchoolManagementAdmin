@@ -25,7 +25,19 @@ import { useAppContext } from "../../contexts/AppContext";
 import moment from "moment";
 import { IconEye, IconViewOff } from "../../assets/svgs";
 
+import Accordion from "../../components/common/Accordion/Accordion";
+
 interface Props {}
+
+const mandatoryFields = [
+  "email",
+  "phone",
+  "teacher_code",
+  "first_name",
+  "last_name",
+  "gender",
+  "department_code",
+];
 
 const initialState = {
   // mandatory mandatory fields
@@ -107,98 +119,6 @@ const initialState = {
 };
 
 const CreateTeacher: React.FC<Props> = () => {
-  // Form section definitions
-  const formSections = [
-    {
-      title: "Basic Information",
-      keys: [
-        "first_name",
-        "last_name",
-        "gender",
-        "date_of_birth",
-        "phone",
-        "email",
-        "teacher_code",
-        "marital_status",
-        "blood_group",
-        "address1",
-        "address2",
-        "city",
-        "state",
-        "permanent_address",
-        "emergency_number",
-        "emergency_name",
-        "nominee",
-        "nominee_relation",
-        "location",
-        "location_category",
-      ],
-    },
-    {
-      title: "Employment Details",
-      keys: [
-        "school",
-        "school_id",
-        "branch_id",
-        "branch",
-        "department",
-        "department_code",
-        "designation",
-        "grade",
-        "category_type",
-        "organizational_classification",
-        "organizational_category",
-        "department_head",
-        "immediate_reporting",
-        "teacher_SRA",
-        "teacher_cofirm",
-        "teacher_adhoc",
-        "teacher_disp",
-        "status",
-        "date_joining",
-        "date_of_leaving",
-        "date_of_retirement",
-        "reason",
-        "pension_amount",
-        "voluntary_provident_fund",
-        "universal_account_number",
-        "gov_provident_fund",
-        "gov_provided_fund_number",
-        "academic_qualification",
-        "academic_university",
-        "specialization",
-        "passing_year",
-        "last_school",
-        "last_designation",
-        "last_date_of_leaving",
-        "reference",
-        "teacher_adt_reg_no",
-        "card_number",
-      ],
-    },
-    {
-      title: "Documents & Security",
-      keys: [
-        "adhaar",
-        "pancard",
-        "bank_name",
-        "bank_account_number",
-        "bank_ifsc_code",
-        "file_passbook",
-        "file_adhaar_front",
-        "file_adhaar_back",
-        "file_pancard",
-        "form_11",
-        "family_name1",
-        "relation_name1",
-        "family_age1",
-        "family_adhaar1",
-        "password",
-        "confirm_password",
-      ],
-    },
-  ];
-
   let mandatoryFields = [
     "email",
     "phone_number",
@@ -238,7 +158,6 @@ const CreateTeacher: React.FC<Props> = () => {
       (field) => field !== "password" && field !== "confirm_password"
     );
   }
-
   const { schools, getSchools } = useAppContext();
 
   const navigate = useNavigate();
@@ -260,7 +179,7 @@ const CreateTeacher: React.FC<Props> = () => {
         });
 
         // Handle any additional transformations
-        orderedData.school = res?.data?.school?.id;
+        orderedData.school = res?.data?.school.id;
         orderedData.date_of_birth = res?.data?.date_of_birth
           ? res?.data?.date_of_birth
           : "";
@@ -332,9 +251,7 @@ const CreateTeacher: React.FC<Props> = () => {
       });
     }
 
-    delete params.school_id;
-
-    Fetch(url, id ? { ...params, school: data?.school.id, phone_number:data?.phone,phone_number_prefix:data?.phone_number_prefix } : params, {
+    Fetch(url, params, {
       method: id ? "put" : "post",
       inFormData: true,
     }).then((res: any) => {
@@ -390,7 +307,7 @@ const CreateTeacher: React.FC<Props> = () => {
     if (id) {
       getTeacherInfo();
     }
-  }, [id]);
+  }, []);
 
   const getMaxLength = (type: string) => {
     switch (type) {
@@ -486,215 +403,252 @@ const CreateTeacher: React.FC<Props> = () => {
     }
   };
 
+  const formSections = [
+    {
+      title: "Basic Information",
+      keys: [
+        "first_name",
+        "last_name",
+        "gender",
+        "date_of_birth",
+        "phone_number",
+        "email",
+        "teacher_code",
+        "department_code",
+        "marital_status",
+        "blood_group",
+
+        "city",
+        "state",
+        "permanent_address",
+        "emergency_number",
+        "password",
+        "confirm_password",
+      ],
+    },
+    {
+      title: "Teacher Details",
+      keys: [
+        "branch_id",
+        "branch",
+        "department",
+        "designation",
+        "grade",
+        "category_type",
+
+        "organizational_classification",
+        "organizational_category",
+        "department_head",
+        "immediate_reporting",
+        "teacher_SRA",
+        "teacher_cofirm",
+        "teacher_adhoc",
+        "teacher_disp",
+        "status",
+        "date_joining",
+        "date_of_leaving",
+        "date_of_retirement",
+        "reason",
+        "adhaar",
+        "pancard",
+        "bank_name",
+        "bank_account_number",
+        "bank_ifsc_code",
+        "pension_amount",
+        "voluntary_provident_fund",
+        "universal_account_number",
+        "gov_provident_fund",
+        "gov_provided_fund_number",
+        "academic_qualification",
+        "academic_university",
+        "specialization",
+        "passing_year",
+        "last_school",
+        "last_designation",
+        "last_date_of_leaving",
+        "reference",
+        "teacher_adt_reg_no",
+        "card_number",
+        "nominee",
+        "nominee_relation",
+        "family_name1",
+        "relation_name1",
+        "family_age1",
+        "family_adhaar1",
+        "address1",
+        "address2",
+        "location",
+        "location_category",
+        "emergency_name",
+      ],
+    },
+    {
+      title: "Miscellaneous",
+      keys: [
+        "file_passbook",
+        "file_adhaar_front",
+        "file_adhaar_back",
+        "file_pancard",
+        "form_11",
+      ],
+    },
+  ];
+
   return (
     <Layout>
       <form action="" onSubmit={handleSubmit}>
         <div className={styles.container}>
-          <h2>{id ? "Update" : "Create"} Teacher</h2>
+          <h2>{id ? "Update" : "Create"} Teacher </h2>
+          <Select
+            label="Select school*"
+            options={schools}
+            value={data?.school}
+            onChange={(value) => handleSelectChange(value, "school")}
+            error={
+              errors?.school
+                ? data?.school
+                  ? errors?.school
+                  : "Please select school."
+                : ""
+            }
+            className="w-25"
+            tabIndex={tabIndex++}
+            name="school"
+          />
 
-          <div className={formStyles["form-grid"]}>
-            {Object.keys(data)
-              .filter((key) => !excludedKeys.includes(key))
-              .map((key) => {
-                if (key === "school") {
-                  return (
-                    <Select
-                      label="Select school*"
-                      options={schools}
-                      value={data?.school}
-                      onChange={(value) => handleSelectChange(value, "school")}
-                      error={
-                        errors?.school
-                          ? data?.school
-                            ? errors?.school
-                            : "Please select school."
-                          : ""
-                      }
-                      tabIndex={tabIndex++}
-                      name="school"
-                      key={key}
-                    />
-                  );
-                } else if (key === "gender") {
-                  return (
-                    <Select
-                      key={key}
-                      label={`${mapKeyToLabel(key)}${
-                        mandatoryFields.includes(key) ? "*" : ""
-                      }`}
-                      options={getGender()}
-                      value={data?.gender}
-                      onChange={(value) => handleSelectChange(value, "gender")}
-                      error={
-                        errors?.gender
-                          ? data?.gender
-                            ? errors?.gender
-                            : "Please select gender."
-                          : ""
-                      }
-                      tabIndex={tabIndex++}
-                      name={key}
-                    />
-                  );
-                } else if (key === "marital_status") {
-                  return (
-                    <Select
-                      key={key}
-                      label={`${mapKeyToLabel(key)}${
-                        mandatoryFields.includes(key) ? "*" : ""
-                      }`}
-                      options={getMaritalStatus()}
-                      value={data?.marital_status}
-                      onChange={(value) =>
-                        handleSelectChange(value, "marital_status")
-                      }
-                      error={
-                        errors?.marital_status
-                          ? data?.marital_status
-                            ? errors?.marital_status
-                            : "Please select marital status."
-                          : ""
-                      }
-                      tabIndex={tabIndex++}
-                      name={key}
-                    />
-                  );
-                } else if (key === "blood_group") {
-                  return (
-                    <Select
-                      key={key}
-                      label={`${mapKeyToLabel(key)}${
-                        mandatoryFields.includes(key) ? "*" : ""
-                      }`}
-                      options={getBloodGroups()}
-                      value={data?.blood_group}
-                      onChange={(value) =>
-                        handleSelectChange(value, "blood_group")
-                      }
-                      error={
-                        errors?.blood_group
-                          ? data?.blood_group
-                            ? errors?.blood_group
-                            : "Please select blood group."
-                          : ""
-                      }
-                      tabIndex={tabIndex++}
-                      name={key}
-                    />
-                  );
-                } else if (key === "category_type") {
-                  return (
-                    <Select
-                      key={key}
-                      label={`${mapKeyToLabel(key)}${
-                        mandatoryFields.includes(key) ? "*" : ""
-                      }`}
-                      options={getCategory()}
-                      value={data?.category_type}
-                      onChange={(value) =>
-                        handleSelectChange(value, "category_type")
-                      }
-                      error={
-                        errors?.category_type
-                          ? data?.category_type
-                            ? errors?.category_type
-                            : "Please select category."
-                          : ""
-                      }
-                      tabIndex={tabIndex++}
-                      name={key}
-                    />
-                  );
-                } else if (key === "status") {
-                  return (
-                    <Select
-                      key={key}
-                      label="Select status"
-                      options={getStatuses()}
-                      value={data?.status}
-                      onChange={(value) => handleSelectChange(value, "status")}
-                      error={
-                        errors?.status
-                          ? data?.status
-                            ? errors?.status
-                            : "Please select status."
-                          : ""
-                      }
-                      tabIndex={tabIndex++}
-                      name={key}
-                    />
-                  );
-                } else if (
-                  key === "date_of_birth" ||
-                  key === "date_joining" ||
-                  key === "date_of_leaving" ||
-                  key === "date_of_retirement" ||
-                  key === "last_date_of_leaving"
-                ) {
-                  return (
-                    <DatePicker
-                      label={`${mapKeyToLabel(key)}${
-                        mandatoryFields.includes(key) ? "*" : ""
-                      }`}
-                      selectedDate={data[key]}
-                      onDateChange={(e: ChangeEvent<HTMLInputElement>) =>
-                        handleSelectChange(e.target.value, key)
-                      }
-                      error={
-                        errors[key]
-                          ? data[key]
-                            ? errors[key]
-                            : `Please select ${mapKeyToLabel(
-                                key
-                              ).toLocaleLowerCase()}.`
-                          : ""
-                      }
-                      className="w-100"
-                      min={
-                        key === "date_joining"
-                          ? minDates.date_of_joining
-                          : getMin(key)
-                      }
-                      max={getMax(key)}
-                      tabIndex={tabIndex++}
-                      key={key}
-                      name={key}
-                    />
-                  );
-                } else if (
-                  key === "file_passbook" ||
-                  key === "file_adhaar_front" ||
-                  key === "file_pancard" ||
-                  key === "form_11" ||
-                  key === "file_adhaar_back"
-                ) {
-                  return (
-                    <ImagePicker
-                      key={key}
-                      componentKey={key}
-                      label={`${mapKeyToLabel(key)}${
-                        mandatoryFields.includes(key) ? "*" : ""
-                      }`}
-                      value={getValue(key)}
-                      onChange={(file: File | null) => {
-                        handleFileChange(file, key);
-                      }}
-                      error={
-                        errors?.[key] && `Please upload ${mapKeyToLabel(key)}`
-                      }
-                      tabIndex={tabIndex++}
-                    />
-                  );
-                } else if (key === "password" || key === "confirm_password") {
-                  return (
-                    <div className={formStyles["form-column"]} key={key}>
+          <Accordion
+            items={formSections.map((section) => ({
+              title: section.title,
+              content: (
+                <div className={formStyles["form-grid"]}>
+                  {section.keys.map((key) => {
+                    if (key === "gender") {
+                      return (
+                        <Select
+                          key={key}
+                          label={`${mapKeyToLabel(key)}${
+                            mandatoryFields.includes(key) ? "*" : ""
+                          }`}
+                          options={getGender()}
+                          value={data[key]}
+                          onChange={(value) => handleSelectChange(value, key)}
+                          tabIndex={tabIndex++}
+                        />
+                      );
+                    }
+
+                    if (
+                      [
+                        "date_of_birth",
+                        "date_joining",
+                        "date_of_retirement",
+                        "date_of_leaving",
+                        "last_date_of_leaving",
+                      ].includes(key)
+                    ) {
+                      return (
+                        <DatePicker
+                          key={key}
+                          label={`${mapKeyToLabel(key)}${
+                            mandatoryFields.includes(key) ? "*" : ""
+                          }`}
+                          selectedDate={data[key]}
+                          onDateChange={(e) =>
+                            handleSelectChange(e.target.value, key)
+                          }
+                          error={
+                            errors[key] &&
+                            `Please select ${mapKeyToLabel(key).toLowerCase()}.`
+                          }
+                          min={
+                            key === "date_joining"
+                              ? minDates.date_of_joining
+                              : getMin(key)
+                          }
+                          max={getMax(key)}
+                          tabIndex={tabIndex++}
+                          className="w-100"
+                        />
+                      );
+                    }
+
+                    if (
+                      [
+                        "file_passbook",
+                        "file_adhaar_front",
+                        "file_adhaar_back",
+                        "file_pancard",
+                        "form_11",
+                      ].includes(key)
+                    ) {
+                      return (
+                        <ImagePicker
+                          key={key}
+                          componentKey={key}
+                          label={`${mapKeyToLabel(key)}${
+                            mandatoryFields.includes(key) ? "*" : ""
+                          }`}
+                          value={getValue(key)}
+                          onChange={(file) => handleFileChange(file, key)}
+                          error={
+                            errors[key] && `Please upload ${mapKeyToLabel(key)}`
+                          }
+                          tabIndex={tabIndex++}
+                        />
+                      );
+                    }
+
+                    if (["password", "confirm_password"].includes(key)) {
+                      return (
+                        <Input
+                          key={key}
+                          label={`${mapKeyToLabel(key)}${
+                            mandatoryFields.includes(key) ? "*" : ""
+                          }`}
+                          name={key}
+                          defaultValue={data[key]}
+                          onBlur={handleChange}
+                          placeholder={`Enter ${mapKeyToLabel(
+                            key
+                          ).toLowerCase()}`}
+                          error={
+                            errors[key]
+                              ? data[key]
+                                ? errors[key]
+                                : `Please enter ${mapKeyToLabel(
+                                    key
+                                  ).toLowerCase()}.`
+                              : ""
+                          }
+                          maxLength={getMaxLength(key)}
+                          tabIndex={tabIndex++}
+                          type={!passwordVisible[key] ? "password" : "text"}
+                          iconRight={
+                            !passwordVisible[key] ? (
+                              <IconEye />
+                            ) : (
+                              <IconViewOff />
+                            )
+                          }
+                          handleIconButtonClick={() =>
+                            setPasswordVisible((prevState) => ({
+                              ...prevState,
+                              [key]: !prevState[key],
+                            }))
+                          }
+                        />
+                      );
+                    }
+
+                    return (
                       <Input
+                        key={key}
                         label={`${mapKeyToLabel(key)}${
                           mandatoryFields.includes(key) ? "*" : ""
                         }`}
                         name={key}
                         defaultValue={data[key]}
-                        onChange={handleChange}
+                        onBlur={handleChange}
                         placeholder={`Enter ${mapKeyToLabel(
                           key
                         ).toLowerCase()}`}
@@ -704,79 +658,33 @@ const CreateTeacher: React.FC<Props> = () => {
                               ? errors[key]
                               : `Please enter ${mapKeyToLabel(
                                   key
-                                ).toLocaleLowerCase()}.`
+                                ).toLowerCase()}.`
                             : ""
                         }
+                        onKeyPress={
+                          [
+                            "phone_number",
+                            "card_number",
+                            "emergency_number",
+                            "adhaar",
+                            "pension_amount",
+                            "passing_year",
+                            "gov_provident_fund",
+                            "family_age1",
+                            "family_adhaar1",
+                          ].includes(key)
+                            ? onKeyPress
+                            : () => {}
+                        }
+                        maxLength={getMaxLength(key)}
                         tabIndex={tabIndex++}
-                        type={!passwordVisible[key] ? "password" : "text"}
-                        iconRight={
-                          !passwordVisible[key] ? <IconEye /> : <IconViewOff />
-                        }
-                        handleIconButtonClick={() =>
-                          setPasswordVisible((prevState) => ({
-                            ...prevState,
-                            [key]: !prevState[key],
-                          }))
-                        }
-                        autoComplete="new-password"
                       />
-                    </div>
-                  );
-                }
-                return (
-                  <div className={formStyles["form-column"]} key={key}>
-                    <Input
-                      label={`${mapKeyToLabel(key)}${
-                        mandatoryFields.includes(key) ? "*" : ""
-                      }`}
-                      name={key}
-                      defaultValue={data[key]}
-                      onChange={handleChange}
-                      placeholder={`Enter ${mapKeyToLabel(key).toLowerCase()}`}
-                      error={
-                        errors[key]
-                          ? data[key]
-                            ? errors[key]
-                            : `Please enter ${mapKeyToLabel(
-                                key
-                              ).toLocaleLowerCase()}.`
-                          : ""
-                      }
-                      onKeyPress={
-                        key === "phone_number" ||
-                        key === "card_number" ||
-                        key === "emergency_number" ||
-                        key === "adhaar" ||
-                        key === "pension_amount" ||
-                        key === "passing_year" ||
-                        key === "gov_provident_fund" ||
-                        key === "family_age1" ||
-                        key === "family_adhaar1"
-                          ? onKeyPress
-                          : () => {}
-                      }
-                      maxLength={getMaxLength(key)}
-                      tabIndex={tabIndex++}
-                      disabled={
-                        (key === "email" || key === "phone_number") && id
-                      }
-                    />
-                  </div>
-                );
-              })}
-          </div>
-
-          {errors?.non_field_errors && (
-            <p className="error">{errors?.non_field_errors}</p>
-          )}
-
-          {errors?.unauthorized && (
-            <p className="error">{errors?.unauthorized}</p>
-          )}
-
-          {errors?.internalServerError && (
-            <p className="error">{errors?.internalServerError}</p>
-          )}
+                    );
+                  })}
+                </div>
+              ),
+            }))}
+          />
 
           <div className={styles.buttonContainer}>
             <Button
