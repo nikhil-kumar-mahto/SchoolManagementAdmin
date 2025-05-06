@@ -419,6 +419,8 @@ const CreateTeacher: React.FC<Props> = () => {
         "email",
         "teacher_code",
         "department_code",
+        "password",
+        "confirm_password",
         "marital_status",
         "blood_group",
 
@@ -426,8 +428,6 @@ const CreateTeacher: React.FC<Props> = () => {
         "state",
         "permanent_address",
         "emergency_number",
-        "password",
-        "confirm_password",
       ],
     },
     {
@@ -538,6 +538,97 @@ const CreateTeacher: React.FC<Props> = () => {
                           onChange={(value) => handleSelectChange(value, key)}
                           tabIndex={tabIndex++}
                           error={errors?.gender}
+                          name={key}
+                        />
+                      );
+                    } else if (key === "marital_status") {
+                      return (
+                        <Select
+                          key={key}
+                          label={`${mapKeyToLabel(key)}${
+                            mandatoryFields.includes(key) ? "*" : ""
+                          }`}
+                          options={getMaritalStatus()}
+                          value={data?.marital_status}
+                          onChange={(value) =>
+                            handleSelectChange(value, "marital_status")
+                          }
+                          error={
+                            errors?.marital_status
+                              ? data?.marital_status
+                                ? errors?.marital_status
+                                : "Please select marital status."
+                              : ""
+                          }
+                          tabIndex={tabIndex++}
+                          name={key}
+                        />
+                      );
+                    } else if (key === "blood_group") {
+                      return (
+                        <Select
+                          key={key}
+                          label={`${mapKeyToLabel(key)}${
+                            mandatoryFields.includes(key) ? "*" : ""
+                          }`}
+                          options={getBloodGroups()}
+                          value={data?.blood_group}
+                          onChange={(value) =>
+                            handleSelectChange(value, "blood_group")
+                          }
+                          error={
+                            errors?.blood_group
+                              ? data?.blood_group
+                                ? errors?.blood_group
+                                : "Please select blood group."
+                              : ""
+                          }
+                          tabIndex={tabIndex++}
+                          name={key}
+                        />
+                      );
+                    } else if (key === "category_type") {
+                      return (
+                        <Select
+                          key={key}
+                          label={`${mapKeyToLabel(key)}${
+                            mandatoryFields.includes(key) ? "*" : ""
+                          }`}
+                          options={getCategory()}
+                          value={data?.category_type}
+                          onChange={(value) =>
+                            handleSelectChange(value, "category_type")
+                          }
+                          error={
+                            errors?.category_type
+                              ? data?.category_type
+                                ? errors?.category_type
+                                : "Please select category."
+                              : ""
+                          }
+                          tabIndex={tabIndex++}
+                          name={key}
+                        />
+                      );
+                    } else if (key === "status") {
+                      return (
+                        <Select
+                          key={key}
+                          label="Select status"
+                          options={getStatuses()}
+                          value={data?.status}
+                          onChange={(value) =>
+                            handleSelectChange(value, "status")
+                          }
+                          error={
+                            errors?.status
+                              ? data?.status
+                                ? errors?.status
+                                : "Please select status."
+                              : ""
+                          }
+                          tabIndex={tabIndex++}
+                          name={key}
                         />
                       );
                     }
@@ -573,6 +664,7 @@ const CreateTeacher: React.FC<Props> = () => {
                           max={getMax(key)}
                           tabIndex={tabIndex++}
                           className="w-100"
+                          name={key}
                         />
                       );
                     }
@@ -611,8 +703,8 @@ const CreateTeacher: React.FC<Props> = () => {
                             mandatoryFields.includes(key) ? "*" : ""
                           }`}
                           name={key}
-                          defaultValue={data[key]}
-                          onBlur={handleChange}
+                          value={data[key]}
+                          onChange={handleChange}
                           placeholder={`Enter ${mapKeyToLabel(
                             key
                           ).toLowerCase()}`}
@@ -641,6 +733,7 @@ const CreateTeacher: React.FC<Props> = () => {
                               [key]: !prevState[key],
                             }))
                           }
+                          autoComplete="off"
                         />
                       );
                     }
@@ -652,8 +745,8 @@ const CreateTeacher: React.FC<Props> = () => {
                           mandatoryFields.includes(key) ? "*" : ""
                         }`}
                         name={key}
-                        defaultValue={data[key]}
-                        onBlur={handleChange}
+                        value={data[key]}
+                        onChange={handleChange}
                         placeholder={`Enter ${mapKeyToLabel(
                           key
                         ).toLowerCase()}`}
