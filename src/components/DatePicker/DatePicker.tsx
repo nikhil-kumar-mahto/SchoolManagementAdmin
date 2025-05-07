@@ -9,7 +9,7 @@ interface DatePickerProps {
   label?: string;
   selectedDate: string;
   onDateChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  error: string | undefined;
+  error?: string | undefined;
   className?: string;
   type?: string;
   min?: string | number | undefined;

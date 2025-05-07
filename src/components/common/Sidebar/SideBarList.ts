@@ -52,4 +52,10 @@ export const sidebarItems: SidebarItem[] = [
     Icon: ScheduleIcon,
     fill: "#000",
   },
+  { 
+    name: "Reports Management",
+    href: "/reports",
+    Icon: ScheduleIcon,
+    fill: "#000",
+  },
 ];

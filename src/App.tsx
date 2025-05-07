@@ -21,6 +21,7 @@ import CreateSubject from "./pages/Subject/CreateSubject";
 import ScheduleManagement from "./pages/ScheduleManagement/ScheduleManagement";
 import { useAppContext } from "./contexts/AppContext";
 import ScheduleList from "./pages/ScheduleManagement/Schedule";
+import Reports from "./pages/reports/Reports";
 
 function App() {
   const { isLoggedIn } = useAppContext();
@@ -79,6 +80,10 @@ function App() {
           element={
             isLoggedIn ? <ScheduleManagement /> : <Navigate to="/login" />
           }
+        />
+        <Route
+          path="/reports"
+          element={isLoggedIn ? <Reports /> : <Navigate to="/login" />}
         />
         <Route path="*" element={<Navigate to="/dashboard" />} />
       </Routes>

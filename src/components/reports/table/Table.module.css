@@ -1,0 +1,38 @@
+.tableWrapper {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.table th,
+.table td {
+  border: 1px solid #ccc;
+  padding: 10px;
+  text-align: center;
+  min-width: 20pc;
+}
+
+.table th {
+  background-color: #f4f4f4;
+}
+
+.timeColumn {
+  font-weight: bold;
+  background-color: #f9f9f9;
+}
+
+.cell {
+  text-align: left;
+}
+
+.photo {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 5px;
+  margin-top: 5px;
+}
