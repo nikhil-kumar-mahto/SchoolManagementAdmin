@@ -5,7 +5,12 @@ import styles from "./Reports.module.css";
 import Filters from "../../components/reports/filter-button/FilterButton";
 import Table from "../../components/reports/table/Table";
 import Select from "../../components/common/Select/Select";
-import { columnHeaders, rowHeaders, tableData } from "../../static/reports";
+import {
+  columnHeaders,
+  filterTypes,
+  rowHeaders,
+  tableData,
+} from "../../static/reports";
 import Fetch from "../../utils/form-handling/fetch";
 import DatePicker from "../../components/DatePicker/DatePicker";
 
@@ -84,27 +89,41 @@ const Reports: React.FC = () => {
             onChange={(value: string) => handleChangeFilter("teacher", value)}
           />
         </div>
-        <Filters
+        {/* <Filters
           selectedFilter={dataType}
           onFilterChange={handleDataTypeChange}
-        />
+        /> */}
 
         <div className={styles.datePickerContainer}>
-          <DatePicker
-            label="Select start date"
-            selectedDate={dateFilters.startDate}
-            onDateChange={(e: ChangeEvent<HTMLInputElement>) =>
-              handleDateChange("startDate", e.target.value)
-            }
+          <Select
+            label="Select Filter Type"
+            options={filterTypes}
+            value={dataType}
+            onChange={(value: string) => handleDataTypeChange(value)}
           />
+          {dataType === "Custom" && (
+            <>
+              <DatePicker
+                label="Select start date"
+                selectedDate={dateFilters.startDate}
+                onDateChange={(e: ChangeEvent<HTMLInputElement>) =>
+                  handleDateChange("startDate", e.target.value)
+                }
+                max={dateFilters.endDate ? dateFilters.endDate : undefined}
+                className="w-100"
+              />
 
-          <DatePicker
-            label="Select end date"
-            selectedDate={dateFilters.endDate}
-            onDateChange={(e: ChangeEvent<HTMLInputElement>) =>
-              handleDateChange("endDate", e.target.value)
-            }
-          />
+              <DatePicker
+                label="Select end date"
+                selectedDate={dateFilters.endDate}
+                onDateChange={(e: ChangeEvent<HTMLInputElement>) =>
+                  handleDateChange("endDate", e.target.value)
+                }
+                min={dateFilters.startDate ? dateFilters.startDate : undefined}
+                className="w-100"
+              />
+            </>
+          )}
         </div>
 
         <Table

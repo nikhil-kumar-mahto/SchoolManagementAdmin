@@ -291,3 +291,11 @@ export const tableData = [
     ],
   },
 ];
+
+
+export const filterTypes = [
+  {label: "Today", value: "Today"},
+  {label: "Week", value: "Week"},
+  {label: "Month", value: "Month"},
+  {label: "Custom", value: "Custom"}
+]
