@@ -1,7 +1,3 @@
-/* eslint-disable */
-// @ts-nocheck
-
-
 import React, { ChangeEvent } from "react";
 import DatePicker from "../../DatePicker/DatePicker";
 import TimeEntry from "../TimeEntry/TimeEntry";
@@ -15,6 +11,7 @@ interface Time {
   end_time: string;
   subject: string;
   teacher: string;
+  id?: string;
 }
 
 interface Props {

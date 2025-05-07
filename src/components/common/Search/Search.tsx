@@ -1,6 +1,3 @@
-/* eslint-disable */
-// @ts-nocheck
-
 import React, { useState, useRef, useEffect } from "react";
 import styles from "./Search.module.css";
 

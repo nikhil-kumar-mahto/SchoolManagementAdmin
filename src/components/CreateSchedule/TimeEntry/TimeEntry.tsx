@@ -1,7 +1,6 @@
 /* eslint-disable */
 // @ts-nocheck
 
-
 import { DeleteIcon } from "../../../assets/svgs";
 import { useAppContext } from "../../../contexts/AppContext";
 import styles from "./TimeEntry.module.css";
@@ -24,7 +23,15 @@ interface Time {
   teachers: Array<{ label: string; value: string }>;
   errors: any;
   minStartTime?: undefined | number | string;
-  dateArray: any[];
+  dateArray: {
+    schedule: {
+      subject: string;
+      teacher: string;
+      start_time: string;
+      end_time: string;
+    }[];
+    date?: string;
+  };
   disabled?: boolean;
   allowLastEntryDelete?: boolean;
 }
