@@ -16,6 +16,7 @@ import Button from "../../components/common/Button/Button";
 import { useAppContext } from "../../contexts/AppContext";
 import Modal from "../../components/common/Modal/Modal";
 import FullPageLoader from "../../components/common/FullPageLoader/FullPageLoader";
+import moment from "moment";
 
 type Day =
   | "Monday"
@@ -385,25 +386,27 @@ const ScheduleManagement: React.FC = () => {
     } else {
       url = "schedule/";
     }
-    Fetch(url, { ...params }, { method: id ? "put" : "post" }).then(
-      (res: any) => {
-        if (res.status) {
-          showToast(
-            id ? "Schedule updated successfully" : "Schedule added successfully"
-          );
-          navigate("/schedule");
-        } else {
-          let resErr = arrayString(res);
-          handleNewError(resErr);
+    Fetch(
+      url,
+      { ...params, date: moment().format("YYYY-MM-DD") },
+      { method: id ? "put" : "post" }
+    ).then((res: any) => {
+      if (res.status) {
+        showToast(
+          id ? "Schedule updated successfully" : "Schedule added successfully"
+        );
+        navigate("/schedule");
+      } else {
+        let resErr = arrayString(res);
+        handleNewError(resErr);
 
-          if (resErr?.is_conflict) {
-            setNoTeacherModal(resErr?.message);
-          }
+        if (resErr?.is_conflict) {
+          setNoTeacherModal(resErr?.message);
         }
-        setIsLoading("");
-        setShowModal(false);
       }
-    );
+      setIsLoading("");
+      setShowModal(false);
+    });
   };
 
   const getDayNumber = (day: string): number | undefined => {
@@ -681,29 +684,7 @@ const ScheduleManagement: React.FC = () => {
             <h2>
               {id ? (disableEdit ? "Deleted" : "Update") : "Create"} Schedule
             </h2>
-            <div className={`${styles.selectContainer} mt-4`}>
-              <Select
-                label="Select school*"
-                options={schools}
-                value={commonInfo?.school}
-                onChange={(value: string) =>
-                  handlecommonInfoChange(value, "school")
-                }
-                error={errors?.school}
-                disabled={id ? true : false}
-              />
-
-              <Select
-                label="Select class*"
-                options={classes}
-                value={commonInfo.class_assigned}
-                onChange={(value: string) =>
-                  handlecommonInfoChange(value, "class_assigned")
-                }
-                error={errors?.class}
-                disabled={id ? true : false}
-              />
-            </div>
+            <div className={`${styles.selectContainer} mt-4`}></div>
 
             <div className={`${styles.viewToggle} mt-3`}>
               <button
