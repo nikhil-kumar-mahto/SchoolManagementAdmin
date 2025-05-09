@@ -35,8 +35,7 @@ const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   const [showModal, setShowModal] = useState(false);
 
   const toggleIsLoggedIn = () => {
-    // setIsLoggedIn((prevState) => !prevState);
-    setIsLoggedIn(true);
+    setIsLoggedIn((prevState) => !prevState);
   };
 
   const isAuthenticated = () => {
@@ -45,8 +44,7 @@ const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   };
 
   useEffect(() => {
-    // setIsLoggedIn(isAuthenticated());
-    setIsLoggedIn(true);
+    setIsLoggedIn(isAuthenticated());
   }, []);
 
   useEffect(() => {

@@ -79,6 +79,8 @@ const LoginScreen: React.FC = () => {
     onSubmit,
   });
 
+  console.log("Err===", errors);
+
   return (
     <div className="login-container">
       <div className="login-form-container flex-center">
@@ -130,6 +132,8 @@ const LoginScreen: React.FC = () => {
             {errors?.internalServerError && (
               <p className="error">{errors?.internalServerError}</p>
             )}
+
+            {errors?.message && <p className="error">{errors?.message}</p>}
 
             <Button
               text="Sign In"

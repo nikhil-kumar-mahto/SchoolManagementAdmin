@@ -583,8 +583,6 @@ const ScheduleManagement: React.FC = () => {
     selectFields,
   });
 
-  console.log("Errors===", errors);
-
   const deleteItem = () => {
     setIsLoading("delete-modal");
     Fetch(`time-slot/${deleteId}/`, {}, { method: "delete" }).then(
@@ -684,7 +682,29 @@ const ScheduleManagement: React.FC = () => {
             <h2>
               {id ? (disableEdit ? "Deleted" : "Update") : "Create"} Schedule
             </h2>
-            <div className={`${styles.selectContainer} mt-4`}></div>
+            <div className={`${styles.selectContainer} mt-4`}>
+              <Select
+                label="Select school*"
+                options={schools}
+                value={commonInfo?.school}
+                onChange={(value: string) =>
+                  handlecommonInfoChange(value, "school")
+                }
+                error={errors?.school}
+                disabled={id ? true : false}
+              />
+
+              <Select
+                label="Select class*"
+                options={classes}
+                value={commonInfo.class_assigned}
+                onChange={(value: string) =>
+                  handlecommonInfoChange(value, "class_assigned")
+                }
+                error={errors?.class}
+                disabled={id ? true : false}
+              />
+            </div>
 
             <div className={`${styles.viewToggle} mt-3`}>
               <button
