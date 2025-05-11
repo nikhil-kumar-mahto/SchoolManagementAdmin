@@ -1,6 +1,3 @@
-/* eslint-disable */
-// @ts-nocheck
-
 import React, { ChangeEvent, useState } from "react";
 import "../../styles/login.css";
 import Input from "../../components/common/Input/Input";
@@ -11,8 +8,8 @@ import Fetch from "../../utils/form-handling/fetch";
 import { arrayString } from "../../utils/form-handling/arrayString";
 import { useAppContext } from "../../contexts/AppContext";
 import { IconEye, IconViewOff } from "../../assets/svgs";
-import Select from "../../components/common/Select/Select";
-import { countryCodes } from "../../static/data";
+// import Select from "../../components/common/Select/Select";
+// import { countryCodes } from "../../static/data";
 
 const initialState = {
   username: "",
@@ -36,14 +33,14 @@ const LoginScreen: React.FC = () => {
     });
   };
 
-  const handleSelectChange = (value: string) => {
-    setData((prevState) => {
-      return {
-        ...prevState,
-        country_code: value,
-      };
-    });
-  };
+  // const handleSelectChange = (value: string) => {
+  //   setData((prevState) => {
+  //     return {
+  //       ...prevState,
+  //       country_code: value,
+  //     };
+  //   });
+  // };
 
   const onSubmit = () => {
     localStorage.clear();

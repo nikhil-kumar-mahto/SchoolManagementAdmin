@@ -80,7 +80,7 @@ const CreateSchool: React.FC = () => {
     }));
   };
 
-  const handleLogoChange = (file: File | null) => {
+  const handleLogoChange = (file: string | File | null) => {
     if (id) {
       setIsLogoChanged(true);
     }

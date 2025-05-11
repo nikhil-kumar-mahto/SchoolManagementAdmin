@@ -1,6 +1,3 @@
-/* eslint-disable */
-// @ts-nocheck
-
 import { DeleteIcon } from "../../../assets/svgs";
 import { useAppContext } from "../../../contexts/AppContext";
 import styles from "./TimeEntry.module.css";
@@ -22,7 +19,7 @@ interface Time {
   handleDelete: () => void;
   teachers: Array<{ label: string; value: string }>;
   errors: any;
-  minStartTime?: undefined | number | string;
+  minStartTime?: undefined | string;
   dateArray: {
     schedule: {
       subject: string;
@@ -51,14 +48,12 @@ const TimeEntry: React.FC<Time> = ({
   allowLastEntryDelete = true,
 }) => {
   const { subjects } = useAppContext();
-  let subjectsFormatted = subjects?.map(
-    (item: { name: string; id: string }) => {
-      return {
-        label: item?.name,
-        value: item?.id,
-      };
-    }
-  );
+  let subjectsFormatted = subjects?.map((item) => {
+    return {
+      label: item?.name,
+      value: item?.id,
+    };
+  });
 
   return (
     <div className={styles.timeAndSubject}>
@@ -66,7 +61,7 @@ const TimeEntry: React.FC<Time> = ({
         label="Select start time*"
         options={
           minStartTime
-            ? filterTimeArray(minStartTime, dateArray, "start_time", true)
+            ? filterTimeArray(minStartTime, dateArray, "start_time")
             : generateTimeArray()
         }
         value={start_time}
@@ -79,7 +74,7 @@ const TimeEntry: React.FC<Time> = ({
 
       <Select
         label="Select end time*"
-        options={filterTimeArray(start_time, dateArray, "end_time", false)}
+        options={filterTimeArray(start_time, dateArray, "end_time")}
         value={end_time}
         onChange={(value: string) => handleChange("end_time", value)}
         error={errors?.end_time}

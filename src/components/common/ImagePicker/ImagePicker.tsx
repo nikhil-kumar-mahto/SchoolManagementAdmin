@@ -4,7 +4,7 @@ import { DeleteIcon } from "../../../assets/svgs";
 
 interface ImagePickerProps {
   label?: string;
-  value: string | { name: string } | null;
+  value: string | { name: string } | null | undefined;
   onChange: (file: File | null | string) => void;
   className?: string;
   error?: string;
@@ -23,7 +23,7 @@ const ImagePicker: React.FC<ImagePickerProps> = ({
   tabIndex = undefined,
   showPreview = true,
 }) => {
-  const [fileName, setFileName] = useState<string | { name: string } | null>(
+  const [fileName, setFileName] = useState<string | { name: string } | null | undefined>(
     value ? value : null
   );
   const [file, setFile] = useState<Blob | MediaSource | null>(null);

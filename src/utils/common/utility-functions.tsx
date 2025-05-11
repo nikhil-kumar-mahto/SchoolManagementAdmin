@@ -1,7 +1,3 @@
-/* eslint-disable */
-// @ts-nocheck
-
-
 import moment from "moment";
 
 export function getIdFromUrl(url: any) {
@@ -52,7 +48,11 @@ export function generateTimeArray() {
   return timeArray;
 }
 
-export function filterTimeArray(start_time, dateArray, type) {
+export function filterTimeArray(
+  start_time: string,
+  dateArray: { schedule?: { start_time: string; end_time: string }[] },
+  type: string
+) {
   const timeArray = generateTimeArray();
 
   if (type === "end_time") {

@@ -9,7 +9,7 @@ interface InputProps {
   type?: "text" | "password" | "email" | "number" | "tel" | "url";
   iconRight?: React.ReactNode;
   [key: string]: any;
-  onKeyPress?: (evt: any, reg: string) => void;
+  onKeyPress?: (evt: React.KeyboardEvent<HTMLInputElement>, reg: RegExp) => void;
   maxLength?: undefined | number;
   tabIndex?: undefined | number;
   disabled?: boolean;

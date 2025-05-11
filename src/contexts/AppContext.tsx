@@ -1,7 +1,3 @@
-/* eslint-disable */
-// @ts-nocheck
-
-
 import React, { createContext, useState, useContext, useEffect } from "react";
 import Fetch from "../utils/form-handling/fetch.js";
 import Modal from "../components/common/Modal/Modal";
@@ -10,11 +6,11 @@ import Auth from "../utils/form-handling/auth.js";
 type AppContextType = {
   isSidebarOpen: boolean;
   toggleSidebar: () => void;
-  subjects: { label: string; value: string }[];
+  subjects: { id: string; name: string }[];
   schools: {
     label: string;
     value: string;
-    classes: { id: string; name: string, section: string }[];
+    classes: { id: string; name: string; section: string }[];
   }[];
   toggleIsLoggedIn: () => void;
   isLoggedIn: boolean | null;
@@ -50,7 +46,7 @@ const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    const handleUnauthorized = (e) => {
+    const handleUnauthorized = (_: Event) => {
       setShowModal(true);
     };
 

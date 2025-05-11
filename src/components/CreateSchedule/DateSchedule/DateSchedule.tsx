@@ -26,7 +26,6 @@ interface Props {
   };
   handleChange: (value: string, type: string) => void;
   teachers: Array<Options>;
-  subjects: Array<Options>;
   errors: any;
   schedule: Array<Time>;
   handleTimeChange: (
@@ -52,17 +51,6 @@ const DateSchedule: React.FC<Props> = ({
   isEditMode,
   disableEdit,
 }) => {
-  let disableAddingMore =
-    !!errors?.schedule?.length ||
-    !schedule[schedule.length - 1]?.start_time ||
-    !schedule[schedule.length - 1]?.end_time ||
-    !schedule[schedule.length - 1]?.teacher ||
-    !schedule[schedule.length - 1]?.subject;
-
-  if (schedule.length === 0) {
-    disableAddingMore = false;
-  }
-
   const allowLastEntryDelete = () => {
     if (schedule.length > 1 || isEditMode) {
       return true;
