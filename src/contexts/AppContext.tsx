@@ -62,7 +62,6 @@ const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   const getSchools = () => {
     Fetch("schools/?limit=40&offset=0&is_active=true").then((res: any) => {
       if (res.status) {
-        console.log(res.data, "878787887878887878787878787878");
         let schools = res.data?.results?.map(
           (item: {
             name: string;
@@ -121,13 +120,13 @@ const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
       }}
     >
       {children}
-      {/* <Modal
+      <Modal
         title="Alert!"
         message="You have been logged out. Please login again."
         onConfirm={handleLogout}
         visible={showModal}
         confirmText="OK"
-      /> */}
+      />
     </AppContext.Provider>
   );
 };

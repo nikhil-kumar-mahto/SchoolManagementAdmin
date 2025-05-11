@@ -21,6 +21,13 @@ interface TableProps {
 }
 
 const Table: React.FC<TableProps> = ({ columnHeaders, rowHeaders, data }) => {
+  if (Object.keys(data).length === 0) {
+    return (
+      <div className="flex-center py-2">
+        <p className="error">No records available.</p>
+      </div>
+    );
+  }
   return (
     <div className={styles.tableWrapper}>
       <table className={styles.table}>
@@ -36,10 +43,8 @@ const Table: React.FC<TableProps> = ({ columnHeaders, rowHeaders, data }) => {
           {rowHeaders.map((time) => (
             <tr key={time}>
               <td className={styles.timeColumn}>{time}</td>
-              {columnHeaders.map((date) => {
-                const record = data
-                  .find((d) => d.time === time)
-                  ?.records.find((r) => r.date === date);
+              {columnHeaders.map((date, index) => {
+                const record = data[time];
 
                 return (
                   <td key={`${date}-${time}`} className={styles.cell}>
@@ -47,23 +52,29 @@ const Table: React.FC<TableProps> = ({ columnHeaders, rowHeaders, data }) => {
                       <>
                         <div className="py-2">
                           <strong>Punch In:</strong>{" "}
-                          {record.punchInTime || "N/A"}
+                          {record[index]?.in_time || "N/A"}
                         </div>
                         <div className="py-2">
                           <strong>Punch Out:</strong>{" "}
-                          {record.punchOutTime || "N/A"}
+                          {record?.[index]?.out_time || "N/A"}
                         </div>
                         <div className="py-2">
-                          <strong>Late:</strong> {record.late || "N/A"}
+                          <strong>Late:</strong>{" "}
+                          {record[index]?.late?.late_punch_out
+                            ? record[index]?.late?.late_punch_out + " mins."
+                            : "N/A"}
                         </div>
                         <div className="py-2">
-                          <strong>Early:</strong> {record.early || "N/A"}
+                          <strong>Early:</strong>{" "}
+                          {record[index]?.early_punch_out
+                            ? record[index]?.early_punch_out + " mins."
+                            : "N/A"}
                         </div>
                         <div className="py-2">
                           <strong>Punch In Photo:</strong>{" "}
-                          {record.punchInPhoto ? (
+                          {record[index].punch_in_photo ? (
                             <img
-                              src={record.punchInPhoto}
+                              src={record[index]?.punch_in_photo}
                               alt="Punch In"
                               className={styles.photo}
                             />
@@ -73,9 +84,9 @@ const Table: React.FC<TableProps> = ({ columnHeaders, rowHeaders, data }) => {
                         </div>
                         <div className="py-2">
                           <strong>Punch Out Photo:</strong>{" "}
-                          {record.punchOutPhoto ? (
+                          {record[index].punch_out_photo ? (
                             <img
-                              src={record.punchOutPhoto}
+                              src={record[index]?.punch_out_photo}
                               alt="Punch Out"
                               className={styles.photo}
                             />
@@ -85,14 +96,14 @@ const Table: React.FC<TableProps> = ({ columnHeaders, rowHeaders, data }) => {
                         </div>
                         <div className="py-2">
                           <strong>Punch In Reason:</strong>{" "}
-                          {record.punchInReason
-                            ? record.punchInReason.slice(0, 15).trim() + "..."
+                          {record[index]?.early_reason
+                            ? record?.early_reason?.slice(0, 15).trim() + "..."
                             : "N/A"}
                         </div>
                         <div className="py-2">
                           <strong>Punch Out Reason:</strong>{" "}
-                          {record.punchOutReason
-                            ? record.punchOutReason.slice(0, 15).trim() + "..."
+                          {record[index]?.late_reason
+                            ? record?.late_reason?.slice(0, 15).trim() + "..."
                             : "N/A"}
                         </div>
                       </>

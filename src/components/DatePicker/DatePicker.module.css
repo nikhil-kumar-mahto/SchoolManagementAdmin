@@ -43,3 +43,7 @@
     color: var(--danger-color);
     border-color: 1px solid var(--danger-color);
 }
+
+.hidden {
+    visibility: hidden !important;
+}

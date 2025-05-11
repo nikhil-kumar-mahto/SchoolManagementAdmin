@@ -2,25 +2,36 @@ import React, { ChangeEvent, useState } from "react";
 import Layout from "../../components/common/Layout/Layout";
 
 import styles from "./Reports.module.css";
-import Filters from "../../components/reports/filter-button/FilterButton";
 import Table from "../../components/reports/table/Table";
 import Select from "../../components/common/Select/Select";
-import {
-  columnHeaders,
-  filterTypes,
-  rowHeaders,
-  tableData,
-} from "../../static/reports";
+import { filterTypes } from "../../static/reports";
 import Fetch from "../../utils/form-handling/fetch";
 import DatePicker from "../../components/DatePicker/DatePicker";
+import { useAppContext } from "../../contexts/AppContext";
+import Button from "../../components/common/Button/Button";
+import {
+  generateColumns,
+  generateColumnsForClass,
+  generateRows,
+  generateTableData,
+} from "../../utils/reports/functions";
+import ImagePreview from "../../components/common/ImagePreview/ImagePreview";
 
 const Reports: React.FC = () => {
   const [dataType, setDataType] = useState("Today");
-  const [data, setData] = useState([]);
+  const [classes, setClasses] = useState([]);
+  const [teachers, setTeachers] = useState([]);
+  const [data, setData] = useState({});
+  const [columns, setColumns] = useState<string[]>([]);
+  const [rows, setRows] = useState<string[]>([]);
+  const [tableData2, setTableData] = useState<any>({}); // TODO
   const [dateFilters, setDateFilters] = useState({
     startDate: "",
     endDate: "",
   });
+  const [isLoading, setIsLoading] = useState(false);
+  const [err, setErr] = useState<any>({});
+  const [isDataLoaded, setIsDataLoaded] = useState(false);
 
   const [selectedFilter, setSelectedFilter] = useState({
     school: "",
@@ -28,11 +39,50 @@ const Reports: React.FC = () => {
     teacher: "",
   });
 
-  const getData = () => {
-    Fetch(
-      `/apiurl?school=${selectedFilter.school}&class=${selectedFilter.class}&teacher=${selectedFilter.teacher}`
-    ).then((res) => {
+  const { schools } = useAppContext();
+
+  const getTeachers = (id: string) => {
+    setTeachers([]);
+    Fetch(`list-teachers/${id}/?limit=40`).then((res: any) => {
       if (res.status) {
+        let teachers = res.data?.results?.map(
+          (item: { name: string; id: string }) => {
+            return {
+              label: item?.name,
+              value: item?.id,
+            };
+          }
+        );
+        setTeachers(teachers);
+      }
+    });
+  };
+
+  const getData = () => {
+    setIsLoading(true);
+    Fetch(
+      `admin/reports/?class_id=${selectedFilter.class}&teacher_id=${
+        selectedFilter.teacher
+      }&filter=${dataType.toLowerCase()}&start_date=${
+        dateFilters?.startDate
+      }&end_date=${dateFilters?.endDate}`
+    ).then((res) => {
+      setIsLoading(false);
+      if (res.status) {
+        setIsDataLoaded(true);
+        let arr = [];
+        if (selectedFilter.class && !selectedFilter.teacher) {
+          arr = generateColumnsForClass(res?.data?.results);
+        } else {
+          arr = generateColumns(res?.data?.results);
+        }
+
+        let arr2 = generateRows(res?.data?.results);
+        let tableData = generateTableData(res?.data?.results);
+
+        setTableData(tableData);
+        setColumns(arr);
+        setRows(arr2);
         setData(res?.data);
       }
     });
@@ -42,12 +92,23 @@ const Reports: React.FC = () => {
     type: "school" | "class" | "teacher",
     value: string
   ) => {
-    setSelectedFilter((prevState) => {
-      return {
-        ...prevState,
-        [type]: value,
-      };
-    });
+    if (type === "school") {
+      getTeachers(value);
+      let classes = schools
+        ?.find((item) => item?.value === value)
+        ?.classes?.map((item) => ({
+          label: item?.name + " " + item?.section,
+          value: item?.id,
+        }));
+
+      setClasses(classes);
+    }
+
+    setSelectedFilter((prevState) => ({
+      ...prevState,
+      [type]: value,
+      ...(type === "school" && { class: "" }),
+    }));
   };
 
   const handleDateChange = (type: "startDate" | "endDate", value: string) => {
@@ -63,36 +124,75 @@ const Reports: React.FC = () => {
     setDataType(filter);
   };
 
+  const validate = () => {
+    setErr({});
+    if (dataType === "Custom") {
+      if (!dateFilters.startDate) {
+        setErr((prevState) => {
+          return {
+            ...prevState,
+            startDate: "Please select start date.",
+          };
+        });
+      }
+      if (!dateFilters.endDate) {
+        setErr((prevState) => {
+          return {
+            ...prevState,
+            endDate: "Please select end date.",
+          };
+        });
+      }
+
+      if (!dateFilters.startDate || !dateFilters.endDate) {
+        return;
+      }
+      getData();
+    } else {
+      getData();
+    }
+  };
+
   return (
     <Layout>
-      <div className={styles.container}>
-        <h2 className="my-3">Reports</h2>
+      <div className={`${styles.container} mt-4`}>
+        <div className={styles.reportsHeader}>
+          <h2 className="my-3">Reports</h2>
+          <Button
+            text="Filter"
+            onClick={validate}
+            isLoading={isLoading}
+            disabled={
+              !(
+                selectedFilter.school &&
+                (selectedFilter.class || selectedFilter.teacher)
+              )
+            }
+          />
+        </div>
+
         <div className={`${styles.filtersContainer} mb-2`}>
           <Select
             label="Select school"
-            options={[]}
+            options={schools}
             value={selectedFilter?.school}
             onChange={(value: string) => handleChangeFilter("school", value)}
           />
 
           <Select
             label="Select class"
-            options={[]}
+            options={classes}
             value={selectedFilter?.class}
             onChange={(value: string) => handleChangeFilter("class", value)}
           />
 
           <Select
             label="Select teacher"
-            options={[]}
+            options={teachers}
             value={selectedFilter?.teacher}
             onChange={(value: string) => handleChangeFilter("teacher", value)}
           />
         </div>
-        {/* <Filters
-          selectedFilter={dataType}
-          onFilterChange={handleDataTypeChange}
-        /> */}
 
         <div className={styles.datePickerContainer}>
           <Select
@@ -101,37 +201,46 @@ const Reports: React.FC = () => {
             value={dataType}
             onChange={(value: string) => handleDataTypeChange(value)}
           />
-          {dataType === "Custom" && (
-            <>
-              <DatePicker
-                label="Select start date"
-                selectedDate={dateFilters.startDate}
-                onDateChange={(e: ChangeEvent<HTMLInputElement>) =>
-                  handleDateChange("startDate", e.target.value)
-                }
-                max={dateFilters.endDate ? dateFilters.endDate : undefined}
-                className="w-100"
-              />
 
-              <DatePicker
-                label="Select end date"
-                selectedDate={dateFilters.endDate}
-                onDateChange={(e: ChangeEvent<HTMLInputElement>) =>
-                  handleDateChange("endDate", e.target.value)
-                }
-                min={dateFilters.startDate ? dateFilters.startDate : undefined}
-                className="w-100"
-              />
-            </>
-          )}
+          <DatePicker
+            label="Select start date"
+            selectedDate={dateFilters.startDate}
+            onDateChange={(e: ChangeEvent<HTMLInputElement>) =>
+              handleDateChange("startDate", e.target.value)
+            }
+            max={dateFilters.endDate ? dateFilters.endDate : undefined}
+            className="w-100"
+            error={err?.startDate}
+            visibility={dataType === "Custom"}
+          />
+
+          <DatePicker
+            label="Select end date"
+            selectedDate={dateFilters.endDate}
+            onDateChange={(e: ChangeEvent<HTMLInputElement>) =>
+              handleDateChange("endDate", e.target.value)
+            }
+            min={dateFilters.startDate ? dateFilters.startDate : undefined}
+            className="w-100"
+            error={err?.endDate}
+            visibility={dataType === "Custom"}
+          />
         </div>
 
-        <Table
-          columnHeaders={columnHeaders}
-          rowHeaders={rowHeaders}
-          data={tableData}
-        />
+        {!isDataLoaded && (
+          <div className={styles.placeholder}>
+            <p className={styles.message}>
+              Please select class or teacher, then click 'Filter' to view the
+              results.
+            </p>
+          </div>
+        )}
+
+        {isDataLoaded && (
+          <Table columnHeaders={columns} rowHeaders={rows} data={tableData2} />
+        )}
       </div>
+      <ImagePreview text="Punch In Photo" imageUrl="https://images.unsplash.com/photo-1611343693811-2c235c683f26?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MjB8fHVuc3BhbHNofGVufDB8fDB8fHww" onClose={() => {}} />
     </Layout>
   );
 };

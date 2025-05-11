@@ -1,7 +1,6 @@
 /* eslint-disable */
 // @ts-nocheck
 
-
 import React from "react";
 import styles from "./DatePicker.module.css";
 
@@ -17,6 +16,7 @@ interface DatePickerProps {
   tabIndex?: number | undefined;
   disabled?: boolean;
   name?: string | undefined;
+  visibility?: boolean;
 }
 
 const DatePicker: React.FC<DatePickerProps> = ({
@@ -31,10 +31,11 @@ const DatePicker: React.FC<DatePickerProps> = ({
   tabIndex = undefined,
   disabled = false,
   name = undefined,
+  visibility = true,
   ...props
 }) => {
   return (
-    <div className={`${styles["custom-date-picker"]} ${className}`}>
+    <div className={`${styles["custom-date-picker"]} ${className} ${!visibility ? styles.hidden : ""}`}>
       {label && (
         <label
           className={`${styles["date-picker-label"]} ${

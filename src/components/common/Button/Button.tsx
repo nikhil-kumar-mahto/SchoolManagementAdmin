@@ -1,7 +1,6 @@
 /* eslint-disable */
 // @ts-nocheck
 
-
 import React from "react";
 import styles from "./Button.module.css";
 import Loader from "../Loader/Loader";
@@ -16,6 +15,7 @@ interface ButtonProps {
   color?: string;
   buttonType?: "button" | "submit" | "reset";
   variant?: "primary" | "danger";
+  disabled?: boolean;
 }
 
 const Button: React.FC<ButtonProps> = ({
@@ -27,6 +27,7 @@ const Button: React.FC<ButtonProps> = ({
   style,
   buttonType = "button",
   variant = "primary",
+  disabled = false,
 }) => {
   return (
     <button
@@ -39,6 +40,7 @@ const Button: React.FC<ButtonProps> = ({
       disabled={isLoading}
       style={style}
       type={buttonType}
+      disabled={disabled}
     >
       {isLoading ? <Loader size="small" color="white" /> : <span>{text}</span>}
     </button>

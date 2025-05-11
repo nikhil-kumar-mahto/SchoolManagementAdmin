@@ -55,3 +55,20 @@
 .danger:hover {
     background-color: var(--danger-hover-color);
 }
+
+.button:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+    box-shadow: none;
+}
+  
+.filled:disabled {
+    background-color: var(--primary-color);
+    color: var(--white);
+}
+  
+.outline:disabled {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    background-color: transparent;
+}
