@@ -7,6 +7,7 @@ import moment from "moment";
 interface TableProps {
   columnHeaders: string[];
   rowHeaders: string[];
+  showClassInfo?: boolean;
   data: {
     time: string;
     records: {
@@ -23,7 +24,12 @@ interface TableProps {
   }[];
 }
 
-const Table: React.FC<TableProps> = ({ columnHeaders, rowHeaders, data }) => {
+const Table: React.FC<TableProps> = ({
+  columnHeaders,
+  rowHeaders,
+  data,
+  showClassInfo = false,
+}) => {
   const [photo, setPhoto] = useState({
     type: "",
     url: "",
@@ -31,7 +37,10 @@ const Table: React.FC<TableProps> = ({ columnHeaders, rowHeaders, data }) => {
   if (Object.keys(data).length === 0) {
     return (
       <div className="flex-center py-2">
-        <p className="error">No report data available.</p>
+        <p className={styles.message}>
+          No report available for the chosen filters. Please modify your search
+          and try again.
+        </p>
       </div>
     );
   }
@@ -53,100 +62,124 @@ const Table: React.FC<TableProps> = ({ columnHeaders, rowHeaders, data }) => {
               {columnHeaders.map((date, index) => {
                 const record = data[time];
 
-                return (
+                return record[index] ? (
                   <td key={`${date}-${index}`} className={styles.cell}>
-                    {record ? (
-                      <>
+                    <>
+                      {showClassInfo && (
                         <div className="py-2">
-                          <strong>Punch In:</strong>{" "}
-                          {record[index]?.in_time
-                            ? moment(record[index]?.in_time, "HH:mm").format(
-                                "HH:mm A"
-                              )
-                            : "N/A"}
+                          <strong>Teacher: </strong>{" "}
+                          {record[index]?.time_slot?.teacher?.name}
                         </div>
+                      )}
+                      <div className="py-2">
+                        <strong>Subject: </strong>{" "}
+                        {record[index]?.time_slot?.subject?.name}
+                      </div>
+                      {!showClassInfo && (
                         <div className="py-2">
-                          <strong>Punch Out:</strong>{" "}
-                          {record?.[index]?.out_time
-                            ? moment(record?.[index]?.out_time, "HH:mm").format(
-                                "HH:mm A"
-                              )
-                            : "N/A"}
+                          <strong>Class: </strong>{" "}
+                          {record[index]?.time_slot?.class_info?.name +
+                            " " +
+                            record[index]?.time_slot?.class_info?.section}
                         </div>
-                        <div className="py-2">
-                          <strong>Late:</strong>{" "}
-                          {record[index]?.late?.late_punch_out
-                            ? record[index]?.late?.late_punch_out + " mins."
-                            : "N/A"}
-                        </div>
-                        <div className="py-2">
-                          <strong>Early:</strong>{" "}
-                          {record[index]?.early_punch_out
-                            ? record[index]?.early_punch_out + " mins."
-                            : "N/A"}
-                        </div>
-                        <div
-                          className={`py-2 flex-center ${styles.photoContainer}`}
-                        >
-                          <strong>Punch In Photo:</strong>
-                          {record[index]?.punch_in_photo ? (
-                            <button
-                              type="button"
-                              className={styles.button}
-                              onClick={() =>
-                                setPhoto({
-                                  type: "PUNCH_IN",
-                                  url: record[index]?.punch_in_photo,
-                                })
-                              }
-                            >
-                              <IconEye color="#007bff" />
-                            </button>
-                          ) : (
-                            "N/A"
-                          )}
-                        </div>
-                        <div
-                          className={`py-2 flex-center ${styles.photoContainer}`}
-                        >
-                          <strong>Punch Out Photo:</strong>{" "}
-                          {record[index]?.punch_out_photo ? (
-                            <button
-                              type="button"
-                              className={styles.button}
-                              onClick={() =>
-                                setPhoto({
-                                  type: "PUNCH_OUT",
-                                  url: record[index]?.punch_out_photo,
-                                })
-                              }
-                            >
-                              <IconEye color="#007bff" />
-                            </button>
-                          ) : (
-                            "N/A"
-                          )}
-                        </div>
-                        <div className="py-2">
-                          <strong>Punch In Reason:</strong>{" "}
-                          {/* {record[index]?.early_reason
+                      )}
+                      <div className="py-2">
+                        <strong>Total time spent:</strong>{" "}
+                        {record[index]?.time_spent} mins.
+                      </div>
+                      <div className="py-2">
+                        <strong>Punch In Time:</strong>{" "}
+                        {record[index]?.in_time
+                          ? moment(record[index]?.in_time, "HH:mm").format(
+                              "hh:mm A"
+                            )
+                          : "N/A"}
+                      </div>
+                      <div className="py-2">
+                        <strong>Punch Out Time:</strong>{" "}
+                        {record?.[index]?.out_time
+                          ? moment(record?.[index]?.out_time, "HH:mm").format(
+                              "hh:mm A"
+                            )
+                          : "N/A"}
+                      </div>
+                      <div className="py-2">
+                        <strong>Arrived Late By:</strong>{" "}
+                        {record[index]?.late?.late_punch_in
+                          ? record[index]?.late?.late_punch_in + " mins."
+                          : "N/A"}
+                      </div>
+                      <div className="py-2">
+                        <strong>Left Late By:</strong>{" "}
+                        {record[index]?.late?.late_punch_out
+                          ? record[index]?.late?.late_punch_out + " mins."
+                          : "N/A"}
+                      </div>
+                      <div className="py-2">
+                        <strong>Left Early By:</strong>{" "}
+                        {record[index]?.early_punch_out
+                          ? record[index]?.early_punch_out + " mins."
+                          : "N/A"}
+                      </div>
+                      <div className={`py-2 ${styles.photoContainer}`}>
+                        <strong>Punch In Photo:</strong>
+                        {record[index]?.punch_in_photo ? (
+                          <button
+                            type="button"
+                            className={styles.button}
+                            onClick={() =>
+                              setPhoto({
+                                type: "PUNCH_IN",
+                                url: record[index]?.punch_in_photo,
+                              })
+                            }
+                          >
+                            <IconEye color="#007bff" />
+                          </button>
+                        ) : (
+                          "N/A"
+                        )}
+                      </div>
+                      <div className={`py-2 ${styles.photoContainer}`}>
+                        <strong>Punch Out Photo:</strong>{" "}
+                        {record[index]?.punch_out_photo ? (
+                          <button
+                            type="button"
+                            className={styles.button}
+                            onClick={() =>
+                              setPhoto({
+                                type: "PUNCH_OUT",
+                                url: record[index]?.punch_out_photo,
+                              })
+                            }
+                          >
+                            <IconEye color="#007bff" />
+                          </button>
+                        ) : (
+                          "N/A"
+                        )}
+                      </div>
+                      <div className="py-2">
+                        <strong>Reason for Late Punch In:</strong>{" "}
+                        {/* {record[index]?.early_reason
                             ? record[index]?.early_reason?.slice(0, 15).trim() +
                               "..."
                             : "N/A"} */}
-                          {record[index]?.early_reason || "N/A"}
-                        </div>
-                        <div className="py-2">
-                          <strong>Punch Out Reason:</strong>{" "}
-                          {/* {record[index]?.late_reason
+                        {record[index]?.early_reason || "N/A"}
+                      </div>
+                      <div className="py-2">
+                        <strong>Reason for Late Punch Out:</strong>{" "}
+                        {/* {record[index]?.late_reason
                             ? record[index].late_reason.slice(0, 15).trim() +
                               "..."
                             : "N/A"} */}
-                          {record[index]?.late_reason || "N/A"}
-                        </div>
-                      </>
-                    ) : (
-                      "No Data"
-                    )}
+                        {record[index]?.late_reason || "N/A"}
+                      </div>
+                    </>
+                  </td>
+                ) : (
+                  <td key={`${date}-${index}`} className={styles.cell}>
+                    <p className="flex-center">N/A</p>
                   </td>
                 );
               })}

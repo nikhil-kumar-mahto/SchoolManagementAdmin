@@ -15,7 +15,6 @@ import {
   generateRows,
   generateTableData,
 } from "../../utils/reports/functions";
-import ImagePreview from "../../components/common/ImagePreview/ImagePreview";
 import Card from "../../components/reports/ card/Card";
 import { convertMinutesToHoursAndMinutes } from "../../utils/common/utility-functions";
 import moment from "moment";
@@ -75,14 +74,15 @@ const Reports: React.FC = () => {
         setIsDataLoaded(true);
         setData(res?.data);
         let arr = [];
-        if (selectedFilter.class && !selectedFilter.teacher) {
-          arr = generateColumnsForClass(res?.data?.data);
-        } else {
-          arr = generateColumns(res?.data?.data);
-        }
+        // if (selectedFilter.class && !selectedFilter.teacher) {
+        //   arr = generateColumnsForClass(res?.data?.data);
+        // } else {
+        //   arr = generateColumns(res?.data?.data);
+        // }
+        arr = generateColumns(res?.data?.data);
 
         let arr2 = generateRows(res?.data?.data);
-        let tableData = generateTableData(res?.data?.data);
+        let tableData = generateTableData(res?.data?.data, arr);
 
         setTableData(tableData);
         setColumns(arr);
@@ -125,6 +125,7 @@ const Reports: React.FC = () => {
   };
 
   const handleDataTypeChange = (filter: string) => {
+    setIsDataLoaded(false);
     setDataType(filter);
   };
 
@@ -237,13 +238,22 @@ const Reports: React.FC = () => {
           />
         </div>
 
-        {selectedFilter.teacher && isDataLoaded && (
+        {isDataLoaded && data?.data && data?.data.length > 0 && (
+          <h4 className="my-2">
+            Detailed Report for
+            {selectedFilter.class && !selectedFilter.teacher
+              ? " Class"
+              : " Teacher"}
+          </h4>
+        )}
+
+        {isDataLoaded && data?.data && data?.data.length > 0 && (
           <div className={styles.cardContainer}>
             <Card
               data={{
                 title: "Total Classes",
                 value: data?.summary?.total_classes,
-                description: "Overall scheduled classes",
+                description: "Classes attended",
               }}
             />
             <Card
@@ -268,7 +278,7 @@ const Reports: React.FC = () => {
               data={{
                 title: "Total Time Spent",
                 value: convertMinutesToHoursAndMinutes(
-                  data?.summary?.total_short_time_minutes
+                  data?.summary?.total_time_spent_minutes
                 ),
                 description: "Overall time spent",
               }}
@@ -286,7 +296,12 @@ const Reports: React.FC = () => {
         )}
 
         {isDataLoaded && (
-          <Table columnHeaders={columns} rowHeaders={rows} data={tableData} />
+          <Table
+            columnHeaders={columns}
+            rowHeaders={rows}
+            data={tableData}
+            showClassInfo={selectedFilter.class && !selectedFilter.teacher}
+          />
         )}
       </div>
     </Layout>
