@@ -1,5 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import styles from "./Table.module.css";
+import ImagePreview from "../../common/ImagePreview/ImagePreview";
+import { IconEye } from "../../../assets/svgs";
+import moment from "moment";
 
 interface TableProps {
   columnHeaders: string[];
@@ -21,10 +24,14 @@ interface TableProps {
 }
 
 const Table: React.FC<TableProps> = ({ columnHeaders, rowHeaders, data }) => {
+  const [photo, setPhoto] = useState({
+    type: "",
+    url: "",
+  });
   if (Object.keys(data).length === 0) {
     return (
       <div className="flex-center py-2">
-        <p className="error">No records available.</p>
+        <p className="error">No report data available.</p>
       </div>
     );
   }
@@ -47,16 +54,24 @@ const Table: React.FC<TableProps> = ({ columnHeaders, rowHeaders, data }) => {
                 const record = data[time];
 
                 return (
-                  <td key={`${date}-${time}`} className={styles.cell}>
+                  <td key={`${date}-${index}`} className={styles.cell}>
                     {record ? (
                       <>
                         <div className="py-2">
                           <strong>Punch In:</strong>{" "}
-                          {record[index]?.in_time || "N/A"}
+                          {record[index]?.in_time
+                            ? moment(record[index]?.in_time, "HH:mm").format(
+                                "HH:mm A"
+                              )
+                            : "N/A"}
                         </div>
                         <div className="py-2">
                           <strong>Punch Out:</strong>{" "}
-                          {record?.[index]?.out_time || "N/A"}
+                          {record?.[index]?.out_time
+                            ? moment(record?.[index]?.out_time, "HH:mm").format(
+                                "HH:mm A"
+                              )
+                            : "N/A"}
                         </div>
                         <div className="py-2">
                           <strong>Late:</strong>{" "}
@@ -70,41 +85,63 @@ const Table: React.FC<TableProps> = ({ columnHeaders, rowHeaders, data }) => {
                             ? record[index]?.early_punch_out + " mins."
                             : "N/A"}
                         </div>
-                        <div className="py-2">
-                          <strong>Punch In Photo:</strong>{" "}
-                          {record[index].punch_in_photo ? (
-                            <img
-                              src={record[index]?.punch_in_photo}
-                              alt="Punch In"
-                              className={styles.photo}
-                            />
+                        <div
+                          className={`py-2 flex-center ${styles.photoContainer}`}
+                        >
+                          <strong>Punch In Photo:</strong>
+                          {record[index]?.punch_in_photo ? (
+                            <button
+                              type="button"
+                              className={styles.button}
+                              onClick={() =>
+                                setPhoto({
+                                  type: "PUNCH_IN",
+                                  url: record[index]?.punch_in_photo,
+                                })
+                              }
+                            >
+                              <IconEye color="#007bff" />
+                            </button>
                           ) : (
                             "N/A"
                           )}
                         </div>
-                        <div className="py-2">
+                        <div
+                          className={`py-2 flex-center ${styles.photoContainer}`}
+                        >
                           <strong>Punch Out Photo:</strong>{" "}
-                          {record[index].punch_out_photo ? (
-                            <img
-                              src={record[index]?.punch_out_photo}
-                              alt="Punch Out"
-                              className={styles.photo}
-                            />
+                          {record[index]?.punch_out_photo ? (
+                            <button
+                              type="button"
+                              className={styles.button}
+                              onClick={() =>
+                                setPhoto({
+                                  type: "PUNCH_OUT",
+                                  url: record[index]?.punch_out_photo,
+                                })
+                              }
+                            >
+                              <IconEye color="#007bff" />
+                            </button>
                           ) : (
                             "N/A"
                           )}
                         </div>
                         <div className="py-2">
                           <strong>Punch In Reason:</strong>{" "}
-                          {record[index]?.early_reason
-                            ? record?.early_reason?.slice(0, 15).trim() + "..."
-                            : "N/A"}
+                          {/* {record[index]?.early_reason
+                            ? record[index]?.early_reason?.slice(0, 15).trim() +
+                              "..."
+                            : "N/A"} */}
+                          {record[index]?.early_reason || "N/A"}
                         </div>
                         <div className="py-2">
                           <strong>Punch Out Reason:</strong>{" "}
-                          {record[index]?.late_reason
-                            ? record?.late_reason?.slice(0, 15).trim() + "..."
-                            : "N/A"}
+                          {/* {record[index]?.late_reason
+                            ? record[index].late_reason.slice(0, 15).trim() +
+                              "..."
+                            : "N/A"} */}
+                          {record[index]?.late_reason || "N/A"}
                         </div>
                       </>
                     ) : (
@@ -117,6 +154,13 @@ const Table: React.FC<TableProps> = ({ columnHeaders, rowHeaders, data }) => {
           ))}
         </tbody>
       </table>
+      {photo?.type && (
+        <ImagePreview
+          text={`Punch ${photo.type === "PUNCH_IN" ? "In" : "Out"} Photo`}
+          imageUrl={photo.url}
+          onClose={() => setPhoto({ type: "", url: "" })}
+        />
+      )}
     </div>
   );
 };

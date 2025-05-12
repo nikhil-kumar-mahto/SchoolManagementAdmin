@@ -2,7 +2,7 @@
     padding: 20px;
     background-color: var(--white);
     border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    /* box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); */
 }
 
 .filtersContainer {
@@ -33,4 +33,12 @@
   color: var(--danger-color);
   font-size: 1.2rem;
   font-weight: 500;
+}
+
+.cardContainer {
+  display: flex;
+  gap: 16px;
+  justify-content: flex-start; 
+  padding: 16px;
+  overflow-x: auto; 
 }

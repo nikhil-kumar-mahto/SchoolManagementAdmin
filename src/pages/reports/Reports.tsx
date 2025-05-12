@@ -16,15 +16,18 @@ import {
   generateTableData,
 } from "../../utils/reports/functions";
 import ImagePreview from "../../components/common/ImagePreview/ImagePreview";
+import Card from "../../components/reports/ card/Card";
+import { convertMinutesToHoursAndMinutes } from "../../utils/common/utility-functions";
+import moment from "moment";
 
 const Reports: React.FC = () => {
   const [dataType, setDataType] = useState("Today");
   const [classes, setClasses] = useState([]);
   const [teachers, setTeachers] = useState([]);
-  const [data, setData] = useState({});
+  const [data, setData] = useState<any>({});
   const [columns, setColumns] = useState<string[]>([]);
   const [rows, setRows] = useState<string[]>([]);
-  const [tableData2, setTableData] = useState<any>({}); // TODO
+  const [tableData, setTableData] = useState<any>({});
   const [dateFilters, setDateFilters] = useState({
     startDate: "",
     endDate: "",
@@ -70,20 +73,20 @@ const Reports: React.FC = () => {
       setIsLoading(false);
       if (res.status) {
         setIsDataLoaded(true);
+        setData(res?.data);
         let arr = [];
         if (selectedFilter.class && !selectedFilter.teacher) {
-          arr = generateColumnsForClass(res?.data?.results);
+          arr = generateColumnsForClass(res?.data?.data);
         } else {
-          arr = generateColumns(res?.data?.results);
+          arr = generateColumns(res?.data?.data);
         }
 
-        let arr2 = generateRows(res?.data?.results);
-        let tableData = generateTableData(res?.data?.results);
+        let arr2 = generateRows(res?.data?.data);
+        let tableData = generateTableData(res?.data?.data);
 
         setTableData(tableData);
         setColumns(arr);
         setRows(arr2);
-        setData(res?.data);
       }
     });
   };
@@ -92,6 +95,7 @@ const Reports: React.FC = () => {
     type: "school" | "class" | "teacher",
     value: string
   ) => {
+    setIsDataLoaded(false);
     if (type === "school") {
       getTeachers(value);
       let classes = schools
@@ -128,7 +132,7 @@ const Reports: React.FC = () => {
     setErr({});
     if (dataType === "Custom") {
       if (!dateFilters.startDate) {
-        setErr((prevState) => {
+        setErr((prevState: any) => {
           return {
             ...prevState,
             startDate: "Please select start date.",
@@ -136,7 +140,7 @@ const Reports: React.FC = () => {
         });
       }
       if (!dateFilters.endDate) {
-        setErr((prevState) => {
+        setErr((prevState: any) => {
           return {
             ...prevState,
             endDate: "Please select end date.",
@@ -168,6 +172,7 @@ const Reports: React.FC = () => {
                 (selectedFilter.class || selectedFilter.teacher)
               )
             }
+            style={{ width: "6rem" }}
           />
         </div>
 
@@ -208,7 +213,11 @@ const Reports: React.FC = () => {
             onDateChange={(e: ChangeEvent<HTMLInputElement>) =>
               handleDateChange("startDate", e.target.value)
             }
-            max={dateFilters.endDate ? dateFilters.endDate : undefined}
+            max={
+              dateFilters.endDate
+                ? dateFilters.endDate
+                : moment().format("YYYY-MM-DD")
+            }
             className="w-100"
             error={err?.startDate}
             visibility={dataType === "Custom"}
@@ -221,11 +230,51 @@ const Reports: React.FC = () => {
               handleDateChange("endDate", e.target.value)
             }
             min={dateFilters.startDate ? dateFilters.startDate : undefined}
+            max={moment().format("YYYY-MM-DD")}
             className="w-100"
             error={err?.endDate}
             visibility={dataType === "Custom"}
           />
         </div>
+
+        {selectedFilter.teacher && isDataLoaded && (
+          <div className={styles.cardContainer}>
+            <Card
+              data={{
+                title: "Total Classes",
+                value: data?.summary?.total_classes,
+                description: "Overall scheduled classes",
+              }}
+            />
+            <Card
+              data={{
+                title: "Total Overtime",
+                value: convertMinutesToHoursAndMinutes(
+                  data?.summary?.total_overtime_minutes
+                ),
+                description: "Extra time spent",
+              }}
+            />
+            <Card
+              data={{
+                title: "Total Short Time",
+                value: convertMinutesToHoursAndMinutes(
+                  data?.summary?.total_short_time_minutes
+                ),
+                description: "Less time spent",
+              }}
+            />
+            <Card
+              data={{
+                title: "Total Time Spent",
+                value: convertMinutesToHoursAndMinutes(
+                  data?.summary?.total_short_time_minutes
+                ),
+                description: "Overall time spent",
+              }}
+            />
+          </div>
+        )}
 
         {!isDataLoaded && (
           <div className={styles.placeholder}>
@@ -237,10 +286,9 @@ const Reports: React.FC = () => {
         )}
 
         {isDataLoaded && (
-          <Table columnHeaders={columns} rowHeaders={rows} data={tableData2} />
+          <Table columnHeaders={columns} rowHeaders={rows} data={tableData} />
         )}
       </div>
-      <ImagePreview text="Punch In Photo" imageUrl="https://images.unsplash.com/photo-1611343693811-2c235c683f26?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MjB8fHVuc3BhbHNofGVufDB8fDB8fHww" onClose={() => {}} />
     </Layout>
   );
 };

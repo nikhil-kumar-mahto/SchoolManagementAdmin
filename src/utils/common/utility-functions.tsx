@@ -1,7 +1,6 @@
 /* eslint-disable */
 // @ts-nocheck
 
-
 import moment from "moment";
 
 export function getIdFromUrl(url: any) {
@@ -319,3 +318,11 @@ export const getStatuses = () => {
     { label: "Terminated", value: "TERMINATED" },
   ];
 };
+
+export function convertMinutesToHoursAndMinutes(minutes) {
+  const duration = moment.duration(minutes, "minutes");
+  const hours = Math.floor(duration.asHours());
+  const mins = duration.minutes();
+
+  return `${hours}h ${mins}min`;
+}

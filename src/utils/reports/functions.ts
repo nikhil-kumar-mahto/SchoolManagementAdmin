@@ -52,7 +52,7 @@ export const generateColumnsForClass = (data: ReportData[]): string[] => {
   data?.forEach((item) => {
     const className = item?.time_slot?.class_info?.name || "";
     const section = item?.time_slot?.class_info?.section || "";
-    const columnName = className + section;
+    const columnName = className + " " + section;
 
     if (columnName) {
       columnSet.add(columnName);
