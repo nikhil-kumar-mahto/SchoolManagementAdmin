@@ -37,10 +37,9 @@ const Button: React.FC<ButtonProps> = ({
       } ${className || ""} ${isLoading ? styles.loading : ""} ${
         variant === "danger" ? styles.danger : ""
       }`}
-      disabled={isLoading}
+      disabled={isLoading || disabled}
       style={style}
       type={buttonType}
-      disabled={disabled}
     >
       {isLoading ? <Loader size="small" color="white" /> : <span>{text}</span>}
     </button>
