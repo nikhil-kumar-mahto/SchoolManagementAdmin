@@ -1,6 +1,3 @@
-/* eslint-disable */
-// @ts-nocheck
-
 import moment from "moment";
 import { useState, useEffect, useRef, KeyboardEvent } from "react";
 import styles from "./Select.module.css";
@@ -250,7 +247,7 @@ function Select({
             ) : (
               filteredOptions.map((option, index) => (
                 <div
-                  ref={(el) => (optionsRef.current[index] = el)}
+                  ref={(el) => (optionsRef.current[index] = el) as any}
                   key={index}
                   className={`${styles.option} 
                     ${option.value === value ? styles.selectedOption : ""} 

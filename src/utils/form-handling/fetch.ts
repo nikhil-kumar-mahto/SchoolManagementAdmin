@@ -1,5 +1,3 @@
-/* eslint-disable */
-
 import Auth from "./auth";
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 
@@ -96,11 +94,21 @@ export default function Fetch(
       return dataParse;
     } catch (err: any) {
       if (err?.response?.status === 500) {
-        return { internalServerError: ["Something went wrong."], status: false };
+        return {
+          internalServerError: ["Something went wrong."],
+          status: false,
+        };
       } else if (err?.response?.status === 401) {
-        const event = new CustomEvent("unauthorizedError", { detail: { message: "Unauthorized access" } });
+        const event = new CustomEvent("unauthorizedError", {
+          detail: { message: "Unauthorized access" },
+        });
         window.dispatchEvent(event);
-        return { unauthorized: ["Your session has expired. Please log in again to continue."], status: false };
+        return {
+          unauthorized: [
+            "Your session has expired. Please log in again to continue.",
+          ],
+          status: false,
+        };
       } else {
         return { ...err?.response?.data, status: false };
       }
@@ -127,10 +135,9 @@ export async function refreshToken(): Promise<string | null | "expired"> {
   }
 
   if (refresh_token) {
-    const refreshResponse = await axios.post(
-      `${apiUrl}accounts/refresh/`,
-      { refresh: refresh_token }
-    );
+    const refreshResponse = await axios.post(`${apiUrl}accounts/refresh/`, {
+      refresh: refresh_token,
+    });
 
     if (refreshResponse?.data?.access) {
       const newToken = refreshResponse.data.access;

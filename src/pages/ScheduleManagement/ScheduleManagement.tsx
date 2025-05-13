@@ -1,6 +1,3 @@
-/* eslint-disable */
-// @ts-nocheck
-
 import React, { useEffect, useState } from "react";
 import styles from "./ScheduleManagement.module.css";
 import Layout from "../../components/common/Layout/Layout";
@@ -17,6 +14,7 @@ import { useAppContext } from "../../contexts/AppContext";
 import Modal from "../../components/common/Modal/Modal";
 import FullPageLoader from "../../components/common/FullPageLoader/FullPageLoader";
 import moment from "moment";
+import { SelectItem } from "../../utils/types";
 
 type Day =
   | "Monday"
@@ -32,6 +30,7 @@ interface Time {
   end_time: string;
   subject: string;
   teacher: string;
+  id?: string;
 }
 
 interface Props {
@@ -40,7 +39,19 @@ interface Props {
   Wednesday: Array<Time>;
   Thursday: Array<Time>;
   Friday: Array<Time>;
+  Saturday: Array<Time>;
+  Sunday: Array<Time>;
 }
+
+type ApiResponse = {
+  date: string;
+  day_of_week: string;
+  start_time?: string;
+  end_time?: string;
+  teacher?: { id: string };
+  subject?: { id: string };
+  id?: string;
+};
 
 const emptyObj = { start_time: "", end_time: "", teacher: "", subject: "" };
 
@@ -63,9 +74,12 @@ const initialState2 = {
 
 const ScheduleManagement: React.FC = () => {
   const [dayState, setDayState] = useState<Props>(initialState); // when user selects day
-  const [dateState, setDateState] = useState(initialState2); // when user selects date
+  const [dateState, setDateState] = useState<{
+    date: string;
+    schedule: Time[];
+  }>(initialState2); // when user selects date
   const [viewMode, setViewMode] = useState<"date" | "day">("date");
-  const [classes, setClasses] = useState([]);
+  const [classes, setClasses] = useState<SelectItem[]>([]);
   const [teachers, setTeachers] = useState([]);
   const [isLoading, setIsLoading] = useState("");
   const [showModal, setShowModal] = useState(false);
@@ -86,14 +100,14 @@ const ScheduleManagement: React.FC = () => {
   const navigate = useNavigate();
   const toast = useToast();
 
-  const { schools, subjects } = useAppContext();
+  const { schools } = useAppContext();
 
   const showToast = (message: string) => {
     toast.show(message, 2000, "#4CAF50");
   };
 
-  const convertToDayState = (data: any[]) => {
-    const result: Record<string, (typeof emptyObj)[]> = {
+  const convertToDayState = (data: ApiResponse[]) => {
+    const result: Record<string, Time[]> = {
       Monday: [],
       Tuesday: [],
       Wednesday: [],
@@ -116,17 +130,23 @@ const ScheduleManagement: React.FC = () => {
       }
     });
 
-    // Object.keys(result).forEach((day) => {
-    //   if (result[day].length === 0) {
-    //     delete result[day];
-    //   }
-    // });
-
     return result;
   };
 
-  const convertToDateState = (data: any[]) => {
-    let convertedFormat = {};
+  const convertToDateState = (data: { time_slots: ApiResponse[] }) => {
+    let convertedFormat: {
+      date: string;
+      schedule: {
+        start_time: string | undefined;
+        end_time: string | undefined;
+        teacher: string | undefined;
+        subject: string | undefined;
+        id: string | undefined;
+      }[];
+    } = {
+      date: "",
+      schedule: [],
+    };
     convertedFormat.date = data?.time_slots?.[0]?.date;
     convertedFormat.schedule = data?.time_slots?.map((item) => {
       return {
@@ -243,12 +263,11 @@ const ScheduleManagement: React.FC = () => {
   const handleDelete = (
     index: number,
     type: "day" | "date",
-    day: Day = "Monday",
-    deletedId = undefined
+    day: string = "Monday"
   ) => {
     if (type === "day") {
       setDayState((prevState) => {
-        const updatedDay = [...prevState[day]];
+        const updatedDay = [...prevState[day as keyof Props]];
         updatedDay.splice(index, 1);
 
         return {
@@ -325,12 +344,7 @@ const ScheduleManagement: React.FC = () => {
     }
   };
 
-  const handleTimeChange = (
-    index: number,
-    type: string,
-    val: string,
-    deletedId = undefined
-  ) => {
+  const handleTimeChange = (index: number, type: string, val: string) => {
     const updatedSchedule = dateState.schedule.map((item, i) => {
       if (i === index) {
         return {
@@ -353,7 +367,7 @@ const ScheduleManagement: React.FC = () => {
     });
   };
 
-  const handleCheckValidation = (params) => {
+  const handleCheckValidation = (params: any) => {
     setIsLoading("button");
     Fetch(
       `schedule/${commonInfo.class_assigned}/validate-slots/`,
@@ -436,7 +450,7 @@ const ScheduleManagement: React.FC = () => {
         school: obj.school,
         sch_class: obj.class_assigned,
         time_slots: Object.entries(obj.time_slots).reduce(
-          (acc, [day, daySlots]) => {
+          (acc: any, [day, daySlots]: any) => {
             let slots = [...daySlots];
             const slotsForDay = slots.map((slot) => ({
               day_of_week: getDayNumber(day),
@@ -478,7 +492,7 @@ const ScheduleManagement: React.FC = () => {
   };
 
   const onSubmit = () => {
-    let params = {};
+    let params: any = {};
 
     if (viewMode === "date") {
       params = {
@@ -541,8 +555,11 @@ const ScheduleManagement: React.FC = () => {
     "Saturday",
     "Sunday",
   ].forEach((day) => {
-    if (Array.isArray(dayParams[day]) && dayParams[day].length === 0) {
-      delete dayParams[day];
+    if (
+      Array.isArray(dayParams[day as keyof Props]) &&
+      dayParams[day as keyof Props].length === 0
+    ) {
+      delete dayParams[day as keyof Props];
     }
   });
 
@@ -550,7 +567,7 @@ const ScheduleManagement: React.FC = () => {
     setDayState((prevState) => {
       return {
         ...prevState,
-        [replicateTo]: prevState[replicateFrom].map((item) => {
+        [replicateTo]: prevState[replicateFrom as keyof Props].map((item) => {
           const { id, ...rest } = item;
           return { ...rest, isEdited: true };
         }),
@@ -561,7 +578,7 @@ const ScheduleManagement: React.FC = () => {
       ...dayState,
       school: commonInfo.school,
       class: commonInfo.class_assigned,
-      [replicateTo]: dayState[replicateFrom].map((item) => {
+      [replicateTo]: dayState[replicateFrom as keyof Props].map((item) => {
         return { ...item, isEdited: id ? true : false };
       }),
     });
@@ -569,7 +586,6 @@ const ScheduleManagement: React.FC = () => {
 
   const {
     errors,
-    handleSubmit,
     handleNewError,
     removeAllError,
     handleDateTimeSlots,
@@ -612,7 +628,9 @@ const ScheduleManagement: React.FC = () => {
             setDayState((prevState) => {
               const updatedDay = { ...prevState };
               Object.entries(updatedDay).forEach(([key, value]) => {
-                updatedDay[key] = value.filter((item) => item.id !== deleteId);
+                updatedDay[key as keyof Props] = value.filter(
+                  (item) => item.id !== deleteId
+                );
               });
 
               return updatedDay;
@@ -637,7 +655,7 @@ const ScheduleManagement: React.FC = () => {
 
   const allowLastEntryDelete = () => {
     let count = 0;
-    Object.entries(dayState).forEach(([key, value]) => {
+    Object.entries(dayState).forEach(([_, value]) => {
       count += value?.length;
     });
 
@@ -733,7 +751,7 @@ const ScheduleManagement: React.FC = () => {
               <>
                 {Object.entries(dayState).map(([key, value]) => (
                   <WeekDay
-                    dateState={dayState[key]}
+                    dateState={dayState[key as keyof Props]}
                     key={key}
                     day={key}
                     schedule={value}
@@ -741,20 +759,21 @@ const ScheduleManagement: React.FC = () => {
                     handleChange={(
                       index: number,
                       type: "start_time" | "end_time" | "subject" | "teacher",
-                      value: string,
-                      id = undefined
-                    ) => handleChange(key as Day, index, type, value, id)}
-                    handleDelete={(index: number, id = undefined) => {
+                      value: string
+                    ) => handleChange(key as Day, index, type, value)}
+                    handleDelete={(
+                      index: number,
+                      id: string | undefined = undefined
+                    ) => {
                       if (id) {
                         setDeleteId(id);
                       } else {
-                        handleDelete(index, "day", key as Day, id);
+                        handleDelete(index, "day", key as Day);
                       }
                     }}
                     errors={errors?.schedule?.[key]}
                     teachers={teachers}
                     replicateDay={replicateDay}
-                    isEditMode={!!id}
                     disableEdit={disableEdit}
                     allowLastEntryDelete={allowLastEntryDelete()}
                   />
@@ -779,11 +798,9 @@ const ScheduleManagement: React.FC = () => {
                 handleTimeChange={(
                   index: number,
                   type: "start_time" | "end_time" | "subject" | "teacher",
-                  value: string,
-                  id = undefined
-                ) => handleTimeChange(index, type, value, id)}
+                  value: string
+                ) => handleTimeChange(index, type, value)}
                 teachers={teachers}
-                subjects={subjects}
                 errors={errors}
                 schedule={dateState.schedule}
                 addItem={() => addItem("date")}
@@ -791,7 +808,7 @@ const ScheduleManagement: React.FC = () => {
                   if (id) {
                     setDeleteId(id);
                   } else {
-                    handleDelete(index, "date", "", id);
+                    handleDelete(index, "date", "");
                   }
                 }}
                 isEditMode={!!id}

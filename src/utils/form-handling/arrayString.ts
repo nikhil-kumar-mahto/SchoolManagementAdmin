@@ -1,6 +1,3 @@
-/* eslint-disable */
-// @ts-nocheck
-
 export function arrayString(valu: any): any {
   let a = typeof valu;
   if (a === "object") {
@@ -14,7 +11,8 @@ export function arrayString(valu: any): any {
         } else if (key !== "message" && key !== "non_field_errors") {
           error[key] = Array.isArray(value) ? value[0] : value;
         } else {
-          error["message"] = value || (Array.isArray(value) ? value[0] : "Something went wrong");
+          error["message"] =
+            value || (Array.isArray(value) ? value[0] : "Something went wrong");
         }
       }
     }
@@ -26,7 +24,9 @@ export function arrayString(valu: any): any {
 
 export function objectToQueryString(obj: Record<string, any>): string {
   const queryString = Object.keys(obj)
-    .filter((key) => obj[key] !== null && obj[key] !== undefined && obj[key] !== "")
+    .filter(
+      (key) => obj[key] !== null && obj[key] !== undefined && obj[key] !== ""
+    )
     .map((key) => encodeURIComponent(key) + "=" + encodeURIComponent(obj[key]))
     .join("&");
 

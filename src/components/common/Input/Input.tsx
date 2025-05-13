@@ -1,8 +1,4 @@
-/* eslint-disable */
-// @ts-nocheck
-
-
-import React, { ChangeEvent } from "react";
+import React, { ChangeEvent, KeyboardEventHandler } from "react";
 import styles from "./Input.module.css";
 
 interface InputProps {
@@ -13,7 +9,7 @@ interface InputProps {
   type?: "text" | "password" | "email" | "number" | "tel" | "url";
   iconRight?: React.ReactNode;
   [key: string]: any;
-  onKeyPress?: () => void;
+  onKeyPress?: (evt: React.KeyboardEvent<HTMLInputElement>, reg: RegExp) => void;
   maxLength?: undefined | number;
   tabIndex?: undefined | number;
   disabled?: boolean;
@@ -54,7 +50,7 @@ const Input: React.FC<InputProps> = ({
           className={`${styles.input} ${
             iconRight ? styles.withIconRight : ""
           } ${disabled ? styles.disabled : ""}`}
-          onKeyDown={onKeyPress}
+          onKeyDown={onKeyPress as KeyboardEventHandler<HTMLInputElement>}
           maxLength={maxLength}
           tabIndex={tabIndex}
           autoComplete={autoComplete}

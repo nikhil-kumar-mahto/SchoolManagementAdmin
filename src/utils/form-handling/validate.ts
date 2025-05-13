@@ -1,9 +1,17 @@
-/* eslint-disable */
-// @ts-nocheck
+interface FormCProps {
+  values: Record<string, any>;
+  removeValidValue?: string[];
+  onSubmit: (e?: React.FormEvent<HTMLFormElement>) => void;
+  onSubmitError?: (errors: Record<string, any>) => void;
+  selectFields?: string[];
+}
 
 import { useState, useEffect } from "react";
-export const validation = (data, selectFields = []) => {
-  let errors = {};
+export const validation = (
+  data: Record<string, any>,
+  selectFields: string[] = []
+) => {
+  let errors: Record<string, any> = {};
   for (const property in data) {
     if (!data[property]?.length && Array.isArray(data[property])) {
       const isSelectField = selectFields.includes(property);
@@ -45,7 +53,10 @@ export const validation = (data, selectFields = []) => {
   return errors;
 };
 
-export const onKeyPress = (evt, reg) => {
+export const onKeyPress = (
+  evt: React.KeyboardEvent<HTMLInputElement>,
+  reg: RegExp
+) => {
   if (
     evt.key === "Backspace" ||
     evt.key === "Tab" ||
@@ -65,8 +76,12 @@ export const onKeyPress = (evt, reg) => {
   }
 };
 
-const inputValidation = (data, property, selectFields = []) => {
-  const errors = {};
+const inputValidation = (
+  data: Record<string, any>,
+  property: string,
+  selectFields: string[] = []
+) => {
+  const errors: any = {};
   if (
     data[property] === null ||
     data[property] === undefined ||
@@ -149,14 +164,14 @@ const inputValidation = (data, property, selectFields = []) => {
   }
   return errors;
 };
-export const passwordCheck = (password) => {
+export const passwordCheck = (password: string) => {
   if (password.length < 8) return "Password must have minimum of 8 characters.";
   const regex =
     /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z])(?=.*[^\w\d\s]).{8,}$/;
   if (!regex.test(password))
     return "Password must include at least 8 characters, with at least one uppercase letter, one lowercase letter, one number, and one special character.";
 };
-export const ValidateEmailAddress = (emailString) => {
+export const ValidateEmailAddress = (emailString: string) => {
   if (!emailString) return "Please enter email";
   const regex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
   if (!regex.test(emailString))
@@ -168,8 +183,8 @@ export const FormC = ({
   onSubmit,
   onSubmitError,
   selectFields = [],
-}) => {
-  const [err, setErr] = useState({});
+}: FormCProps) => {
+  const [err, setErr] = useState<any>({});
   const [stateParam, setStateParam] = useState({ ...values });
   useEffect(() => {
     if ((values && JSON.stringify(values)) !== JSON.stringify(stateParam)) {
@@ -180,7 +195,12 @@ export const FormC = ({
   const removeAllError = () => {
     setErr({});
   };
-  const handleSubmit = (e) => {
+  const handleSubmit = (
+    e:
+      | React.MouseEvent<HTMLButtonElement>
+      | React.FormEvent<HTMLFormElement>
+      | undefined
+  ) => {
     e?.preventDefault();
     const data = removeFormValidation(stateParam);
     const error = validation(data, selectFields);
@@ -188,7 +208,7 @@ export const FormC = ({
     setErr(error);
     if (!Object?.keys(error)?.length) {
       setErr({});
-      onSubmit(e);
+      onSubmit(e as React.FormEvent<HTMLFormElement>);
     } else {
       onSubmitError && onSubmitError(error);
       const err = Object.keys(error);
@@ -205,7 +225,7 @@ export const FormC = ({
       }
     }
   };
-  const handleNewError = (error) => {
+  const handleNewError = (error: Record<string, any>) => {
     if (Object.keys(error)?.length) {
       const firstKey = Object.keys(error)[0];
       const input =
@@ -219,7 +239,9 @@ export const FormC = ({
     }
     setErr({ ...error });
   };
-  const handleBlur = (e) => {
+  const handleBlur = (
+    e: React.FocusEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
     const state = {
       ...stateParam,
@@ -234,7 +256,10 @@ export const FormC = ({
       }
     }
   };
-  const handleArrayChange = (e, type) => {
+  const handleArrayChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+    type: string
+  ) => {
     const { name, value } = e?.target || {};
     let state = {
       [name]: value,
@@ -248,7 +273,9 @@ export const FormC = ({
       setErr({});
     }
   };
-  const handleChange = (e) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e?.target || {};
     let state = {
       [name]: value,
@@ -272,7 +299,7 @@ export const FormC = ({
       }
     }
   };
-  const removeFormValidation = (stateUpdate) => {
+  const removeFormValidation = (stateUpdate: Record<string, any>) => {
     let d = { ...stateUpdate };
     if (removeValidValue?.length) {
       for (let name in d) {
@@ -284,7 +311,20 @@ export const FormC = ({
     return d;
   };
 
-  const handleDateTimeSlots = (values, isSubmit = false) => {
+  const handleDateTimeSlots = (
+    values: {
+      school?: string;
+      class?: string;
+      date?: string;
+      schedule: {
+        start_time?: string;
+        end_time?: string;
+        teacher?: string;
+        subject?: string;
+      }[];
+    },
+    isSubmit = false
+  ) => {
     if (isSubmit) {
       removeAllError();
     }
@@ -363,7 +403,14 @@ export const FormC = ({
     }
   };
 
-  const handleWeekTimeSlots = (values, isSubmit = false) => {
+  const handleWeekTimeSlots = (
+    values: {
+      school?: string;
+      class?: string;
+      [key: string]: any;
+    },
+    isSubmit = false
+  ) => {
     if (isSubmit) {
       removeAllError();
     }
@@ -476,7 +523,9 @@ export const FormC = ({
 
     if (errors?.schedule) {
       if (
-        Object.values(errors?.schedule).every((item) => item.length === 0) &&
+        Object.values(errors?.schedule).every(
+          (item: any) => item.length === 0
+        ) &&
         isSubmit &&
         !errors.school &&
         !errors.class

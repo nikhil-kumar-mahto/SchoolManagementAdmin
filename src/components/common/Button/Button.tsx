@@ -1,13 +1,10 @@
-/* eslint-disable */
-// @ts-nocheck
-
 import React from "react";
 import styles from "./Button.module.css";
 import Loader from "../Loader/Loader";
 
 interface ButtonProps {
   text: string;
-  onClick: () => void;
+  onClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
   type?: "outline" | "filled";
   className?: string;
   isLoading?: boolean;

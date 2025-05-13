@@ -1,7 +1,3 @@
-/* eslint-disable */
-// @ts-nocheck
-
-
 class AuthClass {
   private token: string;
 

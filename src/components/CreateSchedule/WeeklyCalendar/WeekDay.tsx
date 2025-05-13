@@ -1,7 +1,3 @@
-/* eslint-disable */
-// @ts-nocheck
-
-
 import React, { useState } from "react";
 import TimeEntry from "../TimeEntry/TimeEntry";
 import { PlusCircleIcon } from "../../../assets/svgs";
@@ -20,6 +16,7 @@ interface Time {
   handleDelete: () => void;
   teachers: Array<{ label: string; value: string }>;
   errors: any;
+  id?: string;
 }
 
 const previousDay = (day: string) => {
@@ -49,16 +46,20 @@ type Props = {
   handleChange: (
     index: number,
     type: "start_time" | "end_time" | "subject" | "teacher",
-    value: string,
-    id: string | undefined
+    value: string
   ) => void;
   handleDelete: (index: number, id: string | undefined) => void;
   teachers: Array<{ label: string; value: string }>;
   errors: any;
   replicateDay: (replicateTo: string, replicateFrom: string) => void;
-  isEditMode: boolean;
   disableEdit: boolean;
   allowLastEntryDelete: boolean;
+  dateState: {
+    subject: string;
+    teacher: string;
+    start_time: string;
+    end_time: string;
+  }[];
 };
 
 const WeekDay: React.FC<Props> = ({
@@ -70,7 +71,6 @@ const WeekDay: React.FC<Props> = ({
   errors = {},
   teachers,
   replicateDay,
-  isEditMode,
   dateState = [],
   disableEdit,
   allowLastEntryDelete,
@@ -124,7 +124,7 @@ const WeekDay: React.FC<Props> = ({
             handleChange={(
               type: "start_time" | "end_time" | "subject" | "teacher",
               value: string
-            ) => handleChange(index, type, value, item?.id)}
+            ) => handleChange(index, type, value)}
             handleDelete={() => handleDelete(index, item?.id)}
             errors={errors?.[index]}
             teachers={teachers}

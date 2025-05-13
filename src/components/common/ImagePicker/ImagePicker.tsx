@@ -1,15 +1,11 @@
-/* eslint-disable */
-// @ts-nocheck
-
-
 import React, { useState, ChangeEvent, useEffect, useRef } from "react";
 import styles from "./ImagePicker.module.css";
 import { DeleteIcon } from "../../../assets/svgs";
 
 interface ImagePickerProps {
   label?: string;
-  value: string | null;
-  onChange: (file: File | null) => void;
+  value: string | { name: string } | null | undefined;
+  onChange: (file: File | null | string) => void;
   className?: string;
   error?: string;
   componentKey?: string;
@@ -27,14 +23,16 @@ const ImagePicker: React.FC<ImagePickerProps> = ({
   tabIndex = undefined,
   showPreview = true,
 }) => {
-  const [fileName, setFileName] = useState<string | null>(value ? value : null);
-  const [file, setFile] = useState<File | null | string>(null);
+  const [fileName, setFileName] = useState<string | { name: string } | null | undefined>(
+    value ? value : null
+  );
+  const [file, setFile] = useState<Blob | MediaSource | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
     if (!fileName) {
       setFileName(value);
-      setFile(value);
+      setFile(value as MediaSource | null);
     }
   }, [value]);
 
@@ -85,7 +83,7 @@ const ImagePicker: React.FC<ImagePickerProps> = ({
             error ? styles.errorLabel : ""
           }`}
         >
-          {fileName ? fileName : "Choose File"}
+          {fileName ? (fileName as string) : "Choose File"}
         </label>
       </div>
       {error && <p className={styles.errorMessage}>{error}</p>}

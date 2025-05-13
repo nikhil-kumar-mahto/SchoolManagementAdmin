@@ -1,12 +1,9 @@
-/* eslint-disable */
-// @ts-nocheck
-
 import React from "react";
 import styles from "./DatePicker.module.css";
 
 interface DatePickerProps {
   label?: string;
-  selectedDate: string;
+  selectedDate: string | undefined;
   onDateChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   error?: string | undefined;
   className?: string;

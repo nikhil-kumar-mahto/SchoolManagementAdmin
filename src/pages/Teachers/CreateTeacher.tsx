@@ -1,5 +1,3 @@
-/* eslint-disable */
-// @ts-nocheck
 import React, { ChangeEvent, useEffect, useState } from "react";
 import Input from "../../components/common/Input/Input";
 import Button from "../../components/common/Button/Button";
@@ -28,20 +26,9 @@ import moment from "moment";
 import { IconEye, IconViewOff } from "../../assets/svgs";
 
 import Accordion from "../../components/common/Accordion/Accordion";
+import { TeacherFormState } from "../../utils/types";
 
-interface Props {}
-
-const mandatoryFields = [
-  "email",
-  "phone",
-  "teacher_code",
-  "first_name",
-  "last_name",
-  "gender",
-  "department_code",
-];
-
-const initialState = {
+const initialState: TeacherFormState = {
   // mandatory mandatory fields
   school: "",
   email: "",
@@ -120,7 +107,7 @@ const initialState = {
   status: "",
 };
 
-const CreateTeacher: React.FC<Props> = () => {
+const CreateTeacher: React.FC = () => {
   let mandatoryFields = [
     "email",
     "phone_number",
@@ -133,7 +120,7 @@ const CreateTeacher: React.FC<Props> = () => {
     "confirm_password",
   ];
   let tabIndex = 1;
-  const [data, setData] = useState(initialState);
+  const [data, setData] = useState<TeacherFormState>(initialState);
   const [isLoading, setIsLoading] = useState(false);
   const [isFilesModified, setIsFilesModified] = useState({
     file_passbook: false,
@@ -143,15 +130,15 @@ const CreateTeacher: React.FC<Props> = () => {
     file_adhaar_front: false,
     file_adhaar_back: false,
   });
-  const [minDates, setMinDates] = useState({
+  const [minDates, setMinDates] = useState<{
+    date_of_joining: string | undefined;
+  }>({
     date_of_joining: undefined,
   });
   const [passwordVisible, setPasswordVisible] = useState({
     password: false,
     confirm_password: false,
   });
-
-  const excludedKeys: string[] = ["id", "user", "phone_number_prefix"];
 
   const { id } = useParams();
 
@@ -177,7 +164,7 @@ const CreateTeacher: React.FC<Props> = () => {
         Object.keys(initialState).forEach((key) => {
           orderedData[key] = res.data.hasOwnProperty(key)
             ? res.data[key]
-            : initialState[key];
+            : initialState[key as keyof TeacherFormState];
         });
 
         // Handle any additional transformations
@@ -244,7 +231,7 @@ const CreateTeacher: React.FC<Props> = () => {
         "file_pancard",
         "file_passbook",
         "form_11",
-      ];
+      ] as const;
 
       fieldsToDelete.forEach((key) => {
         if (!isFilesModified[key]) {
@@ -353,18 +340,19 @@ const CreateTeacher: React.FC<Props> = () => {
     }
   };
 
-  const getValue = (key: string) => {
+  const getValue = (key: keyof TeacherFormState) => {
     if (id) {
       return data?.[key];
     } else {
       if (data?.[key]) {
-        return data?.[key]?.name;
+        // return data?.[key]?.name;
+        return typeof data[key] === "string" ? data[key] : data[key]?.name;
       }
     }
     return null;
   };
 
-  const handleFileChange = (file: File | null, key: string) => {
+  const handleFileChange = (file: File | null | string, key: string) => {
     if (id) {
       setIsFilesModified((prevState) => {
         return {
@@ -629,6 +617,96 @@ const CreateTeacher: React.FC<Props> = () => {
                           name={key}
                         />
                       );
+                    } else if (key === "marital_status") {
+                      return (
+                        <Select
+                          key={key}
+                          label={`${mapKeyToLabel(key)}${
+                            mandatoryFields.includes(key) ? "*" : ""
+                          }`}
+                          options={getMaritalStatus()}
+                          value={data?.marital_status}
+                          onChange={(value) =>
+                            handleSelectChange(value, "marital_status")
+                          }
+                          error={
+                            errors?.marital_status
+                              ? data?.marital_status
+                                ? errors?.marital_status
+                                : "Please select marital status."
+                              : ""
+                          }
+                          tabIndex={tabIndex++}
+                          name={key}
+                        />
+                      );
+                    } else if (key === "blood_group") {
+                      return (
+                        <Select
+                          key={key}
+                          label={`${mapKeyToLabel(key)}${
+                            mandatoryFields.includes(key) ? "*" : ""
+                          }`}
+                          options={getBloodGroups()}
+                          value={data?.blood_group}
+                          onChange={(value) =>
+                            handleSelectChange(value, "blood_group")
+                          }
+                          error={
+                            errors?.blood_group
+                              ? data?.blood_group
+                                ? errors?.blood_group
+                                : "Please select blood group."
+                              : ""
+                          }
+                          tabIndex={tabIndex++}
+                          name={key}
+                        />
+                      );
+                    } else if (key === "category_type") {
+                      return (
+                        <Select
+                          key={key}
+                          label={`${mapKeyToLabel(key)}${
+                            mandatoryFields.includes(key) ? "*" : ""
+                          }`}
+                          options={getCategory()}
+                          value={data?.category_type}
+                          onChange={(value) =>
+                            handleSelectChange(value, "category_type")
+                          }
+                          error={
+                            errors?.category_type
+                              ? data?.category_type
+                                ? errors?.category_type
+                                : "Please select category."
+                              : ""
+                          }
+                          tabIndex={tabIndex++}
+                          name={key}
+                        />
+                      );
+                    } else if (key === "status") {
+                      return (
+                        <Select
+                          key={key}
+                          label="Select status"
+                          options={getStatuses()}
+                          value={data?.status}
+                          onChange={(value) =>
+                            handleSelectChange(value, "status")
+                          }
+                          error={
+                            errors?.status
+                              ? data?.status
+                                ? errors?.status
+                                : "Please select status."
+                              : ""
+                          }
+                          tabIndex={tabIndex++}
+                          name={key}
+                        />
+                      );
                     }
 
                     if (
@@ -646,7 +724,9 @@ const CreateTeacher: React.FC<Props> = () => {
                           label={`${mapKeyToLabel(key)}${
                             mandatoryFields.includes(key) ? "*" : ""
                           }`}
-                          selectedDate={data[key]}
+                          selectedDate={
+                            data[key as keyof TeacherFormState] as string
+                          }
                           onDateChange={(e) =>
                             handleSelectChange(e.target.value, key)
                           }
@@ -683,7 +763,7 @@ const CreateTeacher: React.FC<Props> = () => {
                           label={`${mapKeyToLabel(key)}${
                             mandatoryFields.includes(key) ? "*" : ""
                           }`}
-                          value={getValue(key)}
+                          value={getValue(key as keyof TeacherFormState)}
                           onChange={(file) => handleFileChange(file, key)}
                           error={
                             errors[key] && `Please upload ${mapKeyToLabel(key)}`
@@ -708,7 +788,7 @@ const CreateTeacher: React.FC<Props> = () => {
                           ).toLowerCase()}`}
                           error={
                             errors[key]
-                              ? data[key]
+                              ? data[key as keyof TeacherFormState]
                                 ? errors[key]
                                 : `Please enter ${mapKeyToLabel(
                                     key
@@ -717,9 +797,17 @@ const CreateTeacher: React.FC<Props> = () => {
                           }
                           maxLength={getMaxLength(key)}
                           tabIndex={tabIndex++}
-                          type={!passwordVisible[key] ? "password" : "text"}
+                          type={
+                            !passwordVisible[
+                              key as keyof typeof passwordVisible
+                            ]
+                              ? "password"
+                              : "text"
+                          }
                           iconRight={
-                            !passwordVisible[key] ? (
+                            !passwordVisible[
+                              key as keyof typeof passwordVisible
+                            ] ? (
                               <IconEye />
                             ) : (
                               <IconViewOff />
@@ -728,7 +816,8 @@ const CreateTeacher: React.FC<Props> = () => {
                           handleIconButtonClick={() =>
                             setPasswordVisible((prevState) => ({
                               ...prevState,
-                              [key]: !prevState[key],
+                              [key]:
+                                !prevState[key as keyof typeof passwordVisible],
                             }))
                           }
                           autoComplete="off"
@@ -750,7 +839,7 @@ const CreateTeacher: React.FC<Props> = () => {
                         ).toLowerCase()}`}
                         error={
                           errors[key]
-                            ? data[key]
+                            ? data[key as keyof TeacherFormState]
                               ? errors[key]
                               : `Please enter ${mapKeyToLabel(
                                   key

@@ -1,6 +1,3 @@
-/* eslint-disable */
-// @ts-nocheck
-
 import Layout from "../../components/common/Layout/Layout";
 import DataTable from "../../components/common/DataTable/DataTable";
 import styles from "../../styles/Listing.module.css";
@@ -14,13 +11,14 @@ import Modal from "../../components/common/Modal/Modal";
 import { useAppContext } from "../../contexts/AppContext";
 import Select from "../../components/common/Select/Select";
 import Tooltip from "../../components/common/ToolTip/ToolTip";
+import { SelectItem } from "../../utils/types";
 
 function Class() {
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState<"listing" | "delete" | "">("");
   const [showModal, setShowModal] = useState(false);
   const [itemToDelete, setItemToDelete] = useState("");
-  const [classes, setClasses] = useState([]);
+  const [classes, setClasses] = useState<SelectItem[]>([]);
   const [pagination, setPagination] = useState({
     total: 0,
     currentPage: 1,
@@ -70,7 +68,7 @@ function Class() {
         value: item?.id,
       }));
 
-    setClasses(classes);
+    setClasses(classes as SelectItem[]);
     setSelectedSchool(id);
 
     const updatedParams: any = { school: id };

@@ -1,7 +1,3 @@
-/* eslint-disable */
-// @ts-nocheck
-
-
 import React, { useEffect, useState } from "react";
 import styles from "./Sidebar.module.css";
 import { SchoolIcon } from "../../../assets/svgs";

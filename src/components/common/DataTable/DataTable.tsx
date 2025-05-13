@@ -1,7 +1,3 @@
-/* eslint-disable */
-// @ts-nocheck
-
-
 import React from "react";
 import styles from "./DataTable.module.css";
 import Loader from "../Loader/Loader";
