@@ -11,22 +11,34 @@ import { useAppContext } from "../../contexts/AppContext";
 import Button from "../../components/common/Button/Button";
 import {
   generateColumns,
-  generateColumnsForClass,
   generateRows,
   generateTableData,
 } from "../../utils/reports/functions";
 import Card from "../../components/reports/ card/Card";
 import { convertMinutesToHoursAndMinutes } from "../../utils/common/utility-functions";
 import moment from "moment";
+import { ReportTypes } from "../../types/reports";
+
+const initialReportState: ReportTypes = {
+  data: [],
+  summary: {
+    total_classes: 0,
+    total_overtime_minutes: 0,
+    total_short_time_minutes: 0,
+    total_time_spent_minutes: 0,
+  },
+};
 
 const Reports: React.FC = () => {
   const [dataType, setDataType] = useState("Today");
-  const [classes, setClasses] = useState([]);
+  const [classes, setClasses] = useState<{ label: string; value: string }[]>(
+    []
+  );
   const [teachers, setTeachers] = useState([]);
-  const [data, setData] = useState<any>({});
+  const [data, setData] = useState<ReportTypes>(initialReportState);
   const [columns, setColumns] = useState<string[]>([]);
   const [rows, setRows] = useState<string[]>([]);
-  const [tableData, setTableData] = useState<any>({});
+  const [tableData, setTableData] = useState({});
   const [dateFilters, setDateFilters] = useState({
     startDate: "",
     endDate: "",
@@ -105,7 +117,7 @@ const Reports: React.FC = () => {
           value: item?.id,
         }));
 
-      setClasses(classes);
+      setClasses(classes || []);
     }
 
     setSelectedFilter((prevState) => ({
@@ -252,7 +264,7 @@ const Reports: React.FC = () => {
             <Card
               data={{
                 title: "Total Classes",
-                value: data?.summary?.total_classes,
+                value: data?.summary?.total_classes.toString(),
                 description: "Classes attended",
               }}
             />
@@ -300,7 +312,9 @@ const Reports: React.FC = () => {
             columnHeaders={columns}
             rowHeaders={rows}
             data={tableData}
-            showClassInfo={selectedFilter.class && !selectedFilter.teacher}
+            showClassInfo={Boolean(
+              selectedFilter.class && !selectedFilter.teacher
+            )}
           />
         )}
       </div>

@@ -13,7 +13,7 @@ type AppContextType = {
   schools: {
     label: string;
     value: string;
-    classes: { id: string; name: string }[];
+    classes: { id: string; name: string, section: string }[];
   }[];
   toggleIsLoggedIn: () => void;
   isLoggedIn: boolean | null;

@@ -3,25 +3,15 @@ import styles from "./Table.module.css";
 import ImagePreview from "../../common/ImagePreview/ImagePreview";
 import { IconEye } from "../../../assets/svgs";
 import moment from "moment";
+import { ReportData } from "../../../types/reports";
 
 interface TableProps {
   columnHeaders: string[];
   rowHeaders: string[];
-  showClassInfo?: boolean;
+  showClassInfo?: boolean | undefined;
   data: {
-    time: string;
-    records: {
-      date: string;
-      punchInTime: string;
-      punchOutTime: string;
-      late: string;
-      early: string;
-      punchInPhoto: string;
-      punchOutPhoto: string;
-      punchInReason: string;
-      punchOutReason: string;
-    }[];
-  }[];
+    [time: string]: ReportData[];
+  };
 }
 
 const Table: React.FC<TableProps> = ({

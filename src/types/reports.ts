@@ -1,20 +1,21 @@
+
 export type ReportData = {
   class_info: {
     id: string;
     name: string;
     section: string;
   };
-  absent_reason: "";
-  early_minutes: "";
-  early_reason: "";
-  in_time: "";
-  date: "";
-  late_minutes: "";
-  late_reason: "";
-  out_time: "";
-  punch_in_photo: "";
-  punch_out_photo: "";
-  status: "";
+  time_spent: number;
+  absent_reason: '';
+  early_reason: '';
+  in_time: '';
+  date: '';
+  late_minutes: '';
+  late_reason: '';
+  out_time: '';
+  punch_in_photo: '';
+  punch_out_photo: '';
+  status: '';
   time_slot: {
     class_info: {
       id: string;
@@ -34,6 +35,11 @@ export type ReportData = {
       name: string;
     };
   };
+  late: {
+    late_punch_in: string;
+    late_punch_out: string;
+  };
+  early_punch_out: string;
 };
 
 export type ReportSummary = {
