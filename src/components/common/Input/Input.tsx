@@ -3,7 +3,7 @@ import styles from "./Input.module.css";
 
 interface InputProps {
   label?: string;
-  value?: string;
+  value?: any;
   onChange?: (event: ChangeEvent<HTMLInputElement>) => void;
   error?: string;
   type?: "text" | "password" | "email" | "number" | "tel" | "url";

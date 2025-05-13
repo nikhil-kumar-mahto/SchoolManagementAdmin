@@ -120,7 +120,7 @@ const CreateTeacher: React.FC = () => {
     "confirm_password",
   ];
   let tabIndex = 1;
-  const [data, setData] = useState<TeacherFormState>(initialState);
+  const [data, setData] = useState<any>(initialState);
   const [isLoading, setIsLoading] = useState(false);
   const [isFilesModified, setIsFilesModified] = useState({
     file_passbook: false,
@@ -202,7 +202,7 @@ const CreateTeacher: React.FC = () => {
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setData((prevData) => ({
+    setData((prevData: any) => ({
       ...prevData,
       [name]: value,
     }));
@@ -286,7 +286,7 @@ const CreateTeacher: React.FC = () => {
         };
       });
     }
-    setData((prevData) => ({
+    setData((prevData: any) => ({
       ...prevData,
       [type]: value,
     }));

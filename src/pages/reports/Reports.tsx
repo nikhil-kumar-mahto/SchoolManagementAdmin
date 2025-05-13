@@ -272,7 +272,7 @@ const Reports: React.FC = () => {
               data={{
                 title: "Total Overtime",
                 value: convertMinutesToHoursAndMinutes(
-                  data?.summary?.total_overtime_minutes
+                  data?.summary?.total_overtime_minutes.toString()
                 ),
                 description: "Extra time spent",
               }}
@@ -281,7 +281,7 @@ const Reports: React.FC = () => {
               data={{
                 title: "Total Short Time",
                 value: convertMinutesToHoursAndMinutes(
-                  data?.summary?.total_short_time_minutes
+                  data?.summary?.total_short_time_minutes.toString()
                 ),
                 description: "Less time spent",
               }}
@@ -290,7 +290,7 @@ const Reports: React.FC = () => {
               data={{
                 title: "Total Time Spent",
                 value: convertMinutesToHoursAndMinutes(
-                  data?.summary?.total_time_spent_minutes
+                  data?.summary?.total_time_spent_minutes.toString()
                 ),
                 description: "Overall time spent",
               }}

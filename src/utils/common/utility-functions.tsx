@@ -320,7 +320,7 @@ export const getStatuses = () => {
   ];
 };
 
-export function convertMinutesToHoursAndMinutes(minutes) {
+export function convertMinutesToHoursAndMinutes(minutes: string) {
   const duration = moment.duration(minutes, "minutes");
   const hours = Math.floor(duration.asHours());
   const mins = duration.minutes();
