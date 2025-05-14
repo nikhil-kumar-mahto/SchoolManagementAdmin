@@ -1,6 +1,7 @@
 import {
   ClassIcon,
   DashboardIcon,
+  ReportsIcon,
   ScheduleIcon,
   SchoolIcon2,
   SubjectIcon,
@@ -55,7 +56,7 @@ export const sidebarItems: SidebarItem[] = [
   { 
     name: "Reports Management",
     href: "/reports",
-    Icon: ScheduleIcon,
+    Icon: ReportsIcon,
     fill: "#000",
   },
 ];
